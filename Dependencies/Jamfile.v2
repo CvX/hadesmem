@@ -18,6 +18,13 @@ lib BeaEngine
   : <include>"." <include>"./BeaEngine/" 
   ;
 
+lib poshlib
+  : [ glob poshlib/posh.c ]
+  :
+  :
+  : <include>"."
+  ;
+
 alias RapidXML 
   : 
   : 
