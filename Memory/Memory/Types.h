@@ -17,11 +17,28 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+	#pragma once
+#endif
+
+#ifndef __HADES_MEMORY_TYPES__
+#define __HADES_MEMORY_TYPES__
 
 // C++ Standard Library
 #include <string>
 #include <cstdint>
+
+// Posh
+#include "posh.h"
+
+// System
+#if defined(POSH_OS_WIN32)
+# include <Windows.h>
+#elif defined(POSH_OS_LINUX)
+# include <sys/types.h>
+#else
+# error [HadesMem] Operating system not supported
+#endif
 
 namespace Hades
 {
@@ -29,34 +46,47 @@ namespace Hades
   {
     namespace Types
     {
-      // Declare fixed-size types
-      typedef std::int8_t     Int8;
-      typedef std::uint8_t    UInt8;
-      typedef std::int16_t    Int16;
-      typedef std::uint16_t   UInt16;
-      typedef std::int32_t    Int32;
-      typedef std::uint32_t   UInt32;
-      typedef std::int64_t    Int64;
-      typedef std::uint64_t   UInt64;
-      typedef float           Float;
-      typedef double          Double;
-      typedef char            CharA;
-      typedef wchar_t         CharW;
-      typedef std::string     StringA;
-      typedef std::wstring    StringW;
-      typedef void*           Pointer;
+      // Declare signed integer types
+      typedef std::int8_t   Int8;
+      typedef std::int16_t  Int16;
+      typedef std::int32_t  Int32;
+      typedef std::int64_t  Int64;
+      typedef std::intptr_t IntPtr;
 
-      // Ensure data type are correct
-      static_assert(sizeof(Int8) == 1, "Size of Int8 is wrong.");
-      static_assert(sizeof(UInt8) == 1, "Size of UInt8 is wrong.");
-      static_assert(sizeof(Int16) == 2, "Size of Int16 is wrong.");
-      static_assert(sizeof(UInt16) == 2, "Size of UInt16 is wrong.");
-      static_assert(sizeof(Int32) == 4, "Size of Int32 is wrong.");
-      static_assert(sizeof(UInt32) == 4, "Size of UInt32 is wrong.");
-      static_assert(sizeof(Int64) == 8, "Size of Int64 is wrong.");
-      static_assert(sizeof(UInt64) == 8, "Size of UInt64 is wrong.");
-      static_assert(sizeof(Float) == 4, "Size of Float is wrong.");
-      static_assert(sizeof(Double) == 8, "Size of Double is wrong.");
+      // Declare signed integer types
+      typedef std::uint8_t   UInt8;
+      typedef std::uint16_t  UInt16;
+      typedef std::uint32_t  UInt32;
+      typedef std::uint64_t  UInt64;
+      typedef std::uintptr_t UIntPtr;
+
+      // Declare char & string types
+      typedef char      Char8;
+      typedef char16_t  Char16;
+      typedef char32_t  Char32;
+      
+      typedef std::basic_string<Char8>  String8;
+      typedef std::basic_string<Char16> String16;
+      typedef std::basic_string<Char32> String32;
+
+      typedef char          CharA;
+      typedef wchar_t       CharW;
+      typedef std::string   StringA;
+      typedef std::wstring  StringW;
+
+      // Other types
+      typedef float   Float;
+      typedef double  Double;
+      typedef void*   Pointer;
+
+      // System dependent types
+    #if defined(POSH_OS_WIN32)
+	    typedef ::DWORD	  Pid;
+	    typedef ::HANDLE	ProcessHandle;
+    #elif defined(POSH_OS_LINUX)
+	    typedef ::pid_t Pid;
+	    typedef ::pid_t	ProcessHandle;
+    #endif
     }
   }
 }
