@@ -55,7 +55,7 @@ namespace Hades
   // Create a error code
   inline boost::system::error_code MakeErrorCodeSys()
   {
-    using bs = boost::system;
+    namespace bs = boost::system;
 
   #if defined(POSH_OS_WIN32)
     return bs::error_code(GetLastError(), bs::system_category);
