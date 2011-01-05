@@ -82,8 +82,11 @@ namespace Hades
       // Open process given process id
       void Open(Pid ProcID);
 
-      // Process handle
     #if defined(POSH_OS_WIN32)
+      // Gets the SeDebugPrivilege
+      void GetSeDebugPrivilege();
+
+      // Process handle
       ProcessHandle m_Handle;
     #endif
 
