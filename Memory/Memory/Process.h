@@ -19,11 +19,6 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-// Windows API
-#include <tchar.h>
-#include <Windows.h>
-#include <TlHelp32.h>
-
 // C++ Standard Library
 #include <string>
 
@@ -39,7 +34,7 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 // Hades
 #include "Fwd.h"
 #include "Error.h"
-#include "Common/EnsureCleanup.h"
+#include "Types.hpp"
 
 namespace Hades
 {
@@ -54,14 +49,13 @@ namespace Hades
       { };
 
       // Open process from process ID
-      explicit Process(DWORD ProcID);
+      explicit Process(Pid ProcID);
 
       // Open process from process name
-      explicit Process(std::basic_string<TCHAR> const& ProcName);
+      explicit Process(TString const& ProcName);
 
       // Open process from window name and class
-      Process(std::basic_string<TCHAR> const& WindowName, 
-        std::basic_string<TCHAR> const& ClassName);
+      Process(TString const& WindowName, TString const& ClassName);
 
       // Copy constructor
       Process(Process const& MyProcess);
@@ -72,27 +66,32 @@ namespace Hades
       // Move constructor
       Process(Process&& MyProcess);
 
+      // Destructor
+      ~Process();
+
       // Move assignment
       Process& operator=(Process&& MyProcess);
 
       // Get process handle
-      HANDLE GetHandle() const;
+      ProcessHandle GetHandle() const;
       
       // Get process ID
-      DWORD GetID() const;
+      Pid GetID() const;
 
     private:
       // Open process given process id
-      void Open(DWORD ProcID);
+      void Open(Pid ProcID);
 
       // Gets the SeDebugPrivilege
       void GetSeDebugPrivilege();
 
       // Process handle
-      Windows::EnsureCloseHandle m_Handle;
+    #if defined(POSH_OS_WIN32)
+      ProcessHandle m_Handle;
+    #endif
 
       // Process ID
-      DWORD m_ID;
+      Pid m_ID;
     };
   }
 }
