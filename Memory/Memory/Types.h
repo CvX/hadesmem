@@ -74,6 +74,14 @@ namespace Hades
       typedef std::string   StringA;
       typedef std::wstring  StringW;
 
+    #if defined(UNICODE) || defined(_UNICODE)
+      typedef CharW   TChar;
+      typedef StringW TString;
+    #else
+      typedef CharA   TChar;
+      typedef StringA TString;
+    #endif
+      
       // Other types
       typedef float   Float;
       typedef double  Double;
