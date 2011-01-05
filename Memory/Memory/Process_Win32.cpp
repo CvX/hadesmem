@@ -17,9 +17,13 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <posh.h>
+#if defined(POSH_OS_WIN32)
+
 // Windows API
 #include <Windows.h>
 #include <TlHelp32.h>
+#include <tchar.h>
 
 // Boost
 #ifdef _MSC_VER
@@ -34,6 +38,7 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 // Hades
 #include "Process.h"
 #include "Common/I18n.h"
+#include "Common/EnsureCleanup.h"
 
 namespace Hades
 {
@@ -159,6 +164,11 @@ namespace Hades
       }
     }
 
+    ~Process()
+    {
+      CloseHandle(m_Handle);
+    }
+
     // Copy assignment
     Process& Process::operator=(Process const& MyProcess)
     {
@@ -268,6 +278,7 @@ namespace Hades
       TOKEN_PRIVILEGES Privileges = { 0 };
       // Set the privileges we need
       Privileges.PrivilegeCount = 1;
+
       Privileges.Privileges[0].Luid = Luid;
       Privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
@@ -296,3 +307,5 @@ namespace Hades
     }
   }
 }
+
+#endif //POSH_OS_WIN32
