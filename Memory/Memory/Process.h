@@ -17,7 +17,12 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+	#pragma once
+#endif
+
+#ifndef __HADES_PROCESS__
+#define __HADES_PROCESS__
 
 // C++ Standard Library
 #include <string>
@@ -30,6 +35,9 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif // #ifdef _MSC_VER
+
+// Posh
+#include <posh.h>
 
 // Hades
 #include "Fwd.h"
@@ -95,3 +103,5 @@ namespace Hades
     };
   }
 }
+
+#endif //__HADES_PROCESS__
