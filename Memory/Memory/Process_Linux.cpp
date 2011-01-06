@@ -1,7 +1,7 @@
 /*
 This file is part of HadesMem.
-Copyright © 2010 RaptorFactor (aka Cypherjb, Cypher, Chazwazza). 
-<http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
+Copyright © 2011 Ethon
+<ethon@list.ru>
 
 HadesMem is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
