@@ -113,6 +113,9 @@ BOOST_AUTO_TEST_CASE(ProcedureTest)
 
 BOOST_AUTO_TEST_CASE(IteratorTest)
 {
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+  
   // Enumerate module list and run tests on all modules
   HadesMem::ModuleList Modules(MyMemory);
   BOOST_CHECK(Modules.begin() != Modules.end());
