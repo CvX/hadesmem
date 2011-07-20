@@ -132,9 +132,9 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
       // Note: The module name check could possibly fail if multiple modules 
       // with the same name but a different path are loaded in the process, 
       // but this is currently not the case with any of the testing binaries.
-      BOOST_CHECK_EQUAL(M.GetBase(), Hades::Memory::GetRemoteModuleHandle(
+      BOOST_CHECK_EQUAL(M.GetBase(), HadesMem::GetRemoteModuleHandle(
         MyMemory, M.GetName().c_str()));
-      BOOST_CHECK_EQUAL(M.GetBase(), Hades::Memory::GetRemoteModuleHandle(
+      BOOST_CHECK_EQUAL(M.GetBase(), HadesMem::GetRemoteModuleHandle(
         MyMemory, M.GetPath().c_str()));
     });
 }
