@@ -1,0 +1,148 @@
+/*
+This file is part of HadesMem.
+Copyright (C) 2011 Joshua Boyce (a.k.a. RaptorFactor).
+<http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
+
+HadesMem is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+HadesMem is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// Haes
+#include <HadesMemory/Module.hpp>
+#include <HadesMemory/MemoryMgr.hpp>
+
+// Boost
+#define BOOST_TEST_MODULE ModuleTest
+#include <boost/test/unit_test.hpp>
+
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+      
+  // Open module by handle
+  HadesMem::Module SelfModule(MyMemory, NULL);
+  BOOST_CHECK_EQUAL(SelfModule.GetBase(), GetModuleHandle(NULL));
+  HadesMem::Module NewSelfModule(MyMemory, SelfModule.GetBase());
+  BOOST_CHECK(SelfModule == NewSelfModule);
+      
+  // Open module by name
+  HadesMem::Module K32Module(MyMemory, L"kernel32.dll");
+  BOOST_CHECK_EQUAL(K32Module.GetBase(), GetModuleHandle(L"kernel32.dll"));
+  HadesMem::Module NewK32Module(MyMemory, K32Module.GetName());
+  BOOST_CHECK(K32Module == NewK32Module);
+  HadesMem::Module NewNewK32Module(MyMemory, K32Module.GetPath());
+  BOOST_CHECK(K32Module == NewNewK32Module);
+  
+  // Test inequality
+  BOOST_CHECK(SelfModule != K32Module);
+  
+  // Test module handle failure
+  BOOST_CHECK_THROW(HadesMem::Module InvalidModuleHandle(MyMemory, 
+    reinterpret_cast<HMODULE>(-1)), HadesMem::HadesMemError);
+  
+  // Test module name failure
+  BOOST_CHECK_THROW(HadesMem::Module InvalidModuleName(MyMemory, 
+    L"InvalidModuleXYZQQ.dll"), HadesMem::HadesMemError);
+      
+  // Test copying, assignement, and moving
+  HadesMem::Module OtherSelfModule(SelfModule);
+  BOOST_CHECK(OtherSelfModule == SelfModule);
+  SelfModule = OtherSelfModule;
+  BOOST_CHECK(OtherSelfModule == SelfModule);
+  HadesMem::Module MovedSelfModule(std::move(OtherSelfModule));
+  BOOST_CHECK(MovedSelfModule == SelfModule);
+  SelfModule = std::move(MovedSelfModule);
+  BOOST_CHECK_EQUAL(SelfModule.GetBase(), GetModuleHandle(NULL));
+}
+
+BOOST_AUTO_TEST_CASE(DataTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+      
+  // Open module by name
+  HadesMem::Module K32Module(MyMemory, L"kernel32.dll");
+  
+  // Test GetBase
+  BOOST_CHECK_EQUAL(K32Module.GetBase(), GetModuleHandle(L"kernel32.dll"));
+  
+  // Test GetSize
+  BOOST_CHECK(K32Module.GetSize() != 0);
+  
+  // Test GetName
+  BOOST_CHECK(K32Module.GetName() == L"kernel32.dll");
+  
+  // Test GetPath
+  BOOST_CHECK(!K32Module.GetPath().empty());
+  BOOST_CHECK(K32Module.GetPath().find(L"kernel32.dll") != std::wstring::npos);
+}
+
+BOOST_AUTO_TEST_CASE(ProcedureTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+      
+  // Open NTDLL module by name
+  HadesMem::Module NtdllMod(MyMemory, L"ntdll.dll");
+  
+  // Find NtQueryInformationProcess
+  FARPROC pQueryInfo = NtdllMod.FindProcedure(
+    "NtQueryInformationProcess");
+  BOOST_CHECK_EQUAL(pQueryInfo, GetProcAddress(GetModuleHandle(
+    L"ntdll.dll"), "NtQueryInformationProcess"));
+    
+  // Find ordinal 0
+  FARPROC pOrdinal0 = NtdllMod.FindProcedure(1);
+  BOOST_CHECK_EQUAL(pOrdinal0, GetProcAddress(GetModuleHandle(
+    L"ntdll.dll"), MAKEINTRESOURCEA(1)));
+}
+
+#if 0
+// Module component tests
+BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+{
+  // Create memory manager for self
+  Hades::Memory::MemoryMgr const MyMemory(GetCurrentProcessId());
+    
+  // Enumerate module list and run tests on all modules
+  Hades::Memory::ModuleList Modules(MyMemory);
+  BOOST_CHECK(Modules.begin() != Modules.end());
+  std::for_each(Modules.begin(), Modules.end(), 
+    [&] (Hades::Memory::Module const& M)
+    {
+      // Ensure module APIs execute without exception and return valid data
+      BOOST_CHECK(M.GetBase() != 0);
+      BOOST_CHECK(M.GetSize() != 0);
+      BOOST_CHECK(!M.GetName().empty());
+      BOOST_CHECK(!M.GetPath().empty());
+      
+      // Ensure GetRemoteModuleHandle works as expected
+      // Note: The module name check could possibly fail if multiple modules 
+      // with the same name but a different path are loaded in the process, 
+      // but this is currently not the case with any of the testing binaries.
+      BOOST_CHECK_EQUAL(M.GetBase(), Hades::Memory::GetRemoteModuleHandle(
+        MyMemory, M.GetName().c_str()));
+      BOOST_CHECK_EQUAL(M.GetBase(), Hades::Memory::GetRemoteModuleHandle(
+        MyMemory, M.GetPath().c_str()));
+      
+      // Test module constructors
+      Hades::Memory::Module const TestMod1(MyMemory, M.GetBase());
+      Hades::Memory::Module const TestMod2(MyMemory, M.GetName());
+      Hades::Memory::Module const TestMod3(MyMemory, M.GetPath().wstring());
+      BOOST_CHECK_EQUAL(M.GetBase(), TestMod1.GetBase());
+      BOOST_CHECK_EQUAL(M.GetBase(), TestMod2.GetBase());
+      BOOST_CHECK_EQUAL(M.GetBase(), TestMod3.GetBase());
+    });
+}
+#endif
