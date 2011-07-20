@@ -25,19 +25,31 @@
     </h4>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
 <li class="listitem">
-          Move support for MemoryMgr.
+          Move support for <code class="computeroutput"><span class="identifier">MemoryMgr</span></code>.
         </li>
 <li class="listitem">
           Documented version macros.
         </li>
 <li class="listitem">
-          Documented copy/assignment/move constructors/operators for MemoryMgr.
+          Documented copy/assignment/move constructors/operators for <code class="computeroutput"><span class="identifier">MemoryMgr</span></code>.
         </li>
 <li class="listitem">
           Improved compiler detection.
         </li>
 <li class="listitem">
           Improved build scripts to allow architecture selection.
+        </li>
+<li class="listitem">
+          Added <code class="computeroutput"><span class="identifier">Module</span></code> component.
+        </li>
+<li class="listitem">
+          Changed <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">Call</span></code> to use the new <code class="computeroutput"><span class="identifier">Module</span></code>
+          APIs for increased stability.
+        </li>
+<li class="listitem">
+          Added build scripts for Intel. Please note that this platform is still
+          unsupported (as per the documentation). The scripts are there so users
+          can help with the porting process (as are the Clang scripts).
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_0_0"></a><h4>
