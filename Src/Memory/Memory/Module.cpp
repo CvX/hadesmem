@@ -346,4 +346,212 @@ namespace HadesMem
   {
     return !(*this == Rhs);
   }
+  
+  // Get remote module handle
+  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
+    LPCWSTR ModuleName)
+  {
+    // Get module list
+    ModuleList Modules(MyMemory);
+    
+    // If pointer to module name is null, return a handle to the file used 
+    // to create the calling process. (i.e. The first module in the list)
+    if (!ModuleName)
+    {
+      return Modules.begin()->GetBase();
+    }
+    
+    // Pointer is non-null, so convert to lowercase C++ string
+    std::wstring ModuleNameReal(ModuleName);
+    boost::to_lower(ModuleNameReal);
+    
+    // Find location of file extension
+    auto const PeriodPos = ModuleNameReal.find(L'.');
+    // If no extension is found, assume a DLL is being requested
+    if (PeriodPos == std::wstring::npos)
+    {
+      ModuleNameReal += L".dll";
+    }
+    // If there is an 'empty' extension (i.e. a trailing period), this 
+    // indicates no extension (and '.dll' should not be appended). Remove 
+    // the trailing peroid so the string can be used for name/path 
+    // comparisons.
+    else if (PeriodPos == ModuleNameReal.size() - 1)
+    {
+      ModuleNameReal.erase(ModuleNameReal.size() - 1);
+    }
+    
+    // Detect paths
+    bool const IsPath = (ModuleNameReal.find(L'\\') != std::wstring::npos) || 
+      (ModuleNameReal.find(L'/') != std::wstring::npos);
+    
+    // Find target module
+    auto Iter = std::find_if(Modules.begin(), Modules.end(), 
+      [&] (Module const& M) -> bool
+      {
+        if (IsPath)
+        {
+          return boost::filesystem::equivalent(ModuleNameReal, M.GetPath());
+        }
+        else
+        {
+          return ModuleNameReal == M.GetName();
+        }
+      });
+    // Return module base if target found
+    if (Iter != Modules.end())
+    {
+      return Iter->GetBase();
+    }
+    
+    // Return null if target not found
+    return nullptr;
+  }
+  
+  // Constructor
+  ModuleList::ModuleList(MemoryMgr const& MyMemory)
+    : m_Memory(MyMemory), 
+    m_Snap(), 
+    m_Cache()
+  { }
+  
+  // Get start of module list
+  ModuleList::iterator ModuleList::begin()
+  {
+    return iterator(*this);
+  }
+  
+  // Get end of module list
+  ModuleList::iterator ModuleList::end()
+  {
+    return iterator();
+  }
+  
+  // Get module from cache by number
+  boost::optional<Module&> ModuleList::GetByNum(DWORD Num)
+  {
+    while (Num >= m_Cache.size())
+    {
+      if (m_Cache.empty())
+      {
+        m_Snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 
+          m_Memory.GetProcessId());
+        if (m_Snap == INVALID_HANDLE_VALUE)
+        {
+          DWORD const LastError = GetLastError();
+          BOOST_THROW_EXCEPTION(Error() << 
+            ErrorFunction("ModuleList::GetByNum") << 
+            ErrorString("Could not get module snapshot.") << 
+            ErrorCodeWinLast(LastError));
+        }
+
+        MODULEENTRY32 MyModuleEntry;
+        ZeroMemory(&MyModuleEntry, sizeof(MyModuleEntry));
+        MyModuleEntry.dwSize = sizeof(MyModuleEntry);
+        if (!Module32First(m_Snap, &MyModuleEntry))
+        {
+          DWORD const LastError = GetLastError();
+          BOOST_THROW_EXCEPTION(Error() << 
+            ErrorFunction("ModuleList::GetByNum") << 
+            ErrorString("Could not get module info.") << 
+            ErrorCodeWinLast(LastError));
+        }
+
+        m_Cache.push_back(Module(m_Memory, MyModuleEntry));
+      }
+      else
+      {
+        MODULEENTRY32 MyModuleEntry;
+        ZeroMemory(&MyModuleEntry, sizeof(MyModuleEntry));
+        MyModuleEntry.dwSize = sizeof(MyModuleEntry);
+        if (!Module32Next(m_Snap, &MyModuleEntry))
+        {
+          if (GetLastError() != ERROR_NO_MORE_FILES)
+          {
+            DWORD const LastError = GetLastError();
+            BOOST_THROW_EXCEPTION(Error() << 
+              ErrorFunction("ModuleList::GetByNum") << 
+              ErrorString("Error enumerating module list.") << 
+              ErrorCodeWinLast(LastError));
+          }
+          
+          return boost::optional<Module&>();
+        }
+        else
+        {
+          m_Cache.push_back(Module(m_Memory, MyModuleEntry));
+        }
+      }
+    }
+    
+    return m_Cache[Num];
+  }
+  
+  
+  // Constructor
+  ModuleList::ModuleIter::ModuleIter() : 
+    m_pParent(nullptr), 
+    m_Number(static_cast<DWORD>(-1)), 
+    m_Current()
+  { }
+  
+  // Constructor
+  ModuleList::ModuleIter::ModuleIter(ModuleList& Parent) 
+    : m_pParent(&Parent), 
+    m_Number(0), 
+    m_Current()
+  {
+    boost::optional<Module&> Temp = m_pParent->GetByNum(m_Number);
+    if (Temp)
+    {
+      m_Current = *Temp;
+    }
+    else
+    {
+      m_pParent = nullptr;
+      m_Number = static_cast<DWORD>(-1);
+    }
+  }
+  
+  // Copy constructor
+  ModuleList::ModuleIter::ModuleIter(ModuleIter const& Rhs) 
+    : m_pParent(Rhs.m_pParent), 
+    m_Number(Rhs.m_Number), 
+    m_Current(Rhs.m_Current)
+  { }
+  
+  // Assignment operator
+  ModuleList::ModuleIter& ModuleList::ModuleIter::operator=(
+    ModuleList::ModuleIter const& Rhs) 
+  {
+    m_pParent = Rhs.m_pParent;
+    m_Number = Rhs.m_Number;
+    m_Current = Rhs.m_Current;
+    return *this;
+  }
+
+  // Increment iterator
+  void ModuleList::ModuleIter::increment() 
+  {
+    boost::optional<Module&> Temp = m_pParent->GetByNum(++m_Number);
+    m_Current = Temp ? *Temp : boost::optional<Module>();
+    if (!Temp)
+    {
+      m_pParent = nullptr;
+      m_Number = static_cast<DWORD>(-1);
+    }
+  }
+  
+  // Check iterator for equality
+  bool ModuleList::ModuleIter::equal(ModuleList::ModuleIter const& Rhs) const
+  {
+    return this->m_pParent == Rhs.m_pParent && 
+      this->m_Number == Rhs.m_Number;
+  }
+
+  // Dereference iterator
+  Module& ModuleList::ModuleIter::dereference() const 
+  {
+    return *m_Current;
+  }
 }

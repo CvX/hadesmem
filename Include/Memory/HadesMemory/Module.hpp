@@ -22,9 +22,15 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 // Hades
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Error.hpp>
+#include <HadesMemory/Detail/EnsureCleanup.hpp>
 
 // C++ Standard Library
 #include <string>
+#include <vector>
+
+// Boost
+#include <boost/optional.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 
 // Windows API
 #include <Windows.h>
@@ -100,5 +106,87 @@ namespace HadesMem
     std::wstring m_Name;
     // Module path
     std::wstring m_Path;
+  };
+  
+  // Get remote module handle
+  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
+    LPCWSTR ModuleName);
+  
+  // Module enumeration class
+  class ModuleList
+  {
+  public:
+    // ModuleList exception type
+    class Error : public virtual HadesMemError
+    { };
+
+    // Module iterator
+    class ModuleIter : public boost::iterator_facade<ModuleIter, Module, 
+      boost::forward_traversal_tag>
+    {
+    public:
+      // Module iterator error class
+      class Error : public virtual HadesMemError
+      { };
+
+      // Constructor
+      ModuleIter();
+      
+      // Constructor
+      ModuleIter(ModuleList& Parent);
+      
+      // Copy constructor
+      ModuleIter(ModuleIter const& Rhs);
+      
+      // Assignment operator
+      ModuleIter& operator=(ModuleIter const& Rhs);
+    
+    private:
+      // Give Boost.Iterator access to internals
+      friend class boost::iterator_core_access;
+
+      // Increment iterator
+      void increment();
+      
+      // Check iterator for equality
+      bool equal(ModuleIter const& Rhs) const;
+  
+      // Dereference iterator
+      Module& dereference() const;
+
+      // Parent list instance
+      class ModuleList* m_pParent;
+      
+      // Module number
+      DWORD m_Number;
+      
+      // Current module instance
+      mutable boost::optional<Module> m_Current;
+    };
+    
+    // Module list iterator types
+    typedef ModuleIter iterator;
+    
+    // Constructor
+    ModuleList(MemoryMgr const& MyMemory);
+    
+    // Get start of module list
+    iterator begin();
+    
+    // Get end of module list
+    iterator end();
+    
+    // Get module from cache by number
+    boost::optional<Module&> GetByNum(DWORD Num);
+    
+  private:
+    // Memory instance
+    MemoryMgr m_Memory;
+    
+    // Snapshot handle
+    Detail::EnsureCloseSnap m_Snap;
+    
+    // Module cache
+    std::vector<Module> m_Cache;
   };
 }
