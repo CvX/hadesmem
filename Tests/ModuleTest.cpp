@@ -35,13 +35,13 @@ BOOST_AUTO_TEST_CASE(ConstructorsTest)
       
   // Open module by handle
   HadesMem::Module SelfModule(MyMemory, NULL);
-  BOOST_CHECK_EQUAL(SelfModule.GetBase(), GetModuleHandle(NULL));
-  HadesMem::Module NewSelfModule(MyMemory, SelfModule.GetBase());
+  BOOST_CHECK_EQUAL(SelfModule.GetHandle(), GetModuleHandle(NULL));
+  HadesMem::Module NewSelfModule(MyMemory, SelfModule.GetHandle());
   BOOST_CHECK(SelfModule == NewSelfModule);
       
   // Open module by name
   HadesMem::Module K32Module(MyMemory, L"kernel32.dll");
-  BOOST_CHECK_EQUAL(K32Module.GetBase(), GetModuleHandle(L"kernel32.dll"));
+  BOOST_CHECK_EQUAL(K32Module.GetHandle(), GetModuleHandle(L"kernel32.dll"));
   HadesMem::Module NewK32Module(MyMemory, K32Module.GetName());
   BOOST_CHECK(K32Module == NewK32Module);
   HadesMem::Module NewNewK32Module(MyMemory, K32Module.GetPath());
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(ConstructorsTest)
   HadesMem::Module MovedSelfModule(std::move(OtherSelfModule));
   BOOST_CHECK(MovedSelfModule == SelfModule);
   SelfModule = std::move(MovedSelfModule);
-  BOOST_CHECK_EQUAL(SelfModule.GetBase(), GetModuleHandle(NULL));
+  BOOST_CHECK_EQUAL(SelfModule.GetHandle(), GetModuleHandle(NULL));
 }
 
 BOOST_AUTO_TEST_CASE(DataTest)
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(DataTest)
   // Open module by name
   HadesMem::Module K32Module(MyMemory, L"kernel32.dll");
   
-  // Test GetBase
-  BOOST_CHECK_EQUAL(K32Module.GetBase(), GetModuleHandle(L"kernel32.dll"));
+  // Test GetHandle
+  BOOST_CHECK_EQUAL(K32Module.GetHandle(), GetModuleHandle(L"kernel32.dll"));
   
   // Test GetSize
   BOOST_CHECK(K32Module.GetSize() != 0);
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
     [&] (HadesMem::Module const& M)
     {
       // Ensure module APIs execute without exception and return valid data
-      BOOST_CHECK(M.GetBase() != 0);
+      BOOST_CHECK(M.GetHandle() != 0);
       BOOST_CHECK(M.GetSize() != 0);
       BOOST_CHECK(!M.GetName().empty());
       BOOST_CHECK(!M.GetPath().empty());
@@ -132,9 +132,9 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
       // Note: The module name check could possibly fail if multiple modules 
       // with the same name but a different path are loaded in the process, 
       // but this is currently not the case with any of the testing binaries.
-      BOOST_CHECK_EQUAL(M.GetBase(), HadesMem::GetRemoteModuleHandle(
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
         MyMemory, M.GetName().c_str()));
-      BOOST_CHECK_EQUAL(M.GetBase(), HadesMem::GetRemoteModuleHandle(
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
         MyMemory, M.GetPath().c_str()));
     });
 }

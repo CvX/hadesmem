@@ -70,8 +70,8 @@ namespace HadesMem
     // Destructor
     ~Module();
 
-    // Get module base
-    HMODULE GetBase() const;
+    // Get module handle
+    HMODULE GetHandle() const;
     
     // Get module size
     DWORD GetSize() const;
@@ -111,6 +111,44 @@ namespace HadesMem
   // Get remote module handle
   HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
     LPCWSTR ModuleName);
+
+  // Module iterator
+  class ModuleIter : public boost::iterator_facade<ModuleIter, Module, 
+    boost::forward_traversal_tag>
+  {
+  public:
+    // Module iterator error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    ModuleIter();
+    
+    // Constructor
+    ModuleIter(class ModuleList& Parent);
+    
+  private:
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
+
+    // Increment iterator
+    void increment();
+    
+    // Check iterator for equality
+    bool equal(ModuleIter const& Rhs) const;
+
+    // Dereference iterator
+    Module& dereference() const;
+
+    // Parent list instance
+    class ModuleList* m_pParent;
+    
+    // Module number
+    DWORD m_Number;
+    
+    // Current module instance
+    mutable boost::optional<Module> m_Current;
+  };
   
   // Module enumeration class
   class ModuleList
@@ -119,50 +157,6 @@ namespace HadesMem
     // ModuleList exception type
     class Error : public virtual HadesMemError
     { };
-
-    // Module iterator
-    class ModuleIter : public boost::iterator_facade<ModuleIter, Module, 
-      boost::forward_traversal_tag>
-    {
-    public:
-      // Module iterator error class
-      class Error : public virtual HadesMemError
-      { };
-
-      // Constructor
-      ModuleIter();
-      
-      // Constructor
-      ModuleIter(ModuleList& Parent);
-      
-      // Copy constructor
-      ModuleIter(ModuleIter const& Rhs);
-      
-      // Assignment operator
-      ModuleIter& operator=(ModuleIter const& Rhs);
-    
-    private:
-      // Give Boost.Iterator access to internals
-      friend class boost::iterator_core_access;
-
-      // Increment iterator
-      void increment();
-      
-      // Check iterator for equality
-      bool equal(ModuleIter const& Rhs) const;
-  
-      // Dereference iterator
-      Module& dereference() const;
-
-      // Parent list instance
-      class ModuleList* m_pParent;
-      
-      // Module number
-      DWORD m_Number;
-      
-      // Current module instance
-      mutable boost::optional<Module> m_Current;
-    };
     
     // Module list iterator types
     typedef ModuleIter iterator;
@@ -170,16 +164,30 @@ namespace HadesMem
     // Constructor
     ModuleList(MemoryMgr const& MyMemory);
     
+    // Move constructor
+    ModuleList(ModuleList&& Other);
+    
+    // Move assignment operator
+    ModuleList& operator=(ModuleList&& Other);
+    
     // Get start of module list
     iterator begin();
     
     // Get end of module list
     iterator end();
     
+  protected:
+    // Disable copying and copy-assignment
+    ModuleList(ModuleList const& Other);
+    ModuleList& operator=(ModuleList const& Other);
+    
+  private:
+    // Give ModuleIter access to internals
+    friend class ModuleIter;
+    
     // Get module from cache by number
     boost::optional<Module&> GetByNum(DWORD Num);
     
-  private:
     // Memory instance
     MemoryMgr m_Memory;
     

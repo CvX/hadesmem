@@ -401,7 +401,7 @@ process.]]
 
 [variablelist
 
-[[Effects:] [Sets self to refer to the same process `Other` via move 
+[[Effects:] [Sets self to refer to the same process as `Other` via move 
 semantics. Invalidates `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -854,6 +854,369 @@ after the function call.]]
 ]
 
 [endsect] [/ MemoryMgr]
+
+[section:module Module]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/Module.hpp>
+
+  class Module
+  {
+  public:
+    class Error : public virtual HadesMemError
+    { };
+    
+    Module(MemoryMgr const& MyMemory, HMODULE Handle);
+    
+    Module(MemoryMgr const& MyMemory, std::wstring const& ModuleName);
+    
+    Module(MemoryMgr const& MyMemory, MODULEENTRY32 const& ModuleEntry);
+    
+    Module(Module const& Other);
+    
+    Module& operator=(Module const& Other);
+    
+    Module(Module&& Other);
+    
+    Module& operator=(Module&& Other);
+    
+    ~Module();
+    
+    HMODULE GetBase() const;
+    
+    DWORD GetSize() const;
+    
+    std::wstring GetName() const;
+    
+    std::wstring GetPath() const;
+    
+    FARPROC FindProcedure(std::string const& Name) const;
+    
+    FARPROC FindProcedure(WORD Ordinal) const;
+    
+    bool operator==(Module const& Rhs) const;
+    
+    bool operator!=(Module const& Rhs) const;
+  };
+  
+  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
+    LPCWSTR ModuleName);
+  
+  class ModuleList
+  {
+  public:
+    class Error : public virtual HadesMemError
+    { };
+    
+    typedef unspecified iterator;
+    
+    ModuleList(MemoryMgr const& MyMemory);
+    
+    iterator begin();
+    
+    iterator end();
+  };
+
+[h3 Description]
+
+The `Module` class provides functionality for finding and working with modules 
+(a.k.a DLLs or EXEs).
+
+The GetRemoteModuleHandle free function provides an 'extension' of the 
+`GetModuleHandle` Windows API to allow lookup in a remote process.
+
+The `ModuleList` class provides STL-compatible iterators for module 
+enumeration. Module enumeration is 'lazy' to keep the API performant. Lazy 
+in this context means that module lookup and initialization is only performed 
+on-demmand, rather than the list being pre-processed. Furthermore, caching is 
+implemented to improve performance when the list is used in multi-pass algorithms.
+
+[h3 Module public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `Module` methods when an error occurs.
+
+[h3 Module public construct/copy/destruct/move]
+
+[h4 Module handle constructor]
+
+  Module(MemoryMgr const& MyMemory, HMODULE Handle);
+
+[variablelist
+
+[[Effects:] [Constructs a `Module` instance that refers to the specified 
+module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module name constructor]
+
+  Module(MemoryMgr const& MyMemory, std::wstring const& ModuleName);
+
+[variablelist
+
+[[Effects:] [Constructs a `Module` instance that refers to the specified 
+module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module module entry constructor]
+
+  Module(MemoryMgr const& MyMemory, MODULEENTRY32 const& ModuleEntry);
+
+[variablelist
+
+[[Effects:] [Constructs a `Module` instance from the data in the module 
+entry.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module copy constructor]
+
+  Module(Module const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Module` that refers to the same module as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module copy assignment operator]
+
+  Module& operator=(Module const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module move constructor]
+
+  Module(Module&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Module` that refers to the same module as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module move assignment operator]
+
+  Module& operator=(Module&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same module as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module destructor]
+
+  ~Module();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Module public member functions]
+
+[h4 Module member function `GetBase`]
+
+  HMODULE GetHandle() const;
+
+[variablelist
+
+[[Returns:] [Handle (a.k.a base address) to module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module member function `GetSize`]
+
+  DWORD GetSize() const;
+
+[variablelist
+
+[[Returns:] [Size of module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module member function `GetName`]
+
+  std::wstring GetName() const;
+
+[variablelist
+
+[[Returns:] [Name of module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module member function `GetPath`]
+
+  std::wstring GetPath() const;
+
+[variablelist
+
+[[Returns:] [Path to module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module member function `FindProcedure`]
+
+  FARPROC FindProcedure(std::string const& Name) const;
+  FARPROC FindProcedure(WORD Ordinal) const;
+
+[variablelist
+
+[[Effects:] [Looks for procedure in export address table of module, either 
+via name `Name` or ordinal `Ordinal`.]]
+
+[[Returns:] [Address of procedure.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Module equality operator]
+
+  bool operator==(Module const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same module.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 Module inequality operator]
+
+  bool operator!=(Module const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different module.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Free functions]
+
+[h4 Free function `GetRemoteModuleHandle`]
+
+  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
+    LPCWSTR ModuleName);
+
+[variablelist
+
+[[Effects:] [Has the same effects as the Windows API 
+[@http://msdn.microsoft.com/en-us/library/ms683199.aspx GetModuleHandle].]]
+
+[[Returns:] [Handle to requested module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h3 ModuleList public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `ModuleList` methods when an error occurs.
+
+  typedef unspecified iterator;
+  
+Iterator type for list. Models the 
+[@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
+Implementation type unspecified (use automatic type deduction for named 
+iterators).
+
+[h3 ModuleList public construct/copy/destruct/move]
+
+[h4 ModuleList constructor]
+
+  ModuleList(MemoryMgr const& MyMemory);
+
+[variablelist
+
+[[Effects:] [Constructs a `ModuleList` instance targetting the process 
+specified by `MyMemory`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ModuleList move constructor]
+
+  ModuleList(ModuleList&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `ModuleList` that refers to the same module list as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ModuleList move assignment operator]
+
+  ModuleList& operator=(ModuleList&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same module list as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ModuleList destructor]
+
+  ~ModuleList();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[endsect] [/ Module]
 
 [endsect] [/ Reference]
 

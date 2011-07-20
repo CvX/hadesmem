@@ -235,7 +235,7 @@ namespace HadesMem
   { }
 
   // Get module base address
-  HMODULE Module::GetBase() const
+  HMODULE Module::GetHandle() const
   {
     return m_Base;
   }
@@ -358,7 +358,7 @@ namespace HadesMem
     // to create the calling process. (i.e. The first module in the list)
     if (!ModuleName)
     {
-      return Modules.begin()->GetBase();
+      return Modules.begin()->GetHandle();
     }
     
     // Pointer is non-null, so convert to lowercase C++ string
@@ -398,10 +398,10 @@ namespace HadesMem
           return ModuleNameReal == M.GetName();
         }
       });
-    // Return module base if target found
+    // Return module handle if target found
     if (Iter != Modules.end())
     {
-      return Iter->GetBase();
+      return Iter->GetHandle();
     }
     
     // Return null if target not found
@@ -414,6 +414,23 @@ namespace HadesMem
     m_Snap(), 
     m_Cache()
   { }
+    
+  // Move constructor
+  ModuleList::ModuleList(ModuleList&& Other)
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_Snap(std::move(Other.m_Snap)), 
+    m_Cache(std::move(Other.m_Cache))
+  { }
+  
+  // Move assignment operator
+  ModuleList& ModuleList::operator=(ModuleList&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    this->m_Snap = std::move(Other.m_Snap);
+    this->m_Cache = std::move(Other.m_Cache);
+    
+    return *this;
+  }
   
   // Get start of module list
   ModuleList::iterator ModuleList::begin()
@@ -489,14 +506,14 @@ namespace HadesMem
   
   
   // Constructor
-  ModuleList::ModuleIter::ModuleIter() : 
+  ModuleIter::ModuleIter() : 
     m_pParent(nullptr), 
     m_Number(static_cast<DWORD>(-1)), 
     m_Current()
   { }
   
   // Constructor
-  ModuleList::ModuleIter::ModuleIter(ModuleList& Parent) 
+  ModuleIter::ModuleIter(ModuleList& Parent) 
     : m_pParent(&Parent), 
     m_Number(0), 
     m_Current()
@@ -513,25 +530,8 @@ namespace HadesMem
     }
   }
   
-  // Copy constructor
-  ModuleList::ModuleIter::ModuleIter(ModuleIter const& Rhs) 
-    : m_pParent(Rhs.m_pParent), 
-    m_Number(Rhs.m_Number), 
-    m_Current(Rhs.m_Current)
-  { }
-  
-  // Assignment operator
-  ModuleList::ModuleIter& ModuleList::ModuleIter::operator=(
-    ModuleList::ModuleIter const& Rhs) 
-  {
-    m_pParent = Rhs.m_pParent;
-    m_Number = Rhs.m_Number;
-    m_Current = Rhs.m_Current;
-    return *this;
-  }
-
   // Increment iterator
-  void ModuleList::ModuleIter::increment() 
+  void ModuleIter::increment() 
   {
     boost::optional<Module&> Temp = m_pParent->GetByNum(++m_Number);
     m_Current = Temp ? *Temp : boost::optional<Module>();
@@ -543,14 +543,14 @@ namespace HadesMem
   }
   
   // Check iterator for equality
-  bool ModuleList::ModuleIter::equal(ModuleList::ModuleIter const& Rhs) const
+  bool ModuleIter::equal(ModuleIter const& Rhs) const
   {
     return this->m_pParent == Rhs.m_pParent && 
       this->m_Number == Rhs.m_Number;
   }
 
   // Dereference iterator
-  Module& ModuleList::ModuleIter::dereference() const 
+  Module& ModuleIter::dereference() const 
   {
     return *m_Current;
   }
