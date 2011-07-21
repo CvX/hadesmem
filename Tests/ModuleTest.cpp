@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(DataTest)
   // Test GetName
   BOOST_CHECK(K32Module.GetName() == L"kernel32.dll");
   
-  // Test GetPath
+  // Test GetPath
   BOOST_CHECK(!K32Module.GetPath().empty());
   BOOST_CHECK(K32Module.GetPath().find(L"kernel32.dll") != std::wstring::npos);
 }
