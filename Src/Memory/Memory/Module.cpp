@@ -444,8 +444,32 @@ namespace HadesMem
     return iterator();
   }
   
+  // Get start of module list
+  ModuleList::const_iterator ModuleList::begin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of module list
+  ModuleList::const_iterator ModuleList::end() const
+  {
+    return const_iterator();
+  }
+  
+  // Get start of module list
+  ModuleList::const_iterator ModuleList::cbegin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of module list
+  ModuleList::const_iterator ModuleList::cend() const
+  {
+    return const_iterator();
+  }
+  
   // Get module from cache by number
-  boost::optional<Module&> ModuleList::GetByNum(DWORD Num)
+  boost::optional<Module&> ModuleList::GetByNum(DWORD Num) const
   {
     while (Num >= m_Cache.size())
     {
@@ -502,56 +526,5 @@ namespace HadesMem
     }
     
     return m_Cache[Num];
-  }
-  
-  
-  // Constructor
-  ModuleIter::ModuleIter() : 
-    m_pParent(nullptr), 
-    m_Number(static_cast<DWORD>(-1)), 
-    m_Current()
-  { }
-  
-  // Constructor
-  ModuleIter::ModuleIter(ModuleList& Parent) 
-    : m_pParent(&Parent), 
-    m_Number(0), 
-    m_Current()
-  {
-    boost::optional<Module&> Temp = m_pParent->GetByNum(m_Number);
-    if (Temp)
-    {
-      m_Current = *Temp;
-    }
-    else
-    {
-      m_pParent = nullptr;
-      m_Number = static_cast<DWORD>(-1);
-    }
-  }
-  
-  // Increment iterator
-  void ModuleIter::increment() 
-  {
-    boost::optional<Module&> Temp = m_pParent->GetByNum(++m_Number);
-    m_Current = Temp ? *Temp : boost::optional<Module>();
-    if (!Temp)
-    {
-      m_pParent = nullptr;
-      m_Number = static_cast<DWORD>(-1);
-    }
-  }
-  
-  // Check iterator for equality
-  bool ModuleIter::equal(ModuleIter const& Rhs) const
-  {
-    return this->m_pParent == Rhs.m_pParent && 
-      this->m_Number == Rhs.m_Number;
-  }
-
-  // Dereference iterator
-  Module& ModuleIter::dereference() const 
-  {
-    return *m_Current;
   }
 }

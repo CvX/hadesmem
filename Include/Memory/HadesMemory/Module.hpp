@@ -111,44 +111,10 @@ namespace HadesMem
   // Get remote module handle
   HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
     LPCWSTR ModuleName);
-
-  // Module iterator
-  class ModuleIter : public boost::iterator_facade<ModuleIter, Module, 
-    boost::forward_traversal_tag>
-  {
-  public:
-    // Module iterator error class
-    class Error : public virtual HadesMemError
-    { };
-
-    // Constructor
-    ModuleIter();
     
-    // Constructor
-    ModuleIter(class ModuleList& Parent);
-    
-  private:
-    // Give Boost.Iterator access to internals
-    friend class boost::iterator_core_access;
-
-    // Increment iterator
-    void increment();
-    
-    // Check iterator for equality
-    bool equal(ModuleIter const& Rhs) const;
-
-    // Dereference iterator
-    Module& dereference() const;
-
-    // Parent list instance
-    class ModuleList* m_pParent;
-    
-    // Module number
-    DWORD m_Number;
-    
-    // Current module instance
-    mutable boost::optional<Module> m_Current;
-  };
+  // Forward declaration of ModuleIter
+  template <typename ModuleT>
+  class ModuleIter;
   
   // Module enumeration class
   class ModuleList
@@ -159,7 +125,8 @@ namespace HadesMem
     { };
     
     // Module list iterator types
-    typedef ModuleIter iterator;
+    typedef ModuleIter<Module> iterator;
+    typedef ModuleIter<Module const> const_iterator;
     
     // Constructor
     ModuleList(MemoryMgr const& MyMemory);
@@ -176,6 +143,18 @@ namespace HadesMem
     // Get end of module list
     iterator end();
     
+    // Get start of module list
+    const_iterator begin() const;
+     
+    // Get end of module list
+    const_iterator end() const;
+    
+    // Get start of module list
+    const_iterator cbegin() const;
+     
+    // Get end of module list
+    const_iterator cend() const;
+    
   protected:
     // Disable copying and copy-assignment
     ModuleList(ModuleList const& Other);
@@ -183,18 +162,92 @@ namespace HadesMem
     
   private:
     // Give ModuleIter access to internals
-    friend class ModuleIter;
+    template <typename> friend class ModuleIter;
     
     // Get module from cache by number
-    boost::optional<Module&> GetByNum(DWORD Num);
+    boost::optional<Module&> GetByNum(DWORD Num) const;
     
     // Memory instance
     MemoryMgr m_Memory;
     
     // Snapshot handle
-    Detail::EnsureCloseSnap m_Snap;
+    mutable Detail::EnsureCloseSnap m_Snap;
     
     // Module cache
-    std::vector<Module> m_Cache;
+    mutable std::vector<Module> m_Cache;
+  };
+
+  // Module iterator
+  template <typename ModuleT>
+  class ModuleIter : public boost::iterator_facade<ModuleIter<ModuleT>, 
+    ModuleT, boost::forward_traversal_tag>
+  {
+  public:
+    // Module iterator error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    ModuleIter()
+      : m_pParent(nullptr), 
+      m_Number(static_cast<DWORD>(-1)), 
+      m_Current()
+    { }
+    
+    // Constructor
+    ModuleIter(class ModuleList const& Parent)
+      : m_pParent(&Parent), 
+      m_Number(0), 
+      m_Current()
+    {
+      boost::optional<Module&> Temp = m_pParent->GetByNum(m_Number);
+      if (Temp)
+      {
+        m_Current = *Temp;
+      }
+      else
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
+    
+  private:
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
+
+    // Increment iterator
+    void increment()
+    {
+      boost::optional<Module&> Temp = m_pParent->GetByNum(++m_Number);
+      m_Current = Temp ? *Temp : boost::optional<Module>();
+      if (!Temp)
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
+    
+    // Check iterator for equality
+    bool equal(ModuleIter const& Rhs) const
+    {
+      return this->m_pParent == Rhs.m_pParent && 
+        this->m_Number == Rhs.m_Number;
+    }
+
+    // Dereference iterator
+    ModuleT& dereference() const
+    {
+      return *m_Current;
+    }
+
+    // Parent list instance
+    class ModuleList const* m_pParent;
+    
+    // Module number
+    DWORD m_Number;
+    
+    // Current module instance
+    mutable boost::optional<Module> m_Current;
   };
 }

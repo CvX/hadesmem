@@ -116,10 +116,54 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
   // Create memory manager for self
   HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
   
-  // Enumerate module list and run tests on all modules
+  // Test non-const module iterator
   HadesMem::ModuleList Modules(MyMemory);
   BOOST_CHECK(Modules.begin() != Modules.end());
   std::for_each(Modules.begin(), Modules.end(), 
+    [&] (HadesMem::Module& M)
+    {
+      // Ensure module APIs execute without exception and return valid data
+      BOOST_CHECK(M.GetHandle() != 0);
+      BOOST_CHECK(M.GetSize() != 0);
+      BOOST_CHECK(!M.GetName().empty());
+      BOOST_CHECK(!M.GetPath().empty());
+      
+      // Ensure GetRemoteModuleHandle works as expected
+      // Note: The module name check could possibly fail if multiple modules 
+      // with the same name but a different path are loaded in the process, 
+      // but this is currently not the case with any of the testing binaries.
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
+        MyMemory, M.GetName().c_str()));
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
+        MyMemory, M.GetPath().c_str()));
+    });
+  
+  // Test implicit const module iteratator
+  HadesMem::ModuleList const ModulesImpC(MyMemory);
+  BOOST_CHECK(ModulesImpC.begin() != ModulesImpC.end());
+  std::for_each(ModulesImpC.begin(), ModulesImpC.end(), 
+    [&] (HadesMem::Module const& M)
+    {
+      // Ensure module APIs execute without exception and return valid data
+      BOOST_CHECK(M.GetHandle() != 0);
+      BOOST_CHECK(M.GetSize() != 0);
+      BOOST_CHECK(!M.GetName().empty());
+      BOOST_CHECK(!M.GetPath().empty());
+      
+      // Ensure GetRemoteModuleHandle works as expected
+      // Note: The module name check could possibly fail if multiple modules 
+      // with the same name but a different path are loaded in the process, 
+      // but this is currently not the case with any of the testing binaries.
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
+        MyMemory, M.GetName().c_str()));
+      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
+        MyMemory, M.GetPath().c_str()));
+    });
+  
+  // Test explicit const module iteratator
+  HadesMem::ModuleList ModulesExpC(MyMemory);
+  BOOST_CHECK(ModulesExpC.cbegin() != ModulesExpC.cend());
+  std::for_each(ModulesExpC.cbegin(), ModulesExpC.cend(), 
     [&] (HadesMem::Module const& M)
     {
       // Ensure module APIs execute without exception and return valid data

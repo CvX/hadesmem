@@ -125,7 +125,7 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
 * Move support for `MemoryMgr`.
 * Version macros.
 * Documented copy/assignment/move constructors/operators for `MemoryMgr`.
-* Added `Module` component.
+* Added new `Module` APIs.
 
 [*Bug Fixes]
 
@@ -923,12 +923,21 @@ after the function call.]]
     { };
     
     typedef unspecified iterator;
+    typedef unspecified const_iterator;
     
     ModuleList(MemoryMgr const& MyMemory);
     
     iterator begin();
     
     iterator end();
+    
+    const_iterator begin() const;
+    
+    const_iterator end() const;
+    
+    const_iterator cbegin() const;
+    
+    const_iterator cend() const;
   };
 
 [h3 Description]
@@ -1233,11 +1242,13 @@ semantics. Invalidates `Other`.]]
 
 [h4 ModuleList member function `begin`]
 
-  unspecified begin();
+  iterator begin();
+  const_iterator begin() const;
 
 [variablelist
 
-[[Returns:] [STL-compatible iterator for start of module list.]]
+[[Returns:] [STL-compatible iterator or const_iterator for start of module 
+list.]]
 
 [[Throws:] [Yes.]]
 
@@ -1248,11 +1259,43 @@ deduction for named iterators.]]
 
 [h4 ModuleList member function `end`]
 
-  unspecified end();
+  iterator end();
+  const_iterator end() const;
 
 [variablelist
 
-[[Returns:] [STL-compatible iterator for off-the-end of module list.]]
+[[Returns:] [STL-compatible iterator or const_iterator for off-the-end of 
+module list.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [Iterator type is currently unspecified. Use automatic type 
+deduction for named iterators.]]
+
+]
+
+[h4 ModuleList member function `cbegin`]
+
+  const_iterator cbegin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for start of module list.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [Iterator type is currently unspecified. Use automatic type 
+deduction for named iterators.]]
+
+]
+
+[h4 ModuleList member function `cend`]
+
+  const_iterator cend() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for off-the-end of module list.]]
 
 [[Throws:] [Yes.]]
 
