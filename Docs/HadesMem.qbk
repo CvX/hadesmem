@@ -206,8 +206,7 @@ or the requirements list of your project.
   class MemoryMgr
   {
   public:
-    class Error : public virtual HadesMemError 
-    { };
+    class Error : public virtual HadesMemError;
 
     explicit MemoryMgr(DWORD ProcID);
       
@@ -877,8 +876,7 @@ after the function call.]]
   class Module
   {
   public:
-    class Error : public virtual HadesMemError
-    { };
+    class Error : public virtual HadesMemError;
     
     Module(MemoryMgr const& MyMemory, HMODULE Handle);
     
@@ -918,8 +916,7 @@ after the function call.]]
   class ModuleList
   {
   public:
-    class Error : public virtual HadesMemError
-    { };
+    class Error : public virtual HadesMemError;
     
     typedef unspecified iterator;
     typedef unspecified const_iterator;
