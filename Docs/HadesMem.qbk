@@ -913,8 +913,7 @@ after the function call.]]
     bool operator!=(Module const& Rhs) const;
   };
   
-  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
-    LPCWSTR ModuleName);
+  Module GetRemoteModule(MemoryMgr const& MyMemory, LPCWSTR ModuleName);
   
   class ModuleList
   {
@@ -1156,17 +1155,16 @@ via name `Name` or ordinal `Ordinal`.]]
 
 [h3 Free functions]
 
-[h4 Free function `GetRemoteModuleHandle`]
+[h4 Free function `GetRemoteModule`]
 
-  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
-    LPCWSTR ModuleName);
+  Module GetRemoteModule(MemoryMgr const& MyMemory, LPCWSTR ModuleName);
 
 [variablelist
 
 [[Effects:] [Has the same effects as the Windows API 
 [@http://msdn.microsoft.com/en-us/library/ms683199.aspx GetModuleHandle].]]
 
-[[Returns:] [Handle to requested module.]]
+[[Returns:] [Requested module.]]
 
 [[Throws:] [Yes.]]
 

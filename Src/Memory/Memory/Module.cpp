@@ -348,8 +348,7 @@ namespace HadesMem
   }
   
   // Get remote module handle
-  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
-    LPCWSTR ModuleName)
+  Module GetRemoteModule(MemoryMgr const& MyMemory, LPCWSTR ModuleName)
   {
     // Get module list
     ModuleList Modules(MyMemory);
@@ -358,7 +357,7 @@ namespace HadesMem
     // to create the calling process. (i.e. The first module in the list)
     if (!ModuleName)
     {
-      return Modules.begin()->GetHandle();
+      return *Modules.begin();
     }
     
     // Pointer is non-null, so convert to lowercase C++ string
@@ -401,11 +400,13 @@ namespace HadesMem
     // Return module handle if target found
     if (Iter != Modules.end())
     {
-      return Iter->GetHandle();
+      return *Iter;
     }
     
-    // Return null if target not found
-    return nullptr;
+    // Throw if target not found
+    BOOST_THROW_EXCEPTION(Module::Error() << 
+      ErrorFunction("GetRemoteModule") << 
+      ErrorString("Could not find requested module."));
   }
   
   // Constructor

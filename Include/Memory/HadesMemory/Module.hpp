@@ -109,8 +109,7 @@ namespace HadesMem
   };
   
   // Get remote module handle
-  HMODULE GetRemoteModuleHandle(MemoryMgr const& MyMemory, 
-    LPCWSTR ModuleName);
+  Module GetRemoteModule(MemoryMgr const& MyMemory, LPCWSTR ModuleName);
     
   // Forward declaration of ModuleIter
   template <typename ModuleT>

@@ -132,10 +132,8 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
       // Note: The module name check could possibly fail if multiple modules 
       // with the same name but a different path are loaded in the process, 
       // but this is currently not the case with any of the testing binaries.
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetName().c_str()));
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetPath().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetName().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetPath().c_str()));
     });
   
   // Test implicit const module iteratator
@@ -154,10 +152,8 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
       // Note: The module name check could possibly fail if multiple modules 
       // with the same name but a different path are loaded in the process, 
       // but this is currently not the case with any of the testing binaries.
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetName().c_str()));
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetPath().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetName().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetPath().c_str()));
     });
   
   // Test explicit const module iteratator
@@ -176,9 +172,7 @@ BOOST_AUTO_TEST_CASE(IteratorTest)
       // Note: The module name check could possibly fail if multiple modules 
       // with the same name but a different path are loaded in the process, 
       // but this is currently not the case with any of the testing binaries.
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetName().c_str()));
-      BOOST_CHECK_EQUAL(M.GetHandle(), HadesMem::GetRemoteModuleHandle(
-        MyMemory, M.GetPath().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetName().c_str()));
+      BOOST_CHECK(M == HadesMem::GetRemoteModule(MyMemory, M.GetPath().c_str()));
     });
 }
