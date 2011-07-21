@@ -1180,10 +1180,9 @@ Exception type thrown by `ModuleList` methods when an error occurs.
 
   typedef unspecified iterator;
   
-Iterator type for list. Models the 
+Iterator type for module list. Models the 
 [@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
-Implementation type unspecified (use automatic type deduction for named 
-iterators).
+Implementation type unspecified.
 
 [h3 ModuleList public construct/copy/destruct/move]
 
@@ -1252,9 +1251,6 @@ list.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [Iterator type is currently unspecified. Use automatic type 
-deduction for named iterators.]]
-
 ]
 
 [h4 ModuleList member function `end`]
@@ -1269,9 +1265,6 @@ module list.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [Iterator type is currently unspecified. Use automatic type 
-deduction for named iterators.]]
-
 ]
 
 [h4 ModuleList member function `cbegin`]
@@ -1284,9 +1277,6 @@ deduction for named iterators.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [Iterator type is currently unspecified. Use automatic type 
-deduction for named iterators.]]
-
 ]
 
 [h4 ModuleList member function `cend`]
@@ -1298,9 +1288,6 @@ deduction for named iterators.]]
 [[Returns:] [STL-compatible const_iterator for off-the-end of module list.]]
 
 [[Throws:] [Yes.]]
-
-[[Notes:] [Iterator type is currently unspecified. Use automatic type 
-deduction for named iterators.]]
 
 ]
 
