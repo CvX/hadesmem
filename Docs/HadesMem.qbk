@@ -120,14 +120,27 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
 
 [h3 v1.1.0]
 
+[*New Features]
+
 * Move support for `MemoryMgr`.
-* Documented version macros.
+* Version macros.
 * Documented copy/assignment/move constructors/operators for `MemoryMgr`.
+* Added `Module` component.
+
+[*Bug Fixes]
+
+* Fixed build scripts for users who did not have BJam installed in their 
+%PATH%. This was a bug introduced when Boost.Build changed BJam's name to B2.
+
+[*Changes]
+
 * Improved compiler detection.
 * Improved build scripts to allow architecture selection.
-* Added `Module` component.
 * Changed `MemoryMgr::Call` to use the new `Module` APIs for increased 
 stability.
+* Improved Boost build scripts to only build the libraries that are used 
+by HadesMem. This results in a much faster build time.
+* Updated Boost to latest trunk.
 * Added build scripts for Intel. Please note that this platform is still 
 unsupported (as per the documentation). The scripts are there so users can 
 help with the porting process (as are the Clang scripts).
@@ -1213,6 +1226,38 @@ semantics. Invalidates `Other`.]]
 [[Effects:] [Destroys the instance and frees all resources.]]
 
 [[Throws:] [No.]]
+
+]
+
+[h3 ModuleList public member functions]
+
+[h4 ModuleList member function `begin`]
+
+  unspecified begin();
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator for start of module list.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [Iterator type is currently unspecified. Use automatic type 
+deduction for named iterators.]]
+
+]
+
+[h4 ModuleList member function `end`]
+
+  unspecified end();
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator for off-the-end of module list.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [Iterator type is currently unspecified. Use automatic type 
+deduction for named iterators.]]
 
 ]
 
