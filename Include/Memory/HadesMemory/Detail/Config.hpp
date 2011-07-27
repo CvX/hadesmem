@@ -24,7 +24,7 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 
 // Version numbers
 #define HADES_VERSION_MAJOR 1
-#define HADES_VERSION_MINOR 2
+#define HADES_VERSION_MINOR 3
 #define HADES_VERSION_PATCH 0
 
 // Full version number

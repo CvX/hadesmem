@@ -22,4 +22,5 @@ test-suite Memory
     [ run Detail/ProcessTest.cpp ]
     [ run MemoryMgrTest.cpp ]
     [ run ModuleTest.cpp ]
+    [ run InjectorTest.cpp ]
   ;

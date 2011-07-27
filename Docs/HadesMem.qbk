@@ -1,6 +1,6 @@
 [article HadesMem
   [quickbook 1.5]
-  [version 1.2.0]
+  [version 1.3.0]
   [copyright 2011 Joshua Boyce (aka RaptorFactor)]
   [authors [Boyce, Joshua]]
   [license Distributed under the GNU GPL v3. See accompanying file 
@@ -117,6 +117,18 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
 [endsect] [/ License]
 
 [section:changes Changes]
+
+[h3 v1.3.0]
+
+[*New Features]
+
+* Added new `Injector` APIs.
+
+[*Bug Fixes]
+
+[*Changes]
+
+* Improved `Module` tests.
 
 [h3 v1.2.0]
 
