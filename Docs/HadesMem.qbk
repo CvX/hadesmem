@@ -131,6 +131,8 @@ quoting).
 * Ensure COM is initialized and cleaned up in `CreateProcess`.
 * Fixed documentation for `HADES_VERSION_FULL_STRING`. Format is vXX.YY.ZZ, 
 not vXXYYZZ.
+* Fix critical bug causing problems opening processes other than the 
+current process.
 
 [*Changes]
 
