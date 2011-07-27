@@ -839,6 +839,8 @@ namespace HadesMem
     
     this->m_Address = Other.m_Address;
     Other.m_Address = nullptr;
+    
+    return *this;
   }
   
   AllocAndFree::~AllocAndFree()
