@@ -747,27 +747,17 @@ POD character type. `Data` is written as a C-style character array.]]
   MemoryMgr CreateProcess(std::wstring const& Path, 
     std::wstring const& CommandLine, 
     std::wstring const& WorkingDir);
-
-[variablelist
-
-[[Effects:] [Create process from binary at `Path` with optional command line  
-`CommandLine` and optional working dir `WorkingDir`.]]
-
-[[Returns:] [Memory manager instance for new process.]]
-
-[[Throws:] [Yes.]]
-
-]
-
-[h4 Free function `CreateProcess`]
-
+  
   MemoryMgr CreateProcess(std::wstring const& Path, 
     std::vector<std::wstring> const& Args, 
     std::wstring const& WorkingDir);
 
 [variablelist
 
-[[Effects:] [Create process from binary at `Path` with optional argument list  
+[[Effects:1:] [Create process from binary at `Path` with optional command line  
+`CommandLine` and optional working dir `WorkingDir`.]]
+
+[[Effects:2:] [Create process from binary at `Path` with optional argument list  
 `Args` and optional working dir `WorkingDir`. Command line generation is 
 handled by the API.]]
 
