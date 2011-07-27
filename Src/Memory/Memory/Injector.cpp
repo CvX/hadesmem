@@ -282,6 +282,36 @@ namespace HadesMem
   Injector::Injector(MemoryMgr const& MyMemory) 
     : m_Memory(MyMemory)
   { }
+      
+  // Copy constructor
+  Injector::Injector(Injector const& Other)
+    : m_Memory(Other.m_Memory)
+  { }
+  
+  // Copy assignment operator
+  Injector& Injector::operator=(Injector const& Other)
+  {
+    this->m_Memory = Other.m_Memory;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  Injector::Injector(Injector&& Other)
+    : m_Memory(std::move(Other.m_Memory))
+  { }
+  
+  // Move assignment operator
+  Injector& Injector::operator=(Injector&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    return *this;
+  }
+  
+  // Destructor
+  Injector::~Injector()
+  { }
 
   // Inject DLL
   HMODULE Injector::InjectDll(std::wstring const& Path, 

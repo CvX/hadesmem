@@ -42,6 +42,21 @@ namespace HadesMem
 
     // Constructor
     explicit Injector(MemoryMgr const& MyMemory);
+      
+    // Copy constructor
+    Injector(Injector const& Other);
+    
+    // Copy assignment operator
+    Injector& operator=(Injector const& Other);
+    
+    // Move constructor
+    Injector(Injector&& Other);
+    
+    // Move assignment operator
+    Injector& operator=(Injector&& Other);
+    
+    // Destructor
+    ~Injector();
     
     // Injection flags
     enum InjectFlags
