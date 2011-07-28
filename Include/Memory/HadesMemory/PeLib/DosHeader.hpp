@@ -20,9 +20,8 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 // Hades
-#include <HadesMemory/Detail/Fwd.hpp>
-#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
+#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 
 // C++ Standard Library

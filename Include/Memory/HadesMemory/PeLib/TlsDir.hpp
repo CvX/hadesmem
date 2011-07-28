@@ -20,9 +20,8 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 // Hades
-#include <HadesMemory/Detail/Fwd.hpp>
-#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
+#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 
 // C++ Standard Library
@@ -44,44 +43,50 @@ namespace HadesMem
     // Constructor
     explicit TlsDir(PeFile const& MyPeFile);
 
+    // Get base of TLS dir
+    PVOID GetBase() const;
+
     // Whether TLS directory is valid
     bool IsValid() const;
 
     // Ensure TLS directory is valid
     void EnsureValid() const;
 
+    // Get raw TLS dir
+    IMAGE_TLS_DIRECTORY GetTlsDirRaw() const;
+
     // Get start address of raw data
     DWORD_PTR GetStartAddressOfRawData() const;
-
-    // Set start address of raw data
-    void SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const;
 
     // Get end address of raw data
     DWORD_PTR GetEndAddressOfRawData() const;
 
-    // Set end address of raw data
-    void SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const;
-
     // Get address of index
     DWORD_PTR GetAddressOfIndex() const;
-
-    // Set address of index
-    void SetAddressOfIndex(DWORD_PTR AddressOfIndex) const;
 
     // Get address of callbacks
     DWORD_PTR GetAddressOfCallBacks() const;
 
-    // Set address of callbacks
-    void SetAddressOfCallBacks(DWORD_PTR AddressOfCallbacks) const;
-
     // Get size of zero fill
     DWORD GetSizeOfZeroFill() const;
 
-    // Set size of zero fill
-    void SetSizeOfZeroFill(DWORD SizeOfZeroFill) const;
-
     // Get characteristics
     DWORD GetCharacteristics() const;
+
+    // Set start address of raw data
+    void SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const;
+
+    // Set end address of raw data
+    void SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const;
+
+    // Set address of index
+    void SetAddressOfIndex(DWORD_PTR AddressOfIndex) const;
+
+    // Set address of callbacks
+    void SetAddressOfCallBacks(DWORD_PTR AddressOfCallbacks) const;
+
+    // Set size of zero fill
+    void SetSizeOfZeroFill(DWORD SizeOfZeroFill) const;
 
     // Set characteristics
     void SetCharacteristics(DWORD Characteristics) const;
@@ -90,12 +95,6 @@ namespace HadesMem
     std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
       
     // Todo: SetCallbacks function
-
-    // Get base of TLS dir
-    PVOID GetBase() const;
-
-    // Get raw TLS dir
-    IMAGE_TLS_DIRECTORY GetTlsDirRaw() const;
 
   private:
     // PE file
