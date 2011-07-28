@@ -22,6 +22,7 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Config.hpp>
+#include <HadesMemory/Detail/WinAux.hpp>
 #include <HadesMemory/Detail/ArgQuote.hpp>
 #include <HadesMemory/Detail/StringBuffer.hpp>
 #include <HadesMemory/Detail/EnsureCleanup.hpp>
@@ -57,6 +58,204 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace HadesMem
 {
+  // Constructor
+  Injector::Injector(MemoryMgr const& MyMemory) 
+    : m_Memory(MyMemory)
+  { }
+      
+  // Copy constructor
+  Injector::Injector(Injector const& Other)
+    : m_Memory(Other.m_Memory)
+  { }
+  
+  // Copy assignment operator
+  Injector& Injector::operator=(Injector const& Other)
+  {
+    this->m_Memory = Other.m_Memory;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  Injector::Injector(Injector&& Other)
+    : m_Memory(std::move(Other.m_Memory))
+  { }
+  
+  // Move assignment operator
+  Injector& Injector::operator=(Injector&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    return *this;
+  }
+  
+  // Destructor
+  Injector::~Injector()
+  { }
+
+  // Inject DLL
+  HMODULE Injector::InjectDll(std::wstring const& Path, 
+    InjectFlags Flags) const
+  {
+    // Do not continue if Shim Engine is enabled for local process, 
+    // otherwise it could interfere with the address resolution.
+    HMODULE const ShimEngMod = GetModuleHandle(L"ShimEng.dll");
+    if (ShimEngMod)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("Injector::InjectDll") << 
+        ErrorString("Shims enabled for local process."));
+    }
+    
+    // String to hold 'real' path to module
+    boost::filesystem::path PathReal(Path);
+      
+    // Check if path resolution was requested
+    bool PathResolution = ((Flags & InjectFlag_PathResolution) == 
+      InjectFlag_PathResolution);
+
+    // Check whether we need to convert the path from a relative to 
+    // an absolute
+    if (PathResolution && PathReal.is_relative())
+    {
+      // Convert relative path to absolute path
+      PathReal = boost::filesystem::absolute(PathReal, 
+        Detail::GetSelfDirPath());
+    }
+
+    // Convert path to preferred format
+    PathReal.make_preferred();
+
+    // Ensure target file exists
+    // Note: Only performing this check when path resolution is enabled, 
+    // because otherwise we would need to perform the check in the context 
+    // of the remote process, which is not possible to do without 
+    // introducing race conditions and other potential problems. So we just 
+    // let LoadLibraryW do the check for us.
+    if (PathResolution && !boost::filesystem::exists(PathReal))
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("Injector::InjectDll") << 
+        ErrorString("Could not find module file."));
+    }
+
+    // Get path as string
+    std::wstring const PathString(PathReal.native());
+
+    // Calculate the number of bytes needed for the DLL's pathname
+    std::size_t const PathBufSize = (PathString.size() + 1) * 
+      sizeof(wchar_t);
+
+    // Allocate space in the remote process for the pathname
+    AllocAndFree const LibFileRemote(m_Memory, PathBufSize);
+
+    // Copy the DLL's pathname to the remote process' address space
+    m_Memory.WriteString(LibFileRemote.GetBase(), PathString);
+    
+    // Get address of LoadLibraryW in Kernel32.dll
+    Module Kernel32Mod(m_Memory, L"kernel32.dll");
+    FARPROC const pLoadLibraryW = Kernel32Mod.FindProcedure("LoadLibraryW");
+    DWORD_PTR pLoadLibraryWTemp = reinterpret_cast<DWORD_PTR>(pLoadLibraryW);
+
+    // Load module in remote process using LoadLibraryW
+    std::vector<PVOID> Args;
+    Args.push_back(LibFileRemote.GetBase());
+    MemoryMgr::RemoteFunctionRet RemoteRet = m_Memory.Call(
+      reinterpret_cast<PVOID>(pLoadLibraryWTemp), 
+      MemoryMgr::CallConv_Default, Args);
+    if (!RemoteRet.GetReturnValue())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("Injector::InjectDll") << 
+        ErrorString("Call to LoadLibraryW in remote process failed.") << 
+        ErrorCodeWinLast(RemoteRet.GetLastError()));
+    }
+    
+    // Return module base
+    return reinterpret_cast<HMODULE>(RemoteRet.GetReturnValue());
+  }
+
+  // Free DLL
+  void Injector::FreeDll(HMODULE ModuleRemote) const
+  {
+    // Get address of FreeLibrary in Kernel32.dll
+    Module Kernel32Mod(m_Memory, L"kernel32.dll");
+    FARPROC const pFreeLibrary = Kernel32Mod.FindProcedure("FreeLibrary");
+    DWORD_PTR pFreeLibraryTemp = reinterpret_cast<DWORD_PTR>(pFreeLibrary);
+
+    // Free module in remote process using FreeLibrary
+    std::vector<PVOID> Args;
+    Args.push_back(reinterpret_cast<PVOID>(ModuleRemote));
+    MemoryMgr::RemoteFunctionRet RemoteRet = m_Memory.Call(
+      reinterpret_cast<PVOID>(pFreeLibraryTemp), 
+      MemoryMgr::CallConv_Default, Args);
+    if (!RemoteRet.GetReturnValue())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("Injector::FreeDll") << 
+        ErrorString("Call to FreeLibrary in remote process failed.") << 
+        ErrorCodeWinLast(RemoteRet.GetLastError()));
+    }
+  }
+
+  // Call export
+  MemoryMgr::RemoteFunctionRet Injector::CallExport(
+    HMODULE RemoteModule, std::string const& Export) const
+  {
+    // Get export address
+    Module TargetMod(m_Memory, RemoteModule);
+    FARPROC const pExportAddr = TargetMod.FindProcedure(Export);
+    DWORD_PTR const pExportAddrTemp = reinterpret_cast<DWORD_PTR>(
+      pExportAddr);
+
+    // Create a remote thread that calls the desired export
+    std::vector<PVOID> ExportArgs;
+    ExportArgs.push_back(RemoteModule);
+    return m_Memory.Call(reinterpret_cast<PVOID>(pExportAddrTemp), 
+      MemoryMgr::CallConv_Default, ExportArgs);
+  }
+
+  // Constructor
+  CreateAndInjectData::CreateAndInjectData(MemoryMgr const& MyMemory, 
+    HMODULE Module, DWORD_PTR ExportRet, DWORD ExportLastError) 
+    : m_Memory(MyMemory), 
+    m_Module(Module), 
+    m_ExportRet(ExportRet), 
+    m_ExportLastError(ExportLastError)
+  { }
+  
+  // Copy constructor
+  CreateAndInjectData::CreateAndInjectData(CreateAndInjectData const& Other)
+    : m_Memory(Other.m_Memory), 
+    m_Module(Other.m_Module), 
+    m_ExportRet(Other.m_ExportRet), 
+    m_ExportLastError(Other.m_ExportLastError)
+  { }
+  
+  // Get memory manager
+  MemoryMgr CreateAndInjectData::GetMemoryMgr() const
+  {
+    return m_Memory;
+  }
+  
+  // Get module
+  HMODULE CreateAndInjectData::GetModule() const
+  {
+    return m_Module;
+  }
+  
+  // Get export return value
+  DWORD_PTR CreateAndInjectData::GetExportRet() const
+  {
+    return m_ExportRet;
+  }
+  
+  // Get export last error code
+  DWORD CreateAndInjectData::GetExportLastError() const
+  {
+    return m_ExportLastError;
+  }
+  
   // Create process (as suspended) and inject DLL
   CreateAndInjectData CreateAndInject(
     std::wstring const& Path, 
@@ -224,213 +423,5 @@ namespace HadesMem
       // Rethrow exception
       throw;
     }
-  }
-  
-  // Get base of self
-  inline PVOID GetBaseOfSelf()
-  {
-    MEMORY_BASIC_INFORMATION MemInfo = { 0 };
-    PVOID pGetBaseOfSelf = reinterpret_cast<PVOID>(
-      reinterpret_cast<DWORD_PTR>(&GetBaseOfSelf));
-    if (!VirtualQuery(pGetBaseOfSelf, &MemInfo, sizeof(MemInfo)))
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(HadesMemError() << 
-        ErrorFunction("GetBaseOfSelf") << 
-        ErrorString("Failed to query memory.") << 
-        ErrorCodeWinLast(LastError));
-    }
-
-    return MemInfo.AllocationBase;
-  }
-
-  // Get handle to self
-  inline HMODULE GetHandleToSelf()
-  {
-    return reinterpret_cast<HMODULE>(GetBaseOfSelf());
-  }
-
-  // Get path to self (directory)
-  inline boost::filesystem::path GetSelfPath()
-  {
-    // Get path to self
-    DWORD const SelfPathSize = 32767;
-    std::wstring SelfFullPath;
-    if (!GetModuleFileName(GetHandleToSelf(), Detail::MakeStringBuffer(
-      SelfFullPath, SelfPathSize), SelfPathSize) || GetLastError() == 
-      ERROR_INSUFFICIENT_BUFFER)
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(HadesMemError() << 
-        ErrorFunction("GetSelfPath") << 
-        ErrorString("Could not get path to self.") << 
-        ErrorCodeWinLast(LastError));
-    }
-
-    // Path to self
-    return SelfFullPath;
-  }
-
-  // Get path to self (directory)
-  inline boost::filesystem::path GetSelfDirPath()
-  {
-    // Path to self dir
-    return GetSelfPath().parent_path();
-  }
-
-  // Constructor
-  Injector::Injector(MemoryMgr const& MyMemory) 
-    : m_Memory(MyMemory)
-  { }
-      
-  // Copy constructor
-  Injector::Injector(Injector const& Other)
-    : m_Memory(Other.m_Memory)
-  { }
-  
-  // Copy assignment operator
-  Injector& Injector::operator=(Injector const& Other)
-  {
-    this->m_Memory = Other.m_Memory;
-    
-    return *this;
-  }
-  
-  // Move constructor
-  Injector::Injector(Injector&& Other)
-    : m_Memory(std::move(Other.m_Memory))
-  { }
-  
-  // Move assignment operator
-  Injector& Injector::operator=(Injector&& Other)
-  {
-    this->m_Memory = std::move(Other.m_Memory);
-    
-    return *this;
-  }
-  
-  // Destructor
-  Injector::~Injector()
-  { }
-
-  // Inject DLL
-  HMODULE Injector::InjectDll(std::wstring const& Path, 
-    InjectFlags Flags) const
-  {
-    // Do not continue if Shim Engine is enabled for local process, 
-    // otherwise it could interfere with the address resolution.
-    HMODULE const ShimEngMod = GetModuleHandle(L"ShimEng.dll");
-    if (ShimEngMod)
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("Injector::InjectDll") << 
-        ErrorString("Shims enabled for local process."));
-    }
-    
-    // String to hold 'real' path to module
-    boost::filesystem::path PathReal(Path);
-      
-    // Check if path resolution was requested
-    bool PathResolution = ((Flags & InjectFlag_PathResolution) == 
-      InjectFlag_PathResolution);
-
-    // Check whether we need to convert the path from a relative to 
-    // an absolute
-    if (PathResolution && PathReal.is_relative())
-    {
-      // Convert relative path to absolute path
-      PathReal = boost::filesystem::absolute(PathReal, GetSelfDirPath());
-    }
-
-    // Convert path to preferred format
-    PathReal.make_preferred();
-
-    // Ensure target file exists
-    // Note: Only performing this check when path resolution is enabled, 
-    // because otherwise we would need to perform the check in the context 
-    // of the remote process, which is not possible to do without 
-    // introducing race conditions and other potential problems. So we just 
-    // let LoadLibraryW do the check for us.
-    if (PathResolution && !boost::filesystem::exists(PathReal))
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("Injector::InjectDll") << 
-        ErrorString("Could not find module file."));
-    }
-
-    // Get path as string
-    std::wstring const PathString(PathReal.native());
-
-    // Calculate the number of bytes needed for the DLL's pathname
-    std::size_t const PathBufSize = (PathString.size() + 1) * 
-      sizeof(wchar_t);
-
-    // Allocate space in the remote process for the pathname
-    AllocAndFree const LibFileRemote(m_Memory, PathBufSize);
-
-    // Copy the DLL's pathname to the remote process' address space
-    m_Memory.WriteString(LibFileRemote.GetBase(), PathString);
-    
-    // Get address of LoadLibraryW in Kernel32.dll
-    Module Kernel32Mod(m_Memory, L"kernel32.dll");
-    FARPROC const pLoadLibraryW = Kernel32Mod.FindProcedure("LoadLibraryW");
-    DWORD_PTR pLoadLibraryWTemp = reinterpret_cast<DWORD_PTR>(pLoadLibraryW);
-
-    // Load module in remote process using LoadLibraryW
-    std::vector<PVOID> Args;
-    Args.push_back(LibFileRemote.GetBase());
-    MemoryMgr::RemoteFunctionRet RemoteRet = m_Memory.Call(
-      reinterpret_cast<PVOID>(pLoadLibraryWTemp), 
-      MemoryMgr::CallConv_Default, Args);
-    if (!RemoteRet.GetReturnValue())
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("Injector::InjectDll") << 
-        ErrorString("Call to LoadLibraryW in remote process failed.") << 
-        ErrorCodeWinLast(RemoteRet.GetLastError()));
-    }
-    
-    // Return module base
-    return reinterpret_cast<HMODULE>(RemoteRet.GetReturnValue());
-  }
-
-  // Free DLL
-  void Injector::FreeDll(HMODULE ModuleRemote) const
-  {
-    // Get address of FreeLibrary in Kernel32.dll
-    Module Kernel32Mod(m_Memory, L"kernel32.dll");
-    FARPROC const pFreeLibrary = Kernel32Mod.FindProcedure("FreeLibrary");
-    DWORD_PTR pFreeLibraryTemp = reinterpret_cast<DWORD_PTR>(pFreeLibrary);
-
-    // Free module in remote process using FreeLibrary
-    std::vector<PVOID> Args;
-    Args.push_back(reinterpret_cast<PVOID>(ModuleRemote));
-    MemoryMgr::RemoteFunctionRet RemoteRet = m_Memory.Call(
-      reinterpret_cast<PVOID>(pFreeLibraryTemp), 
-      MemoryMgr::CallConv_Default, Args);
-    if (!RemoteRet.GetReturnValue())
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("Injector::FreeDll") << 
-        ErrorString("Call to FreeLibrary in remote process failed.") << 
-        ErrorCodeWinLast(RemoteRet.GetLastError()));
-    }
-  }
-
-  // Call export
-  MemoryMgr::RemoteFunctionRet Injector::CallExport(
-    HMODULE ModuleRemote, std::string const& Export) const
-  {
-    // Get export address
-    Module MyModule(m_Memory, ModuleRemote);
-    FARPROC const pExportAddr = MyModule.FindProcedure(Export);
-    DWORD_PTR const pExportAddrTemp = reinterpret_cast<DWORD_PTR>(
-      pExportAddr);
-
-    // Create a remote thread that calls the desired export
-    std::vector<PVOID> ExportArgs;
-    ExportArgs.push_back(ModuleRemote);
-    return m_Memory.Call(reinterpret_cast<PVOID>(pExportAddrTemp), 
-      MemoryMgr::CallConv_Default, ExportArgs);
   }
 }

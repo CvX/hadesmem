@@ -73,7 +73,7 @@ namespace HadesMem
     void FreeDll(HMODULE Module) const;
     
     // Call export
-    MemoryMgr::RemoteFunctionRet CallExport(HMODULE ModuleRemote, 
+    MemoryMgr::RemoteFunctionRet CallExport(HMODULE RemoteModule, 
       std::string const& Export) const;
 
   private:
@@ -86,39 +86,17 @@ namespace HadesMem
   {
   public:
     CreateAndInjectData(MemoryMgr const& MyMemory, HMODULE Module, 
-      DWORD_PTR ExportRet, DWORD ExportLastError) 
-      : m_Memory(MyMemory), 
-      m_Module(Module), 
-      m_ExportRet(ExportRet), 
-      m_ExportLastError(ExportLastError)
-    { }
+      DWORD_PTR ExportRet, DWORD ExportLastError);
     
-    CreateAndInjectData(CreateAndInjectData const& Other)
-      : m_Memory(Other.m_Memory), 
-      m_Module(Other.m_Module), 
-      m_ExportRet(Other.m_ExportRet), 
-      m_ExportLastError(Other.m_ExportLastError)
-    { }
+    CreateAndInjectData(CreateAndInjectData const& Other);
     
-    MemoryMgr GetMemoryMgr() const
-    {
-      return m_Memory;
-    }
+    MemoryMgr GetMemoryMgr() const;
     
-    HMODULE GetModule() const
-    {
-      return m_Module;
-    }
+    HMODULE GetModule() const;
     
-    DWORD_PTR GetExportRet() const
-    {
-      return m_ExportRet;
-    }
+    DWORD_PTR GetExportRet() const;
     
-    DWORD GetExportLastError() const
-    {
-      return m_ExportLastError;
-    }
+    DWORD GetExportLastError() const;
     
   private:
     MemoryMgr m_Memory;

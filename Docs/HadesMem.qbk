@@ -126,6 +126,8 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
 
 [*Bug Fixes]
 
+* Added `Module` (and `Injector`) to '''Memory.hpp'''.
+
 [*Changes]
 
 * Improved `Module` tests.
