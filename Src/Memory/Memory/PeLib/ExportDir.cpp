@@ -668,10 +668,12 @@ namespace HadesMem
       }
       else
       {
-        if (Num < MyExportDir.GetNumberOfFunctions())
+        DWORD const OrdinalBase = MyExportDir.GetOrdinalBase();
+        DWORD const NextOrdinal = m_Cache.empty() ? OrdinalBase : 
+          (m_Cache.back().GetOrdinal() + 1);
+        if (NextOrdinal - OrdinalBase < MyExportDir.GetNumberOfFunctions())
         {
-          m_Cache.push_back(Export(m_PeFile, static_cast<DWORD>(
-            MyExportDir.GetOrdinalBase() + m_Cache.size())));
+          m_Cache.push_back(Export(m_PeFile, NextOrdinal));
         }
         else
         {
