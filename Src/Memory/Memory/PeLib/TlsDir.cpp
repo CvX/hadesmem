@@ -31,6 +31,49 @@ namespace HadesMem
     m_Memory(m_PeFile.GetMemoryMgr()), 
     m_pBase(nullptr)
   { }
+      
+  // Copy constructor
+  TlsDir::TlsDir(TlsDir const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  TlsDir& TlsDir::operator=(TlsDir const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  TlsDir::TlsDir(TlsDir&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  TlsDir& TlsDir::operator=(TlsDir&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  TlsDir::~TlsDir()
+  { }
 
   // Whether TLS directory is valid
   bool TlsDir::IsValid() const
@@ -59,20 +102,41 @@ namespace HadesMem
     }
   }
 
+  // Get base of export dir
+  PVOID TlsDir::GetBase() const
+  {
+    // Set base pointer on first request
+    if (!m_pBase)
+    {
+      // Get NT headers
+      NtHeaders const MyNtHeaders(m_PeFile);
+
+      // Get export dir data
+      DWORD const DataDirSize = MyNtHeaders.GetDataDirectorySize(NtHeaders::
+        DataDir_TLS);
+      DWORD const DataDirVa = MyNtHeaders.GetDataDirectoryVirtualAddress(
+        NtHeaders::DataDir_TLS);
+      if (!DataDirSize || !DataDirVa)
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("TlsDir::GetBase") << 
+          ErrorString("PE file has no TLS directory."));
+      }
+
+      // Get base of TLS dir
+      m_pBase = static_cast<PBYTE>(m_PeFile.RvaToVa(DataDirVa));
+    }
+    
+    // Return cached pointer
+    return m_pBase;
+  }
+
   // Get start address of raw data
   DWORD_PTR TlsDir::GetStartAddressOfRawData() const
   {
     PBYTE const pBase = static_cast<PBYTE>(GetBase());
     return m_Memory.Read<DWORD_PTR>(pBase + FIELD_OFFSET(
       IMAGE_TLS_DIRECTORY, StartAddressOfRawData));
-  }
-
-  // Set start address of raw data
-  void TlsDir::SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      StartAddressOfRawData), StartAddressOfRawData);
   }
 
   // Get end address of raw data
@@ -83,28 +147,12 @@ namespace HadesMem
       IMAGE_TLS_DIRECTORY, EndAddressOfRawData));
   }
 
-  // Set end address of raw data
-  void TlsDir::SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      EndAddressOfRawData), EndAddressOfRawData);
-  }
-
   // Get address of index
   DWORD_PTR TlsDir::GetAddressOfIndex() const
   {
     PBYTE const pBase = static_cast<PBYTE>(GetBase());
     return m_Memory.Read<DWORD_PTR>(pBase + FIELD_OFFSET(
       IMAGE_TLS_DIRECTORY, AddressOfIndex));
-  }
-
-  // Set address of index
-  void TlsDir::SetAddressOfIndex(DWORD_PTR AddressOfIndex) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      AddressOfIndex), AddressOfIndex);
   }
 
   // Get address of callbacks
@@ -115,14 +163,6 @@ namespace HadesMem
       IMAGE_TLS_DIRECTORY, AddressOfCallBacks));
   }
 
-  // Set address of callbacks
-  void TlsDir::SetAddressOfCallBacks(DWORD_PTR AddressOfCallBacks) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      AddressOfCallBacks), AddressOfCallBacks);
-  }
-
   // Get size of zero fill
   DWORD TlsDir::GetSizeOfZeroFill() const
   {
@@ -131,35 +171,12 @@ namespace HadesMem
       IMAGE_TLS_DIRECTORY, SizeOfZeroFill));
   }
 
-  // Set size of zero fill
-  void TlsDir::SetSizeOfZeroFill(DWORD SizeOfZeroFill) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      SizeOfZeroFill), SizeOfZeroFill);
-  }
-
   // Get characteristics
   DWORD TlsDir::GetCharacteristics() const
   {
     PBYTE const pBase = static_cast<PBYTE>(GetBase());
     return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
       IMAGE_TLS_DIRECTORY, Characteristics));
-  }
-
-  // Set characteristics
-  void TlsDir::SetCharacteristics(DWORD Characteristics) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
-      Characteristics), Characteristics);
-
-    if (GetCharacteristics() != Characteristics)
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("TlsDir::SetCharacteristics") << 
-        ErrorString("Could not set data. Verification mismatch."));
-    }
   }
 
   // Get list of TLS callbacks
@@ -192,39 +209,58 @@ namespace HadesMem
     return Callbacks;
   }
 
-  // Get base of export dir
-  PVOID TlsDir::GetBase() const
+  // Set start address of raw data
+  void TlsDir::SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const
   {
-    // Set base pointer on first request
-    if (!m_pBase)
-    {
-      // Get NT headers
-      NtHeaders const MyNtHeaders(m_PeFile);
-
-      // Get export dir data
-      DWORD const DataDirSize = MyNtHeaders.GetDataDirectorySize(NtHeaders::
-        DataDir_TLS);
-      DWORD const DataDirVa = MyNtHeaders.GetDataDirectoryVirtualAddress(
-        NtHeaders::DataDir_TLS);
-      if (!DataDirSize || !DataDirVa)
-      {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("TlsDir::GetBase") << 
-          ErrorString("PE file has no TLS directory."));
-      }
-
-      // Get base of TLS dir
-      m_pBase = static_cast<PBYTE>(m_PeFile.RvaToVa(DataDirVa));
-    }
-    
-    // Return cached pointer
-    return m_pBase;
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      StartAddressOfRawData), StartAddressOfRawData);
   }
 
-  // Get raw TLS dir
-  IMAGE_TLS_DIRECTORY TlsDir::GetTlsDirRaw() const
+  // Set end address of raw data
+  void TlsDir::SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const
   {
-    // Get raw TLS dir
-    return m_Memory.Read<IMAGE_TLS_DIRECTORY>(GetBase());
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      EndAddressOfRawData), EndAddressOfRawData);
+  }
+
+  // Set address of index
+  void TlsDir::SetAddressOfIndex(DWORD_PTR AddressOfIndex) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      AddressOfIndex), AddressOfIndex);
+  }
+
+  // Set address of callbacks
+  void TlsDir::SetAddressOfCallBacks(DWORD_PTR AddressOfCallBacks) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      AddressOfCallBacks), AddressOfCallBacks);
+  }
+
+  // Set size of zero fill
+  void TlsDir::SetSizeOfZeroFill(DWORD SizeOfZeroFill) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      SizeOfZeroFill), SizeOfZeroFill);
+  }
+
+  // Set characteristics
+  void TlsDir::SetCharacteristics(DWORD Characteristics) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_TLS_DIRECTORY, 
+      Characteristics), Characteristics);
+
+    if (GetCharacteristics() != Characteristics)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("TlsDir::SetCharacteristics") << 
+        ErrorString("Could not set data. Verification mismatch."));
+    }
   }
 }

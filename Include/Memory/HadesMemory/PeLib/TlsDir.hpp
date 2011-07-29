@@ -42,6 +42,21 @@ namespace HadesMem
 
     // Constructor
     explicit TlsDir(PeFile const& MyPeFile);
+      
+    // Copy constructor
+    TlsDir(TlsDir const& Other);
+    
+    // Copy assignment operator
+    TlsDir& operator=(TlsDir const& Other);
+    
+    // Move constructor
+    TlsDir(TlsDir&& Other);
+    
+    // Move assignment operator
+    TlsDir& operator=(TlsDir&& Other);
+    
+    // Destructor
+    ~TlsDir();
 
     // Get base of TLS dir
     PVOID GetBase() const;
@@ -51,9 +66,6 @@ namespace HadesMem
 
     // Ensure TLS directory is valid
     void EnsureValid() const;
-
-    // Get raw TLS dir
-    IMAGE_TLS_DIRECTORY GetTlsDirRaw() const;
 
     // Get start address of raw data
     DWORD_PTR GetStartAddressOfRawData() const;

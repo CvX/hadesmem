@@ -49,6 +49,21 @@ namespace HadesMem
 
     // Constructor
     Section(PeFile const& MyPeFile, WORD Number);
+      
+    // Copy constructor
+    Section(Section const& Other);
+    
+    // Copy assignment operator
+    Section& operator=(Section const& Other);
+    
+    // Move constructor
+    Section(Section&& Other);
+    
+    // Move assignment operator
+    Section& operator=(Section&& Other);
+    
+    // Destructor
+    ~Section();
 
     // Get section header base
     PVOID GetBase() const;

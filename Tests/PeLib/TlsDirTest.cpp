@@ -87,10 +87,10 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       MyTlsDir.SetSizeOfZeroFill(MyTlsDir.GetSizeOfZeroFill());
       MyTlsDir.SetCharacteristics(MyTlsDir.GetCharacteristics());
       MyTlsDir.GetCallbacks();
-      MyTlsDir.GetTlsDirRaw();
       
-      // Get raw TLS dir data again (using the member function this time)
-      auto const TlsDirRawNew = MyTlsDir.GetTlsDirRaw();
+      // Get raw TLS dir data again
+      auto const TlsDirRawNew = MyMemory.Read<IMAGE_TLS_DIRECTORY>(MyTlsDir.
+        GetBase());
       
       // Ensure TlsDir getters/setters 'match' by checking that the data is 
       // unchanged

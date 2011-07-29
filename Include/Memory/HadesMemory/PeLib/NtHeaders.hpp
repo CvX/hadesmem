@@ -60,6 +60,21 @@ namespace HadesMem
 
     // Constructor
     explicit NtHeaders(PeFile const& MyPeFile);
+      
+    // Copy constructor
+    NtHeaders(NtHeaders const& Other);
+    
+    // Copy assignment operator
+    NtHeaders& operator=(NtHeaders const& Other);
+    
+    // Move constructor
+    NtHeaders(NtHeaders&& Other);
+    
+    // Move assignment operator
+    NtHeaders& operator=(NtHeaders&& Other);
+    
+    // Destructor
+    ~NtHeaders();
 
     // Get base of NT headers
     PVOID GetBase() const;

@@ -39,6 +39,49 @@ namespace HadesMem
     // Ensure signature is valid
     EnsureSignatureValid();
   }
+      
+  // Copy constructor
+  NtHeaders::NtHeaders(NtHeaders const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  NtHeaders& NtHeaders::operator=(NtHeaders const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  NtHeaders::NtHeaders(NtHeaders&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  NtHeaders& NtHeaders::operator=(NtHeaders&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  NtHeaders::~NtHeaders()
+  { }
 
   // Get base of NT headers
   PVOID NtHeaders::GetBase() const
@@ -71,25 +114,11 @@ namespace HadesMem
       Signature));
   }
 
-  // Set signature
-  void NtHeaders::SetSignature(DWORD Signature) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, Signature), 
-      Signature);
-  }
-
   // Get machine
   WORD NtHeaders::GetMachine() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       FileHeader.Machine));
-  }
-
-  // Set machine
-  void NtHeaders::SetMachine(WORD Machine) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      Machine), Machine);
   }
 
   // Get number of sections
@@ -99,25 +128,11 @@ namespace HadesMem
       FileHeader.NumberOfSections));
   }
 
-  // Set number of sections
-  void NtHeaders::SetNumberOfSections(WORD NumberOfSections) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      NumberOfSections), NumberOfSections);
-  }
-
   // Get time date stamp
   DWORD NtHeaders::GetTimeDateStamp() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       FileHeader.TimeDateStamp));
-  }
-
-  // Set time date stamp
-  void NtHeaders::SetTimeDateStamp(DWORD TimeDateStamp) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      TimeDateStamp), TimeDateStamp);
   }
 
   // Get pointer to symbol table
@@ -127,25 +142,11 @@ namespace HadesMem
       FileHeader.PointerToSymbolTable));
   }
 
-  // Set pointer to symbol table
-  void NtHeaders::SetPointerToSymbolTable(DWORD PointerToSymbolTable) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      PointerToSymbolTable), PointerToSymbolTable);
-  }
-
   // Get number of symbols
   DWORD NtHeaders::GetNumberOfSymbols() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       FileHeader.NumberOfSymbols));
-  }
-
-  // Set number of symbols
-  void NtHeaders::SetNumberOfSymbols(DWORD NumberOfSymbols) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      NumberOfSymbols), NumberOfSymbols);
   }
 
   // Get size of optional header
@@ -155,26 +156,11 @@ namespace HadesMem
       FileHeader.SizeOfOptionalHeader));
   }
 
-  // Set size of optional header
-  void NtHeaders::SetSizeOfOptionalHeader(WORD SizeOfOptionalHeader) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      SizeOfOptionalHeader), SizeOfOptionalHeader);
-
-  }
-
   // Get characteristics
   WORD NtHeaders::GetCharacteristics() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       FileHeader.Characteristics));
-  }
-
-  // Set characteristics
-  void NtHeaders::SetCharacteristics(WORD Characteristics) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
-      Characteristics), Characteristics);
   }
 
   // Get magic
@@ -184,25 +170,11 @@ namespace HadesMem
       OptionalHeader.Magic));
   }
 
-  // Set magic
-  void NtHeaders::SetMagic(WORD Magic) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.Magic), Magic);
-  }
-
   // Get major linker version
   BYTE NtHeaders::GetMajorLinkerVersion() const
   {
     return m_Memory.Read<BYTE>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.MajorLinkerVersion));
-  }
-
-  // Set major linker version
-  void NtHeaders::SetMajorLinkerVersion(BYTE MajorLinkerVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MajorLinkerVersion), MajorLinkerVersion);
   }
 
   // Get minor linker version
@@ -212,25 +184,11 @@ namespace HadesMem
       OptionalHeader.MinorLinkerVersion));
   }
 
-  // Set minor linker version
-  void NtHeaders::SetMinorLinkerVersion(BYTE MinorLinkerVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MinorLinkerVersion), MinorLinkerVersion);
-  }
-
   // Get size of code
   DWORD NtHeaders::GetSizeOfCode() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.SizeOfCode));
-  }
-
-  // Set size of code
-  void NtHeaders::SetSizeOfCode(DWORD SizeOfCode) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfCode), SizeOfCode);
   }
 
   // Get size of initialized data
@@ -240,26 +198,11 @@ namespace HadesMem
       OptionalHeader.SizeOfInitializedData));
   }
 
-  // Set size of initialized data
-  void NtHeaders::SetSizeOfInitializedData(DWORD SizeOfInitializedData) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfInitializedData), SizeOfInitializedData);
-  }
-
   // Get size of uninitialized data
   DWORD NtHeaders::GetSizeOfUninitializedData() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.SizeOfUninitializedData));
-  }
-
-  // Set size of uninitialized data
-  void NtHeaders::SetSizeOfUninitializedData(DWORD SizeOfUninitializedData) 
-    const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfUninitializedData), SizeOfUninitializedData);
   }
 
   // Get address of entry point
@@ -269,25 +212,11 @@ namespace HadesMem
       OptionalHeader.AddressOfEntryPoint));
   }
 
-  // Set address of entry point
-  void NtHeaders::SetAddressOfEntryPoint(DWORD AddressOfEntryPoint) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.AddressOfEntryPoint), AddressOfEntryPoint);
-  }
-
   // Get base of code
   DWORD NtHeaders::GetBaseOfCode() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.BaseOfCode));
-  }
-
-  // Set base of code
-  void NtHeaders::SetBaseOfCode(DWORD BaseOfCode) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.BaseOfCode), BaseOfCode);
   }
 
 #if defined(_M_IX86) 
@@ -296,13 +225,6 @@ namespace HadesMem
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.BaseOfData));
-  }
-
-  // Set base of data
-  void NtHeaders::SetBaseOfData(DWORD BaseOfData) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.BaseOfData), BaseOfData);
   }
 #endif
 
@@ -313,25 +235,11 @@ namespace HadesMem
       IMAGE_NT_HEADERS, OptionalHeader.ImageBase));
   }
 
-  // Set image base
-  void NtHeaders::SetImageBase(ULONG_PTR ImageBase) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.ImageBase), ImageBase);
-  }
-
   // Get section alignment
   DWORD NtHeaders::GetSectionAlignment() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.SectionAlignment));
-  }
-
-  // Set section alignment
-  void NtHeaders::SetSectionAlignment(DWORD SectionAlignment) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SectionAlignment), SectionAlignment);
   }
 
   // Get file alignment
@@ -341,27 +249,11 @@ namespace HadesMem
       OptionalHeader.FileAlignment));
   }
 
-  // Set file alignment
-  void NtHeaders::SetFileAlignment(DWORD FileAlignment) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.FileAlignment), FileAlignment);
-  }
-
   // Get major operating system version
   WORD NtHeaders::GetMajorOperatingSystemVersion() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.MajorOperatingSystemVersion));
-  }
-
-  // Set major operating system version
-  void NtHeaders::SetMajorOperatingSystemVersion(
-    WORD MajorOperatingSystemVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MajorOperatingSystemVersion), 
-      MajorOperatingSystemVersion);
   }
 
   // Get minor operating system version
@@ -371,27 +263,11 @@ namespace HadesMem
       OptionalHeader.MinorOperatingSystemVersion));
   }
 
-  // Set minor operating system version
-  void NtHeaders::SetMinorOperatingSystemVersion(
-    WORD MinorOperatingSystemVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MinorOperatingSystemVersion), 
-      MinorOperatingSystemVersion);
-  }
-
   // Get major image version
   WORD NtHeaders::GetMajorImageVersion() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.MajorImageVersion));
-  }
-
-  // Set major image version
-  void NtHeaders::SetMajorImageVersion(WORD MajorImageVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MajorImageVersion), MajorImageVersion);
   }
 
   // Get minor image version
@@ -401,25 +277,11 @@ namespace HadesMem
       OptionalHeader.MinorImageVersion));
   }
 
-  // Set minor image version
-  void NtHeaders::SetMinorImageVersion(WORD MinorImageVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MinorImageVersion), MinorImageVersion);
-  }
-
   // Get major subsystem version
   WORD NtHeaders::GetMajorSubsystemVersion() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.MajorSubsystemVersion));
-  }
-
-  // Set major subsystem version
-  void NtHeaders::SetMajorSubsystemVersion(WORD MajorSubsystemVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MajorSubsystemVersion), MajorSubsystemVersion);
   }
 
   // Get minor subsystem version
@@ -429,25 +291,11 @@ namespace HadesMem
       OptionalHeader.MinorSubsystemVersion));
   }
 
-  // Set minor subsystem version
-  void NtHeaders::SetMinorSubsystemVersion(WORD MinorSubsystemVersion) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.MinorSubsystemVersion), MinorSubsystemVersion);
-  }
-
   // Get Win32 version value
   DWORD NtHeaders::GetWin32VersionValue() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.Win32VersionValue));
-  }
-
-  // Set Win32 version value
-  void NtHeaders::SetWin32VersionValue(DWORD Win32VersionValue) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.Win32VersionValue), Win32VersionValue);
   }
 
   // Get size of image
@@ -457,25 +305,11 @@ namespace HadesMem
       OptionalHeader.SizeOfImage));
   }
 
-  // Set size of image
-  void NtHeaders::SetSizeOfImage(DWORD SizeOfImage) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfImage), SizeOfImage);
-  }
-
   // Get size of headers
   DWORD NtHeaders::GetSizeOfHeaders() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.SizeOfHeaders));
-  }
-
-  // Set size of headers
-  void NtHeaders::SetSizeOfHeaders(DWORD SizeOfHeaders) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfHeaders), SizeOfHeaders);
   }
 
   // Get checksum
@@ -485,25 +319,11 @@ namespace HadesMem
       OptionalHeader.CheckSum));
   }
 
-  // Set checksum
-  void NtHeaders::SetCheckSum(DWORD CheckSum) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.CheckSum), CheckSum);
-  }
-
   // Get subsystem
   WORD NtHeaders::GetSubsystem() const
   {
     return m_Memory.Read<WORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.Subsystem));
-  }
-
-  // Set subsystem
-  void NtHeaders::SetSubsystem(WORD Subsystem) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.Subsystem), Subsystem);
   }
 
   // Get DLL characteristics
@@ -513,25 +333,11 @@ namespace HadesMem
       OptionalHeader.DllCharacteristics));
   }
 
-  // Set DLL characteristics
-  void NtHeaders::SetDllCharacteristics(WORD DllCharacteristics) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.DllCharacteristics), DllCharacteristics);
-  }
-
   // Get size of stack reserve
   ULONG_PTR NtHeaders::GetSizeOfStackReserve() const
   {
     return m_Memory.Read<ULONG_PTR>(m_pBase + FIELD_OFFSET(
       IMAGE_NT_HEADERS, OptionalHeader.SizeOfStackReserve));
-  }
-
-  // Set size of stack reserve
-  void NtHeaders::SetSizeOfStackReserve(ULONG_PTR SizeOfStackReserve) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfStackReserve), SizeOfStackReserve);
   }
 
   // Get size of stack commit
@@ -541,25 +347,11 @@ namespace HadesMem
       IMAGE_NT_HEADERS, OptionalHeader.SizeOfStackCommit));
   }
 
-  // Set size of stack commit
-  void NtHeaders::SetSizeOfStackCommit(ULONG_PTR SizeOfStackCommit) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfStackCommit), SizeOfStackCommit);
-  }
-
   // Get size of heap reserve
   ULONG_PTR NtHeaders::GetSizeOfHeapReserve() const
   {
     return m_Memory.Read<ULONG_PTR>(m_pBase + FIELD_OFFSET(
       IMAGE_NT_HEADERS, OptionalHeader.SizeOfHeapReserve));
-  }
-
-  // Set size of heap reserve
-  void NtHeaders::SetSizeOfHeapReserve(ULONG_PTR SizeOfHeapReserve) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfHeapReserve), SizeOfHeapReserve);
   }
 
   // Get size of heap commit
@@ -569,13 +361,6 @@ namespace HadesMem
       IMAGE_NT_HEADERS, OptionalHeader.SizeOfHeapCommit));
   }
 
-  // Set size of heap commit
-  void NtHeaders::SetSizeOfHeapCommit(ULONG_PTR SizeOfHeapCommit) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.SizeOfHeapCommit), SizeOfHeapCommit);
-  }
-
   // Get loader flags
   DWORD NtHeaders::GetLoaderFlags() const
   {
@@ -583,25 +368,11 @@ namespace HadesMem
       OptionalHeader.LoaderFlags));
   }
 
-  // Set loader flags
-  void NtHeaders::SetLoaderFlags(DWORD LoaderFlags) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.LoaderFlags), LoaderFlags);
-  }
-
   // Get number of RVA and sizes
   DWORD NtHeaders::GetNumberOfRvaAndSizes() const
   {
     return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
       OptionalHeader.NumberOfRvaAndSizes));
-  }
-
-  // Set number of RVA and sizes
-  void NtHeaders::SetNumberOfRvaAndSizes(DWORD NumberOfRvaAndSizes) const
-  {
-    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.NumberOfRvaAndSizes), NumberOfRvaAndSizes);
   }
 
   // Get data directory virtual address
@@ -618,6 +389,294 @@ namespace HadesMem
       VirtualAddress));
   }
 
+  // Get data directory size
+  DWORD NtHeaders::GetDataDirectorySize(DataDir MyDataDir) const
+  {
+    if (static_cast<DWORD>(MyDataDir) >= GetNumberOfRvaAndSizes())
+    {
+      return 0;
+    }
+    
+    return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.DataDirectory[0]) + MyDataDir * sizeof(
+      IMAGE_DATA_DIRECTORY) + FIELD_OFFSET(IMAGE_DATA_DIRECTORY, 
+      Size));
+  }
+
+  // Set signature
+  void NtHeaders::SetSignature(DWORD Signature) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, Signature), 
+      Signature);
+  }
+
+  // Set machine
+  void NtHeaders::SetMachine(WORD Machine) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      Machine), Machine);
+  }
+
+  // Set number of sections
+  void NtHeaders::SetNumberOfSections(WORD NumberOfSections) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      NumberOfSections), NumberOfSections);
+  }
+
+  // Set time date stamp
+  void NtHeaders::SetTimeDateStamp(DWORD TimeDateStamp) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      TimeDateStamp), TimeDateStamp);
+  }
+
+  // Set pointer to symbol table
+  void NtHeaders::SetPointerToSymbolTable(DWORD PointerToSymbolTable) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      PointerToSymbolTable), PointerToSymbolTable);
+  }
+
+  // Set number of symbols
+  void NtHeaders::SetNumberOfSymbols(DWORD NumberOfSymbols) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      NumberOfSymbols), NumberOfSymbols);
+  }
+
+  // Set size of optional header
+  void NtHeaders::SetSizeOfOptionalHeader(WORD SizeOfOptionalHeader) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      SizeOfOptionalHeader), SizeOfOptionalHeader);
+
+  }
+
+  // Set characteristics
+  void NtHeaders::SetCharacteristics(WORD Characteristics) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, FileHeader.
+      Characteristics), Characteristics);
+  }
+
+  // Set magic
+  void NtHeaders::SetMagic(WORD Magic) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.Magic), Magic);
+  }
+
+  // Set major linker version
+  void NtHeaders::SetMajorLinkerVersion(BYTE MajorLinkerVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MajorLinkerVersion), MajorLinkerVersion);
+  }
+
+  // Set minor linker version
+  void NtHeaders::SetMinorLinkerVersion(BYTE MinorLinkerVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MinorLinkerVersion), MinorLinkerVersion);
+  }
+
+  // Set size of code
+  void NtHeaders::SetSizeOfCode(DWORD SizeOfCode) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfCode), SizeOfCode);
+  }
+
+  // Set size of initialized data
+  void NtHeaders::SetSizeOfInitializedData(DWORD SizeOfInitializedData) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfInitializedData), SizeOfInitializedData);
+  }
+
+  // Set size of uninitialized data
+  void NtHeaders::SetSizeOfUninitializedData(DWORD SizeOfUninitializedData) 
+    const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfUninitializedData), SizeOfUninitializedData);
+  }
+
+  // Set address of entry point
+  void NtHeaders::SetAddressOfEntryPoint(DWORD AddressOfEntryPoint) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.AddressOfEntryPoint), AddressOfEntryPoint);
+  }
+
+  // Set base of code
+  void NtHeaders::SetBaseOfCode(DWORD BaseOfCode) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.BaseOfCode), BaseOfCode);
+  }
+
+#if defined(_M_IX86) 
+  // Set base of data
+  void NtHeaders::SetBaseOfData(DWORD BaseOfData) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.BaseOfData), BaseOfData);
+  }
+#endif
+
+  // Set image base
+  void NtHeaders::SetImageBase(ULONG_PTR ImageBase) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.ImageBase), ImageBase);
+  }
+
+  // Set section alignment
+  void NtHeaders::SetSectionAlignment(DWORD SectionAlignment) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SectionAlignment), SectionAlignment);
+  }
+
+  // Set file alignment
+  void NtHeaders::SetFileAlignment(DWORD FileAlignment) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.FileAlignment), FileAlignment);
+  }
+
+  // Set major operating system version
+  void NtHeaders::SetMajorOperatingSystemVersion(
+    WORD MajorOperatingSystemVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MajorOperatingSystemVersion), 
+      MajorOperatingSystemVersion);
+  }
+
+  // Set minor operating system version
+  void NtHeaders::SetMinorOperatingSystemVersion(
+    WORD MinorOperatingSystemVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MinorOperatingSystemVersion), 
+      MinorOperatingSystemVersion);
+  }
+
+  // Set major image version
+  void NtHeaders::SetMajorImageVersion(WORD MajorImageVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MajorImageVersion), MajorImageVersion);
+  }
+
+  // Set minor image version
+  void NtHeaders::SetMinorImageVersion(WORD MinorImageVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MinorImageVersion), MinorImageVersion);
+  }
+
+  // Set major subsystem version
+  void NtHeaders::SetMajorSubsystemVersion(WORD MajorSubsystemVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MajorSubsystemVersion), MajorSubsystemVersion);
+  }
+
+  // Set minor subsystem version
+  void NtHeaders::SetMinorSubsystemVersion(WORD MinorSubsystemVersion) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.MinorSubsystemVersion), MinorSubsystemVersion);
+  }
+
+  // Set Win32 version value
+  void NtHeaders::SetWin32VersionValue(DWORD Win32VersionValue) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.Win32VersionValue), Win32VersionValue);
+  }
+
+  // Set size of image
+  void NtHeaders::SetSizeOfImage(DWORD SizeOfImage) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfImage), SizeOfImage);
+  }
+
+  // Set size of headers
+  void NtHeaders::SetSizeOfHeaders(DWORD SizeOfHeaders) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfHeaders), SizeOfHeaders);
+  }
+
+  // Set checksum
+  void NtHeaders::SetCheckSum(DWORD CheckSum) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.CheckSum), CheckSum);
+  }
+
+  // Set subsystem
+  void NtHeaders::SetSubsystem(WORD Subsystem) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.Subsystem), Subsystem);
+  }
+
+  // Set DLL characteristics
+  void NtHeaders::SetDllCharacteristics(WORD DllCharacteristics) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.DllCharacteristics), DllCharacteristics);
+  }
+
+  // Set size of stack reserve
+  void NtHeaders::SetSizeOfStackReserve(ULONG_PTR SizeOfStackReserve) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfStackReserve), SizeOfStackReserve);
+  }
+
+  // Set size of stack commit
+  void NtHeaders::SetSizeOfStackCommit(ULONG_PTR SizeOfStackCommit) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfStackCommit), SizeOfStackCommit);
+  }
+
+  // Set size of heap reserve
+  void NtHeaders::SetSizeOfHeapReserve(ULONG_PTR SizeOfHeapReserve) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfHeapReserve), SizeOfHeapReserve);
+  }
+
+  // Set size of heap commit
+  void NtHeaders::SetSizeOfHeapCommit(ULONG_PTR SizeOfHeapCommit) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.SizeOfHeapCommit), SizeOfHeapCommit);
+  }
+
+  // Set loader flags
+  void NtHeaders::SetLoaderFlags(DWORD LoaderFlags) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.LoaderFlags), LoaderFlags);
+  }
+
+  // Set number of RVA and sizes
+  void NtHeaders::SetNumberOfRvaAndSizes(DWORD NumberOfRvaAndSizes) const
+  {
+    m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
+      OptionalHeader.NumberOfRvaAndSizes), NumberOfRvaAndSizes);
+  }
+
   // Set data directory virtual address
   void NtHeaders::SetDataDirectoryVirtualAddress(DataDir MyDataDir, 
     DWORD DataDirectoryVirtualAddress) const
@@ -631,20 +690,6 @@ namespace HadesMem
       OptionalHeader.DataDirectory[0]) + MyDataDir * sizeof(
       IMAGE_DATA_DIRECTORY) + FIELD_OFFSET(IMAGE_DATA_DIRECTORY, 
       VirtualAddress), DataDirectoryVirtualAddress);
-  }
-
-  // Get data directory size
-  DWORD NtHeaders::GetDataDirectorySize(DataDir MyDataDir) const
-  {
-    if (static_cast<DWORD>(MyDataDir) >= GetNumberOfRvaAndSizes())
-    {
-      return 0;
-    }
-    
-    return m_Memory.Read<DWORD>(m_pBase + FIELD_OFFSET(IMAGE_NT_HEADERS, 
-      OptionalHeader.DataDirectory[0]) + MyDataDir * sizeof(
-      IMAGE_DATA_DIRECTORY) + FIELD_OFFSET(IMAGE_DATA_DIRECTORY, 
-      Size));
   }
 
   // Set data directory size

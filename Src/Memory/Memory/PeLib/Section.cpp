@@ -35,177 +35,57 @@ namespace HadesMem
     m_SectionNum(Number), 
     m_pBase(nullptr)
   { }
-
-  // Get name
-  std::string Section::GetName() const
+      
+  // Copy constructor
+  Section::Section(Section const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_SectionNum(Other.m_SectionNum), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  Section& Section::operator=(Section const& Other)
   {
-    // Read RVA of module name
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    std::array<char, 8> const NameData(m_Memory.Read<std::array<char, 8>>(
-      pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, Name)));
-
-    // Convert section name to string
-    std::string Name;
-    for (std::size_t i = 0; i < 8 && NameData[i]; ++i)
-    {
-      Name += NameData[i];
-    }
-
-    // Return section name
-    return Name;
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_SectionNum = Other.m_SectionNum;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
   }
-
-  // Set name
-  void Section::SetName(std::string const& Name) const
+  
+  // Move constructor
+  Section::Section(Section&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_SectionNum(Other.m_SectionNum), 
+    m_pBase(Other.m_pBase)
   {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.WriteString(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, Name), 
-      Name);
+    Other.m_SectionNum = 0;
+    
+    Other.m_pBase = nullptr;
   }
-
-  // Get virtual address
-  DWORD Section::GetVirtualAddress() const
+  
+  // Move assignment operator
+  Section& Section::operator=(Section&& Other)
   {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      VirtualAddress));
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_SectionNum = Other.m_SectionNum;
+    Other.m_SectionNum = 0;
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
   }
-
-  // Set virtual address
-  void Section::SetVirtualAddress(DWORD VirtualAddress) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      VirtualAddress), VirtualAddress);
-  }
-
-  // Get virtual size
-  DWORD Section::GetVirtualSize() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, Misc.VirtualSize));
-  }
-
-  // Set virtual size
-  void Section::SetVirtualSize(DWORD VirtualSize) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      Misc.VirtualSize), VirtualSize);
-  }
-
-  // Get size of raw data
-  DWORD Section::GetSizeOfRawData() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, SizeOfRawData));
-  }
-
-  // Set size of raw data
-  void Section::SetSizeOfRawData(DWORD SizeOfRawData) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      SizeOfRawData), SizeOfRawData);
-  }
-
-  // Get pointer to raw data
-  DWORD Section::GetPointerToRawData() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, PointerToRawData));
-  }
-
-  // Set pointer to raw data
-  void Section::SetPointerToRawData(DWORD PointerToRawData) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      PointerToRawData), PointerToRawData);
-  }
-
-  // Get pointer to relocations
-  DWORD Section::GetPointerToRelocations() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, PointerToRelocations));
-  }
-
-  // Set pointer to relocations
-  void Section::SetPointerToRelocations(DWORD PointerToRelocations) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      PointerToRelocations), PointerToRelocations);
-  }
-
-  // Get pointer to line numbers
-  DWORD Section::GetPointerToLinenumbers() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, PointerToLinenumbers));
-  }
-
-  // Set pointer to line numbers
-  void Section::SetPointerToLinenumbers(DWORD PointerToLinenumbers) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      PointerToLinenumbers), PointerToLinenumbers);
-  }
-
-  // Get number of relocations
-  WORD Section::GetNumberOfRelocations() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<WORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, NumberOfRelocations));
-  }
-
-  // Set number of relocations
-  void Section::SetNumberOfRelocations(WORD NumberOfRelocations) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      NumberOfRelocations), NumberOfRelocations);
-  }
-
-  // Get number of line numbers
-  WORD Section::GetNumberOfLinenumbers() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<WORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, NumberOfLinenumbers));
-  }
-
-  // Set number of line numbers
-  void Section::SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      NumberOfLinenumbers), NumberOfLinenumbers);
-  }
-
-  // Get characteristics
-  DWORD Section::GetCharacteristics() const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
-      IMAGE_SECTION_HEADER, Characteristics));
-  }
-
-  // Set characteristics
-  void Section::SetCharacteristics(DWORD Characteristics) const
-  {
-    PBYTE const pBase = static_cast<PBYTE>(GetBase());
-    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
-      Characteristics), Characteristics);
-  }
+  
+  // Destructor
+  Section::~Section()
+  { }
 
   // Get section header base
   PVOID Section::GetBase() const
@@ -249,6 +129,177 @@ namespace HadesMem
   WORD Section::GetNumber() const
   {
     return m_SectionNum;
+  }
+
+  // Get name
+  std::string Section::GetName() const
+  {
+    // Read RVA of module name
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    std::array<char, 8> const NameData(m_Memory.Read<std::array<char, 8>>(
+      pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, Name)));
+
+    // Convert section name to string
+    std::string Name;
+    for (std::size_t i = 0; i < 8 && NameData[i]; ++i)
+    {
+      Name += NameData[i];
+    }
+
+    // Return section name
+    return Name;
+  }
+
+  // Get virtual address
+  DWORD Section::GetVirtualAddress() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      VirtualAddress));
+  }
+
+  // Get virtual size
+  DWORD Section::GetVirtualSize() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, Misc.VirtualSize));
+  }
+
+  // Get size of raw data
+  DWORD Section::GetSizeOfRawData() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, SizeOfRawData));
+  }
+
+  // Get pointer to raw data
+  DWORD Section::GetPointerToRawData() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, PointerToRawData));
+  }
+
+  // Get pointer to relocations
+  DWORD Section::GetPointerToRelocations() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, PointerToRelocations));
+  }
+
+  // Get pointer to line numbers
+  DWORD Section::GetPointerToLinenumbers() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, PointerToLinenumbers));
+  }
+
+  // Get number of relocations
+  WORD Section::GetNumberOfRelocations() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<WORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, NumberOfRelocations));
+  }
+
+  // Get number of line numbers
+  WORD Section::GetNumberOfLinenumbers() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<WORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, NumberOfLinenumbers));
+  }
+
+  // Get characteristics
+  DWORD Section::GetCharacteristics() const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_SECTION_HEADER, Characteristics));
+  }
+
+  // Set name
+  void Section::SetName(std::string const& Name) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.WriteString(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, Name), 
+      Name);
+  }
+
+  // Set virtual address
+  void Section::SetVirtualAddress(DWORD VirtualAddress) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      VirtualAddress), VirtualAddress);
+  }
+
+  // Set virtual size
+  void Section::SetVirtualSize(DWORD VirtualSize) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      Misc.VirtualSize), VirtualSize);
+  }
+
+  // Set size of raw data
+  void Section::SetSizeOfRawData(DWORD SizeOfRawData) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      SizeOfRawData), SizeOfRawData);
+  }
+
+  // Set pointer to raw data
+  void Section::SetPointerToRawData(DWORD PointerToRawData) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      PointerToRawData), PointerToRawData);
+  }
+
+  // Set pointer to relocations
+  void Section::SetPointerToRelocations(DWORD PointerToRelocations) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      PointerToRelocations), PointerToRelocations);
+  }
+
+  // Set pointer to line numbers
+  void Section::SetPointerToLinenumbers(DWORD PointerToLinenumbers) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      PointerToLinenumbers), PointerToLinenumbers);
+  }
+
+  // Set number of relocations
+  void Section::SetNumberOfRelocations(WORD NumberOfRelocations) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      NumberOfRelocations), NumberOfRelocations);
+  }
+
+  // Set number of line numbers
+  void Section::SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      NumberOfLinenumbers), NumberOfLinenumbers);
+  }
+
+  // Set characteristics
+  void Section::SetCharacteristics(DWORD Characteristics) const
+  {
+    PBYTE const pBase = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_SECTION_HEADER, 
+      Characteristics), Characteristics);
   }
   
   // Constructor
