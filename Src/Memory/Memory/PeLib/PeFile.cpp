@@ -29,6 +29,49 @@ namespace HadesMem
     m_pBase(static_cast<PBYTE>(Address)), 
     m_Type(Type)
   { }
+      
+  // Copy constructor
+  PeFile::PeFile(PeFile const& Other)
+    : m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase), 
+    m_Type(Other.m_Type)
+  { }
+  
+  // Copy assignment operator
+  PeFile& PeFile::operator=(PeFile const& Other)
+  {
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    this->m_Type = Other.m_Type;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  PeFile::PeFile(PeFile&& Other)
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase), 
+    m_Type(Other.m_Type)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  PeFile& PeFile::operator=(PeFile&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    this->m_Type = Other.m_Type;
+    
+    return *this;
+  }
+  
+  // Destructor
+  PeFile::~PeFile()
+  { }
 
   // Get memory manager
   MemoryMgr PeFile::GetMemoryMgr() const

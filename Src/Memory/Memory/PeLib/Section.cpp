@@ -225,7 +225,8 @@ namespace HadesMem
       }
 
       // Get raw NT headers
-      IMAGE_NT_HEADERS const NtHeadersRaw = MyNtHeaders.GetHeadersRaw();
+      auto const NtHeadersRaw = m_Memory.Read<IMAGE_NT_HEADERS>(
+        MyNtHeaders.GetBase());
 
       // Get pointer to first section
       PIMAGE_SECTION_HEADER pSectionHeader = 
@@ -243,16 +244,83 @@ namespace HadesMem
     // Return cached pointer
     return m_pBase;
   }
-
-  // Get raw section header
-  IMAGE_SECTION_HEADER Section::GetSectionHeaderRaw() const
-  {
-    return m_Memory.Read<IMAGE_SECTION_HEADER>(GetBase());
-  }
   
   // Get section number
   WORD Section::GetNumber() const
   {
     return m_SectionNum;
+  }
+  
+  // Constructor
+  SectionList::SectionList(PeFile const& MyPeFile)
+    : m_PeFile(MyPeFile), 
+    m_Cache()
+  { }
+    
+  // Move constructor
+  SectionList::SectionList(SectionList&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Cache(std::move(Other.m_Cache))
+  { }
+  
+  // Move assignment operator
+  SectionList& SectionList::operator=(SectionList&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    this->m_Cache = std::move(Other.m_Cache);
+    
+    return *this;
+  }
+  
+  // Get start of section list
+  SectionList::iterator SectionList::begin()
+  {
+    return iterator(*this);
+  }
+  
+  // Get end of section list
+  SectionList::iterator SectionList::end()
+  {
+    return iterator();
+  }
+  
+  // Get start of section list
+  SectionList::const_iterator SectionList::begin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of section list
+  SectionList::const_iterator SectionList::end() const
+  {
+    return const_iterator();
+  }
+  
+  // Get start of section list
+  SectionList::const_iterator SectionList::cbegin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of section list
+  SectionList::const_iterator SectionList::cend() const
+  {
+    return const_iterator();
+  }
+  
+  // Get section from cache by number
+  boost::optional<Section&> SectionList::GetByNum(DWORD Num) const
+  {
+    while (Num >= m_Cache.size())
+    {
+      if (m_Cache.size() >= NtHeaders(m_PeFile).GetNumberOfSections())
+      {
+        return boost::optional<Section&>();
+      }
+      
+      m_Cache.push_back(Section(m_PeFile, static_cast<WORD>(m_Cache.size())));
+    }
+    
+    return m_Cache[Num];
   }
 }

@@ -113,8 +113,9 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
           Dir));
       }
       
-      // Get raw TLS dir data again (using the member function this time)
-      auto const HdrRawNew = MyNtHeaders.GetHeadersRaw();
+      // Get raw TLS dir data again
+      auto const HdrRawNew = MyMemory.Read<IMAGE_NT_HEADERS>(
+        MyNtHeaders.GetBase());
       
       // Ensure NtHeaders getters/setters 'match' by checking that the data is 
       // unchanged

@@ -46,6 +46,21 @@ namespace HadesMem
     // Constructor
     PeFile(MemoryMgr const& MyMemory, PVOID Address, 
       FileType Type = FileType_Image);
+      
+    // Copy constructor
+    PeFile(PeFile const& Other);
+    
+    // Copy assignment operator
+    PeFile& operator=(PeFile const& Other);
+    
+    // Move constructor
+    PeFile(PeFile&& Other);
+    
+    // Move assignment operator
+    PeFile& operator=(PeFile&& Other);
+    
+    // Destructor
+    ~PeFile();
 
     // Get memory manager
     MemoryMgr GetMemoryMgr() const;

@@ -50,74 +50,71 @@ namespace HadesMem
     // Constructor
     Section(PeFile const& MyPeFile, WORD Number);
 
+    // Get section header base
+    PVOID GetBase() const;
+    
+    // Get section number
+    WORD GetNumber() const;
+
     // Get name
     std::string GetName() const;
-
-    // Set name
-    void SetName(std::string const& Name) const;
 
     // Get virtual address
     DWORD GetVirtualAddress() const;
 
-    // Set virtual address
-    void SetVirtualAddress(DWORD VirtualAddress) const;
-
     // Get virtual size
     DWORD GetVirtualSize() const;
-
-    // Set virtual size
-    void SetVirtualSize(DWORD VirtualSize) const;
 
     // Get size of raw data
     DWORD GetSizeOfRawData() const;
 
-    // Set size of raw data
-    void SetSizeOfRawData(DWORD SizeOfRawData) const;
-
     // Get pointer to raw data
     DWORD GetPointerToRawData() const;
-
-    // Set pointer to raw data
-    void SetPointerToRawData(DWORD PointerToRawData) const;
 
     // Get pointer to relocations
     DWORD GetPointerToRelocations() const;
 
-    // Set pointer to relocations
-    void SetPointerToRelocations(DWORD PointerToRelocations) const;
-
     // Get pointer to line numbers
     DWORD GetPointerToLinenumbers() const;
-
-    // Set pointer to line numbers
-    void SetPointerToLinenumbers(DWORD PointerToLinenumbers) const;
 
     // Get number of relocations
     WORD GetNumberOfRelocations() const;
 
-    // Set number of relocations
-    void SetNumberOfRelocations(WORD NumberOfRelocations) const;
-
     // Get number of line numbers
     WORD GetNumberOfLinenumbers() const;
-
-    // Set number of line numbers
-    void SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const;
 
     // Get characteristics
     DWORD GetCharacteristics() const;
 
+    // Set name
+    void SetName(std::string const& Name) const;
+
+    // Set virtual address
+    void SetVirtualAddress(DWORD VirtualAddress) const;
+
+    // Set virtual size
+    void SetVirtualSize(DWORD VirtualSize) const;
+
+    // Set size of raw data
+    void SetSizeOfRawData(DWORD SizeOfRawData) const;
+
+    // Set pointer to raw data
+    void SetPointerToRawData(DWORD PointerToRawData) const;
+
+    // Set pointer to relocations
+    void SetPointerToRelocations(DWORD PointerToRelocations) const;
+
+    // Set pointer to line numbers
+    void SetPointerToLinenumbers(DWORD PointerToLinenumbers) const;
+
+    // Set number of relocations
+    void SetNumberOfRelocations(WORD NumberOfRelocations) const;
+
+    // Set number of line numbers
+    void SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const;
+
     // Set characteristics
     void SetCharacteristics(DWORD Characteristics) const;
-
-    // Get section header base
-    PVOID GetBase() const;
-
-    // Get raw section header
-    IMAGE_SECTION_HEADER GetSectionHeaderRaw() const;
-    
-    // Get section number
-    WORD GetNumber() const;
 
   private:
     // PE file
@@ -132,138 +129,140 @@ namespace HadesMem
     // Section base
     mutable PBYTE m_pBase;
   };
+    
+  // Forward declaration of SectionIter
+  template <typename SectionT>
+  class SectionIter;
   
   // Section enumeration class
   class SectionList
   {
   public:
-    // Section list error class
+    // SectionList exception type
     class Error : public virtual HadesMemError
     { };
-      
-    // Section iterator
-    class SectionIter : public boost::iterator_facade<SectionIter, Section, 
-      boost::forward_traversal_tag>
-    {
-    public:
-      // Section iterator error class
-      class Error : public virtual HadesMemError
-      { };
-
-      // Constructor
-      SectionIter() 
-        : m_pParent(nullptr), 
-        m_PeFile(), 
-        m_Number(static_cast<WORD>(-1)), 
-        m_Section()
-      { }
-      
-      // Constructor
-      SectionIter(SectionList& Parent) 
-        : m_pParent(&Parent), 
-        m_PeFile(Parent.m_PeFile), 
-        m_Number(0), 
-        m_Section()
-      {
-        if (m_Number >= NtHeaders(*m_PeFile).GetNumberOfSections())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_Number = static_cast<WORD>(-1);
-          m_Section = boost::optional<Section>();
-        }
-        else
-        {
-          m_Section = Section(*m_PeFile, m_Number);
-        }
-      }
-      
-      // Copy constructor
-      SectionIter(SectionIter const& Rhs) 
-        : m_pParent(Rhs.m_pParent), 
-        m_PeFile(Rhs.m_PeFile), 
-        m_Number(Rhs.m_Number), 
-        m_Section(Rhs.m_Section)
-      { }
-      
-      // Assignment operator
-      SectionIter& operator=(SectionIter const& Rhs) 
-      {
-        m_pParent = Rhs.m_pParent;
-        m_PeFile = Rhs.m_PeFile;
-        m_Number = Rhs.m_Number;
-        m_Section = Rhs.m_Section;
-        return *this;
-      }
-
-    private:
-      // Give Boost.Iterator access to internals
-      friend class boost::iterator_core_access;
-
-      // Increment iterator
-      void increment() 
-      {
-        if (++m_Number >= NtHeaders(*m_PeFile).GetNumberOfSections())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_Number = static_cast<WORD>(-1);
-          m_Section = boost::optional<Section>();
-        }
-        else
-        {
-          m_Section = Section(*m_PeFile, m_Number);
-        }
-      }
-      
-      // Check iterator for equality
-      bool equal(SectionIter const& Rhs) const
-      {
-        return this->m_pParent == Rhs.m_pParent && 
-          this->m_Number == Rhs.m_Number;
-      }
-  
-      // Dereference iterator
-      Section& dereference() const 
-      {
-        return *m_Section;
-      }
-
-      // Parent
-      class SectionList* m_pParent;
-      // PE file
-      boost::optional<PeFile> m_PeFile;
-      // Section number
-      WORD m_Number;
-      // Section object
-      mutable boost::optional<Section> m_Section;
-    };
     
     // Section list iterator types
-    typedef SectionIter iterator;
+    typedef SectionIter<Section> iterator;
+    typedef SectionIter<Section const> const_iterator;
     
     // Constructor
-    SectionList(PeFile const& MyPeFile)
-      : m_PeFile(MyPeFile)
+    explicit SectionList(PeFile const& MyPeFile);
+    
+    // Move constructor
+    SectionList(SectionList&& Other);
+    
+    // Move assignment operator
+    SectionList& operator=(SectionList&& Other);
+    
+    // Get start of import dir list
+    iterator begin();
+    
+    // Get end of import dir list
+    iterator end();
+    
+    // Get start of import dir list
+    const_iterator begin() const;
+     
+    // Get end of import dir list
+    const_iterator end() const;
+    
+    // Get start of import dir list
+    const_iterator cbegin() const;
+     
+    // Get end of import dir list
+    const_iterator cend() const;
+    
+  protected:
+    // Disable copying and copy-assignment
+    SectionList(SectionList const& Other);
+    SectionList& operator=(SectionList const& Other);
+    
+  private:
+    // Give SectionIter access to internals
+    template <typename> friend class SectionIter;
+    
+    // Get section from cache by number
+    boost::optional<Section&> GetByNum(DWORD Num) const;
+    
+    // PeFile instance
+    PeFile m_PeFile;
+    
+    // Section cache
+    mutable std::vector<Section> m_Cache;
+  };
+
+  // Section iterator
+  template <typename SectionT>
+  class SectionIter : public boost::iterator_facade<
+    SectionIter<SectionT>, SectionT, boost::forward_traversal_tag>
+  {
+  public:
+    // SectionIter error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    SectionIter()
+      : m_pParent(nullptr), 
+      m_Number(static_cast<DWORD>(-1)), 
+      m_Current()
     { }
     
-    // Get start of section list
-    iterator begin()
+    // Constructor
+    SectionIter(class SectionList const& Parent)
+      : m_pParent(&Parent), 
+      m_Number(0), 
+      m_Current()
     {
-      return iterator(*this);
-    }
-    
-    // Get end of section list
-    iterator end()
-    {
-      return iterator();
+      boost::optional<Section&> Temp = m_pParent->GetByNum(m_Number);
+      if (Temp)
+      {
+        m_Current = *Temp;
+      }
+      else
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
     }
     
   private:
-    // Give iterator access to internals
-    friend class SectionIter;
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
+
+    // Increment iterator
+    void increment()
+    {
+      boost::optional<Section&> Temp = m_pParent->GetByNum(++m_Number);
+      m_Current = Temp ? *Temp : boost::optional<Section>();
+      if (!Temp)
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
     
-    // PE file
-    PeFile m_PeFile;
+    // Check iterator for equality
+    bool equal(SectionIter const& Rhs) const
+    {
+      return this->m_pParent == Rhs.m_pParent && 
+        this->m_Number == Rhs.m_Number;
+    }
+
+    // Dereference iterator
+    SectionT& dereference() const
+    {
+      return *m_Current;
+    }
+
+    // Parent list instance
+    class SectionList const* m_pParent;
+    
+    // Import dir number
+    DWORD m_Number;
+    
+    // Current import dir instance
+    mutable boost::optional<Section> m_Current;
   };
 }

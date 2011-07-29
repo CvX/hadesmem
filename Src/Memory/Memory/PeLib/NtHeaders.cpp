@@ -661,10 +661,4 @@ namespace HadesMem
       IMAGE_DATA_DIRECTORY) + FIELD_OFFSET(IMAGE_DATA_DIRECTORY, Size), 
       DataDirectorySize);
   }
-
-  // Get raw NT headers
-  IMAGE_NT_HEADERS NtHeaders::GetHeadersRaw() const
-  {
-    return m_Memory.Read<IMAGE_NT_HEADERS>(GetBase());
-  }
 }
