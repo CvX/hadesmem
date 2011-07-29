@@ -49,6 +49,21 @@ namespace HadesMem
 
     // Constructor
     explicit ExportDir(PeFile const& MyPeFile);
+      
+    // Copy constructor
+    ExportDir(ExportDir const& Other);
+    
+    // Copy assignment operator
+    ExportDir& operator=(ExportDir const& Other);
+    
+    // Move constructor
+    ExportDir(ExportDir&& Other);
+    
+    // Move assignment operator
+    ExportDir& operator=(ExportDir&& Other);
+    
+    // Destructor
+    ~ExportDir();
 
     // Get base of export dir
     PVOID GetBase() const;
@@ -121,6 +136,12 @@ namespace HadesMem
 
     // Set address of name ordinals
     void SetAddressOfNameOrdinals(DWORD AddressOfNameOrdinals) const;
+    
+    // Equality operator
+    bool operator==(ExportDir const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(ExportDir const& Rhs) const;
 
   private:
     // PE file
@@ -139,6 +160,21 @@ namespace HadesMem
   public:
     // Constructor
     Export(PeFile const& MyPeFile, DWORD Ordinal);
+      
+    // Copy constructor
+    Export(Export const& Other);
+    
+    // Copy assignment operator
+    Export& operator=(Export const& Other);
+    
+    // Move constructor
+    Export(Export&& Other);
+    
+    // Move assignment operator
+    Export& operator=(Export&& Other);
+    
+    // Destructor
+    ~Export();
 
     // Get RVA
     DWORD GetRva() const;
@@ -166,6 +202,12 @@ namespace HadesMem
 
     // If entry is forwarded
     bool Forwarded() const;
+    
+    // Equality operator
+    bool operator==(Export const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(Export const& Rhs) const;
 
   private:
     // PE file instance

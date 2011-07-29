@@ -35,6 +35,49 @@ namespace HadesMem
     m_Memory(m_PeFile.GetMemoryMgr()), 
     m_pBase(nullptr)
   { }
+      
+  // Copy constructor
+  ExportDir::ExportDir(ExportDir const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  ExportDir& ExportDir::operator=(ExportDir const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  ExportDir::ExportDir(ExportDir&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  ExportDir& ExportDir::operator=(ExportDir&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  ExportDir::~ExportDir()
+  { }
 
   // Get base of export dir
   PVOID ExportDir::GetBase() const
@@ -271,6 +314,18 @@ namespace HadesMem
     m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
       AddressOfNameOrdinals), AddressOfNameOrdinals);
   }
+  
+  // Equality operator
+  bool ExportDir::operator==(ExportDir const& Rhs) const
+  {
+    return m_pBase = Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool ExportDir::operator!=(ExportDir const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 
   // Constructor
   Export::Export(PeFile const& MyPeFile, DWORD Ordinal) 
@@ -391,6 +446,92 @@ namespace HadesMem
       m_Va = m_PeFile.RvaToVa(FuncRva);
     }
   }
+      
+  // Copy constructor
+  Export::Export(Export const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_Rva(Other.m_Rva), 
+    m_Va(Other.m_Va), 
+    m_Name(Other.m_Name), 
+    m_Forwarder(Other.m_Forwarder), 
+    m_ForwarderSplit(Other.m_ForwarderSplit), 
+    m_Ordinal(Other.m_Ordinal), 
+    m_ByName(Other.m_ByName), 
+    m_Forwarded(Other.m_Forwarded)
+  { }
+  
+  // Copy assignment operator
+  Export& Export::operator=(Export const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_Rva = Other.m_Rva;
+    this->m_Va = Other.m_Va;
+    this->m_Name = Other.m_Name;
+    this->m_Forwarder = Other.m_Forwarder;
+    this->m_ForwarderSplit = Other.m_ForwarderSplit;
+    this->m_Ordinal = Other.m_Ordinal;
+    this->m_ByName = Other.m_ByName;
+    this->m_Forwarded = Other.m_Forwarded;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  Export::Export(Export&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_Rva(Other.m_Rva), 
+    m_Va(Other.m_Va), 
+    m_Name(std::move(Other.m_Name)), 
+    m_Forwarder(std::move(Other.m_Forwarder)), 
+    m_ForwarderSplit(std::move(Other.m_ForwarderSplit)), 
+    m_Ordinal(Other.m_Ordinal), 
+    m_ByName(Other.m_ByName), 
+    m_Forwarded(Other.m_Forwarded)
+  {
+    Other.m_Rva = 0;
+    Other.m_Va = nullptr;
+    Other.m_Ordinal = 0;
+    Other.m_ByName = false;
+    Other.m_Forwarded = false;
+  }
+  
+  // Move assignment operator
+  Export& Export::operator=(Export&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_Rva = Other.m_Rva;
+    Other.m_Rva = 0;
+    
+    this->m_Va = Other.m_Va;
+    Other.m_Va = nullptr;
+    
+    this->m_Name = std::move(Other.m_Name);
+    
+    this->m_Forwarder = std::move(Other.m_Forwarder);
+    
+    this->m_ForwarderSplit = std::move(Other.m_ForwarderSplit);
+    
+    this->m_Ordinal = Other.m_Ordinal;
+    Other.m_Ordinal = 0;
+    
+    this->m_ByName = Other.m_ByName;
+    Other.m_ByName = false;
+    
+    this->m_Forwarded = Other.m_Forwarded;
+    Other.m_Forwarded = false;
+    
+    return *this;
+  }
+  
+  // Destructor
+  Export::~Export()
+  { }
   
   // Get RVA
   DWORD Export::GetRva() const
@@ -444,6 +585,18 @@ namespace HadesMem
   bool Export::Forwarded() const
   {
     return m_Forwarded;
+  }
+  
+  // Equality operator
+  bool Export::operator==(DosHeader const& Rhs) const
+  {
+    return m_Ordinal = Rhs.m_Ordinal && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool Export::operator!=(DosHeader const& Rhs) const
+  {
+    return !(*this == Rhs);
   }
   
   // Constructor

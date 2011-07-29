@@ -42,6 +42,21 @@ namespace HadesMem
 
     // Constructor
     explicit DosHeader(PeFile const& MyPeFile);
+      
+    // Copy constructor
+    DosHeader(DosHeader const& Other);
+    
+    // Copy assignment operator
+    DosHeader& operator=(DosHeader const& Other);
+    
+    // Move constructor
+    DosHeader(DosHeader&& Other);
+    
+    // Move assignment operator
+    DosHeader& operator=(DosHeader&& Other);
+    
+    // Destructor
+    ~DosHeader();
     
     // Get base
     PVOID GetBase() const;
@@ -165,6 +180,12 @@ namespace HadesMem
 
     // Set new header offset
     void SetNewHeaderOffset(LONG Offset) const;
+    
+    // Equality operator
+    bool operator==(DosHeader const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(DosHeader const& Rhs) const;
 
   private:
     // PE file

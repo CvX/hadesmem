@@ -13,7 +13,8 @@ project
     <toolset>gcc:<cxxflags>-Wextra 
     <toolset>gcc:<cxxflags>-pedantic-errors 
     <library>/Memory//Memory 
-    <library>/boost//unit_test_framework/<link>shared 
+    <library>/boost//thread/<link>static 
+    <library>/boost//unit_test_framework/<link>static 
     <toolset>gcc:<linkflags>-Wl,--allow-multiple-definition
   ;
 
@@ -29,4 +30,5 @@ test-suite Memory
     [ run PeLib/NtHeadersTest.cpp ]
     [ run PeLib/PeFileTest.cpp ]
     [ run PeLib/SectionTest.cpp ]
+    [ run PeLib/TlsDirTest.cpp ]
   ;

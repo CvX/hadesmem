@@ -33,6 +33,49 @@ namespace HadesMem
     // Ensure magic is valid
     EnsureMagicValid();
   }
+      
+  // Copy constructor
+  DosHeader::DosHeader(DosHeader const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  DosHeader& DosHeader::operator=(DosHeader const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  DosHeader::DosHeader(DosHeader&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  DosHeader& DosHeader::operator=(DosHeader&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  DosHeader::~DosHeader()
+  { }
   
   // Get base
   PVOID DosHeader::GetBase() const
@@ -325,5 +368,17 @@ namespace HadesMem
   {
     m_Memory.Write(m_pBase + FIELD_OFFSET(IMAGE_DOS_HEADER, e_lfanew), 
       Offset);
+  }
+  
+  // Equality operator
+  bool DosHeader::operator==(DosHeader const& Rhs) const
+  {
+    return m_pBase = Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool DosHeader::operator!=(DosHeader const& Rhs) const
+  {
+    return !(*this == Rhs);
   }
 }

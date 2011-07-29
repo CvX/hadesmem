@@ -27,8 +27,30 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE DosHeaderTest
 #include <boost/test/unit_test.hpp>
 
-// DOS header component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create DOS header
+  HadesMem::DosHeader MyDosHeader(MyPeFile);
+  
+  // Test copying, assignement, and moving
+  HadesMem::DosHeader OtherDosHeader(MyDosHeader);
+  BOOST_CHECK(MyDosHeader == OtherDosHeader);
+  MyDosHeader = OtherDosHeader;
+  BOOST_CHECK(MyDosHeader == OtherDosHeader);
+  HadesMem::DosHeader MovedDosHeader(std::move(OtherDosHeader));
+  BOOST_CHECK(MovedDosHeader == MyDosHeader);
+  HadesMem::DosHeader NewTestDosHeader(MyDosHeader);
+  MyDosHeader = std::move(NewTestDosHeader);
+  BOOST_CHECK(MyDosHeader == MovedDosHeader);
+}
+
+BOOST_AUTO_TEST_CASE(DataTests)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
@@ -74,7 +96,8 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       MyDosHdr.SetNewHeaderOffset(MyDosHdr.GetNewHeaderOffset());
       
       // Get raw DOS header again
-      auto const HdrRawNew = MyMemory.Read<IMAGE_DOS_HEADER>(MyPeFile.GetBase());
+      auto const HdrRawNew = MyMemory.Read<IMAGE_DOS_HEADER>(
+        MyPeFile.GetBase());
       
       // Ensure DosHeader getters/setters 'match' by checking that the data is 
       // unchanged
