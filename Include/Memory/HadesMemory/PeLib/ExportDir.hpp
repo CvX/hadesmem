@@ -253,7 +253,7 @@ namespace HadesMem
     class Error : public virtual HadesMemError
     { };
     
-    // Module list iterator types
+    // Export list iterator types
     typedef ExportIter<Export> iterator;
     typedef ExportIter<Export const> const_iterator;
     
@@ -266,22 +266,22 @@ namespace HadesMem
     // Move assignment operator
     ExportList& operator=(ExportList&& Other);
     
-    // Get start of module list
+    // Get start of export list
     iterator begin();
     
-    // Get end of module list
+    // Get end of export list
     iterator end();
     
-    // Get start of module list
+    // Get start of export list
     const_iterator begin() const;
      
-    // Get end of module list
+    // Get end of export list
     const_iterator end() const;
     
-    // Get start of module list
+    // Get start of export list
     const_iterator cbegin() const;
      
-    // Get end of module list
+    // Get end of export list
     const_iterator cend() const;
     
   protected:
@@ -293,13 +293,13 @@ namespace HadesMem
     // Give ExportIter access to internals
     template <typename> friend class ExportIter;
     
-    // Get module from cache by number
+    // Get export from cache by number
     boost::optional<Export&> GetByNum(DWORD Num) const;
     
     // PeFile instance
     PeFile m_PeFile;
     
-    // Module cache
+    // Export cache
     mutable std::vector<Export> m_Cache;
   };
 
@@ -309,7 +309,7 @@ namespace HadesMem
     ExportT, boost::forward_traversal_tag>
   {
   public:
-    // Module iterator error class
+    // Export iterator error class
     class Error : public virtual HadesMemError
     { };
 

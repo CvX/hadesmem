@@ -34,7 +34,50 @@ namespace HadesMem
     PIMAGE_IMPORT_DESCRIPTOR pImpDesc) 
     : m_PeFile(MyPeFile), 
     m_Memory(m_PeFile.GetMemoryMgr()), 
-    m_pImpDesc(pImpDesc)
+    m_pBase(pImpDesc)
+  { }
+      
+  // Copy constructor
+  ImportDir::ImportDir(ImportDir const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  ImportDir& ImportDir::operator=(ImportDir const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  ImportDir::ImportDir(ImportDir&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  ImportDir& ImportDir::operator=(ImportDir&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  ImportDir::~ImportDir()
   { }
 
   // Whether import directory is valid
@@ -65,10 +108,10 @@ namespace HadesMem
   }
 
   // Get import directory base
-  PBYTE ImportDir::GetBase() const
+  PVOID ImportDir::GetBase() const
   {
     // Initialize base address if necessary
-    if (!m_pImpDesc)
+    if (!m_pBase)
     {
       // Get NT headers
       NtHeaders const MyNtHeaders(m_PeFile);
@@ -86,74 +129,92 @@ namespace HadesMem
       }
 
       // Init base address
-      m_pImpDesc = static_cast<PIMAGE_IMPORT_DESCRIPTOR>(m_PeFile.RvaToVa(
+      m_pBase = static_cast<PIMAGE_IMPORT_DESCRIPTOR>(m_PeFile.RvaToVa(
         DataDirVa));
     }
 
     // Return base address
-    return reinterpret_cast<PBYTE>(m_pImpDesc);
-  }
-
-  // Advance to next descriptor
-  void ImportDir::Advance() const
-  {
-    ++m_pImpDesc;
+    return m_pBase;
   }
 
   // Get characteristics
   DWORD ImportDir::GetCharacteristics() const
   {
-    return m_Memory.Read<DWORD>(GetBase() + FIELD_OFFSET(
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
       IMAGE_IMPORT_DESCRIPTOR, Characteristics));
-  }
-
-  // Set characteristics
-  void ImportDir::SetCharacteristics(DWORD Characteristics) const
-  {
-    return m_Memory.Write(GetBase() + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
-      Characteristics), Characteristics);
   }
 
   // Get time and date stamp
   DWORD ImportDir::GetTimeDateStamp() const
   {
-    return m_Memory.Read<DWORD>(GetBase() + FIELD_OFFSET(
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
       IMAGE_IMPORT_DESCRIPTOR, TimeDateStamp));
-  }
-
-  // Set time and date stamp
-  void ImportDir::SetTimeDateStamp(DWORD TimeDateStamp) const
-  {
-    return m_Memory.Write(GetBase() + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
-      TimeDateStamp), TimeDateStamp);
   }
 
   // Get forwarder chain
   DWORD ImportDir::GetForwarderChain() const
   {
-    return m_Memory.Read<DWORD>(GetBase() + FIELD_OFFSET(
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
       IMAGE_IMPORT_DESCRIPTOR, ForwarderChain));
-  }
-
-  // Set forwarder chain
-  void ImportDir::SetForwarderChain(DWORD ForwarderChain) const
-  {
-    return m_Memory.Write(GetBase() + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
-      ForwarderChain), ForwarderChain);
   }
 
   // Get name (raw)
   DWORD ImportDir::GetNameRaw() const
   {
-    return m_Memory.Read<DWORD>(GetBase() + FIELD_OFFSET(
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
       IMAGE_IMPORT_DESCRIPTOR, Name));
+  }
+
+  // Get first thunk
+  DWORD ImportDir::GetFirstThunk() const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_IMPORT_DESCRIPTOR, FirstThunk));
+  }
+
+  // Set characteristics
+  void ImportDir::SetCharacteristics(DWORD Characteristics) const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+      Characteristics), Characteristics);
+  }
+
+  // Set time and date stamp
+  void ImportDir::SetTimeDateStamp(DWORD TimeDateStamp) const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+      TimeDateStamp), TimeDateStamp);
+  }
+
+  // Set forwarder chain
+  void ImportDir::SetForwarderChain(DWORD ForwarderChain) const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+      ForwarderChain), ForwarderChain);
   }
 
   // Set name (raw)
   void ImportDir::SetNameRaw(DWORD Name) const
   {
-    return m_Memory.Write(GetBase() + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
       Name), Name);
+  }
+
+  // Set first thunk
+  void ImportDir::SetFirstThunk(DWORD FirstThunk) const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+      FirstThunk), FirstThunk);
   }
 
   // Get name
@@ -161,27 +222,151 @@ namespace HadesMem
   {
     return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(GetNameRaw()));
   }
-
-  // Get first thunk
-  DWORD ImportDir::GetFirstThunk() const
+  
+  // Equality operator
+  bool ImportDir::operator==(ImportDir const& Rhs) const
   {
-    return m_Memory.Read<DWORD>(GetBase() + FIELD_OFFSET(
-      IMAGE_IMPORT_DESCRIPTOR, FirstThunk));
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
   }
-
-  // Set first thunk
-  void ImportDir::SetFirstThunk(DWORD FirstThunk) const
+  
+  // Inequality operator
+  bool ImportDir::operator!=(ImportDir const& Rhs) const
   {
-    return m_Memory.Write(GetBase() + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
-      FirstThunk), FirstThunk);
+    return !(*this == Rhs);
+  }
+  
+  // Constructor
+  ImportDirList::ImportDirList(PeFile const& MyPeFile)
+    : m_PeFile(MyPeFile), 
+    m_Cache()
+  { }
+    
+  // Move constructor
+  ImportDirList::ImportDirList(ImportDirList&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Cache(std::move(Other.m_Cache))
+  { }
+  
+  // Move assignment operator
+  ImportDirList& ImportDirList::operator=(ImportDirList&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    this->m_Cache = std::move(Other.m_Cache);
+    
+    return *this;
+  }
+  
+  // Get start of import dir list
+  ImportDirList::iterator ImportDirList::begin()
+  {
+    return iterator(*this);
+  }
+  
+  // Get end of import dir list
+  ImportDirList::iterator ImportDirList::end()
+  {
+    return iterator();
+  }
+  
+  // Get start of import dir list
+  ImportDirList::const_iterator ImportDirList::begin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of import dir list
+  ImportDirList::const_iterator ImportDirList::end() const
+  {
+    return const_iterator();
+  }
+  
+  // Get start of import dir list
+  ImportDirList::const_iterator ImportDirList::cbegin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of import dir list
+  ImportDirList::const_iterator ImportDirList::cend() const
+  {
+    return const_iterator();
+  }
+  
+  // Get import dir from cache by number
+  boost::optional<ImportDir&> ImportDirList::GetByNum(DWORD Num) const
+  {
+    while (Num >= m_Cache.size())
+    {
+      ImportDir const TempImportDir(m_PeFile);
+      if (!TempImportDir.IsValid() || !TempImportDir.GetCharacteristics())
+      {
+        return boost::optional<ImportDir&>();
+      }
+      else
+      {
+        auto pImpDesc = static_cast<PIMAGE_IMPORT_DESCRIPTOR>(
+          TempImportDir.GetBase());
+        ImportDir const MyImportDir(m_PeFile, pImpDesc + m_Cache.size());
+        if (!MyImportDir.IsValid() || !MyImportDir.GetCharacteristics())
+        {
+          return boost::optional<ImportDir&>();
+        }
+        
+        m_Cache.push_back(MyImportDir);
+      }
+    }
+    
+    return m_Cache[Num];
   }
 
   // Constructor
   ImportThunk::ImportThunk(PeFile const& MyPeFile, PVOID pThunk) 
     : m_PeFile(MyPeFile), 
     m_Memory(MyPeFile.GetMemoryMgr()), 
-    m_pThunk(static_cast<PIMAGE_THUNK_DATA>(pThunk)), 
-    m_pBase(reinterpret_cast<PBYTE>(m_pThunk))
+    m_pBase(reinterpret_cast<PBYTE>(pThunk))
+  { }
+      
+  // Copy constructor
+  ImportThunk::ImportThunk(ImportThunk const& Other)
+    : m_PeFile(Other.m_PeFile), 
+    m_Memory(Other.m_Memory), 
+    m_pBase(Other.m_pBase)
+  { }
+  
+  // Copy assignment operator
+  ImportThunk& ImportThunk::operator=(ImportThunk const& Other)
+  {
+    this->m_PeFile = Other.m_PeFile;
+    this->m_Memory = Other.m_Memory;
+    this->m_pBase = Other.m_pBase;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  ImportThunk::ImportThunk(ImportThunk&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Memory(std::move(Other.m_Memory)), 
+    m_pBase(Other.m_pBase)
+  {
+    Other.m_pBase = nullptr;
+  }
+  
+  // Move assignment operator
+  ImportThunk& ImportThunk::operator=(ImportThunk&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_pBase = Other.m_pBase;
+    Other.m_pBase = nullptr;
+    
+    return *this;
+  }
+  
+  // Destructor
+  ImportThunk::~ImportThunk()
   { }
   
   // Whether thunk is valid
@@ -199,13 +384,6 @@ namespace HadesMem
         ErrorFunction("ImportThunk::EnsureValid") << 
         ErrorString("Import thunk is invalid."));
     }
-  }
-
-  // Advance to next thunk
-  void ImportThunk::Advance() const
-  {
-    ++m_pThunk;
-    m_pBase = reinterpret_cast<PBYTE>(m_pThunk);
   }
 
   // Get address of data
@@ -293,5 +471,103 @@ namespace HadesMem
   PVOID ImportThunk::GetBase() const
   {
     return m_pBase;
+  }
+  
+  // Equality operator
+  bool ImportThunk::operator==(ImportThunk const& Rhs) const
+  {
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool ImportThunk::operator!=(ImportThunk const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
+  
+  // Constructor
+  ImportThunkList::ImportThunkList(PeFile const& MyPeFile, DWORD FirstThunk)
+    : m_PeFile(MyPeFile), 
+    m_FirstThunk(FirstThunk), 
+    m_Cache()
+  { }
+    
+  // Move constructor
+  ImportThunkList::ImportThunkList(ImportThunkList&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_FirstThunk(Other.m_FirstThunk), 
+    m_Cache(std::move(Other.m_Cache))
+  {
+    Other.m_FirstThunk = 0;
+  }
+  
+  // Move assignment operator
+  ImportThunkList& ImportThunkList::operator=(ImportThunkList&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+      
+    this->m_FirstThunk = Other.m_FirstThunk;
+    Other.m_FirstThunk = 0;
+    
+    this->m_Cache = std::move(Other.m_Cache);
+    
+    return *this;
+  }
+  
+  // Get start of import thunk list
+  ImportThunkList::iterator ImportThunkList::begin()
+  {
+    return iterator(*this);
+  }
+  
+  // Get end of import thunk list
+  ImportThunkList::iterator ImportThunkList::end()
+  {
+    return iterator();
+  }
+  
+  // Get start of import thunk list
+  ImportThunkList::const_iterator ImportThunkList::begin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of import thunk list
+  ImportThunkList::const_iterator ImportThunkList::end() const
+  {
+    return const_iterator();
+  }
+  
+  // Get start of import thunk list
+  ImportThunkList::const_iterator ImportThunkList::cbegin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of import thunk list
+  ImportThunkList::const_iterator ImportThunkList::cend() const
+  {
+    return const_iterator();
+  }
+  
+  // Get import thunk from cache by number
+  boost::optional<ImportThunk&> ImportThunkList::GetByNum(DWORD Num) const
+  {
+    while (Num >= m_Cache.size())
+    {
+      auto pThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(m_PeFile.RvaToVa(
+        m_FirstThunk));
+      ImportThunk const MyImportThunk(m_PeFile, pThunk + m_Cache.size());
+      if (!MyImportThunk.IsValid())
+      {
+        return boost::optional<ImportThunk&>();
+      }
+      else
+      {
+        m_Cache.push_back(MyImportThunk);
+      }
+    }
+    
+    return m_Cache[Num];
   }
 }

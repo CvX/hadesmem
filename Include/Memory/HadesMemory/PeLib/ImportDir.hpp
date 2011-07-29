@@ -48,6 +48,24 @@ namespace HadesMem
     // Constructor
     explicit ImportDir(PeFile const& MyPeFile, 
       PIMAGE_IMPORT_DESCRIPTOR pImpDesc = nullptr);
+      
+    // Copy constructor
+    ImportDir(ImportDir const& Other);
+    
+    // Copy assignment operator
+    ImportDir& operator=(ImportDir const& Other);
+    
+    // Move constructor
+    ImportDir(ImportDir&& Other);
+    
+    // Move assignment operator
+    ImportDir& operator=(ImportDir&& Other);
+    
+    // Destructor
+    ~ImportDir();
+
+    // Get import directory base
+    PVOID GetBase() const;
 
     // Whether import directory is valid
     bool IsValid() const;
@@ -55,184 +73,194 @@ namespace HadesMem
     // Ensure import directory is valid
     void EnsureValid() const;
 
-    // Get import directory base
-    PBYTE GetBase() const;
-
-    // Advance to next descriptor
-    void Advance() const;
-
     // Get characteristics
     DWORD GetCharacteristics() const;
-
-    // Set characteristics
-    void SetCharacteristics(DWORD Characteristics) const;
 
     // Get time and date stamp
     DWORD GetTimeDateStamp() const;
 
-    // Set time and date stamp
-    void SetTimeDateStamp(DWORD TimeDateStamp) const;
-
     // Get forwarder chain
     DWORD GetForwarderChain() const;
-
-    // Set forwarder chain
-    void SetForwarderChain(DWORD ForwarderChain) const;
 
     // Get name (raw)
     DWORD GetNameRaw() const;
 
+    // Get first thunk
+    DWORD GetFirstThunk() const;
+
+    // Set characteristics
+    void SetCharacteristics(DWORD Characteristics) const;
+
+    // Set time and date stamp
+    void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+    // Set forwarder chain
+    void SetForwarderChain(DWORD ForwarderChain) const;
+
     // Set name (raw)
     void SetNameRaw(DWORD Name) const;
+
+    // Set first thunk
+    void SetFirstThunk(DWORD FirstThunk) const;
 
     // Get name
     std::string GetName() const;
       
     // Todo: SetName function
-
-    // Get first thunk
-    DWORD GetFirstThunk() const;
-
-    // Set first thunk
-    void SetFirstThunk(DWORD FirstThunk) const;
+    
+    // Equality operator
+    bool operator==(ImportDir const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(ImportDir const& Rhs) const;
 
   private:
+    // PE file
     PeFile m_PeFile;
 
+    // Memory instance
     MemoryMgr m_Memory;
 
-    mutable PIMAGE_IMPORT_DESCRIPTOR m_pImpDesc;
+    // Import descriptor
+    mutable PIMAGE_IMPORT_DESCRIPTOR m_pBase;
   };
+    
+  // Forward declaration of ImportDirIter
+  template <typename ImportDirT>
+  class ImportDirIter;
   
-  // ImportDir enumeration class
+  // Import dir enumeration class
   class ImportDirList
   {
   public:
-    // ImportDir list error class
+    // ImportDirList exception type
     class Error : public virtual HadesMemError
     { };
-      
-    // ImportDir iterator
-    class ImportDirIter : public boost::iterator_facade<ImportDirIter, 
-      ImportDir, boost::forward_traversal_tag>
-    {
-    public:
-      // ImportDir iterator error class
-      class Error : public virtual HadesMemError
-      { };
-
-      // Constructor
-      ImportDirIter() 
-        : m_pParent(nullptr), 
-        m_PeFile(), 
-        m_ImportDir(), 
-        m_Num(static_cast<DWORD>(-1))
-      { }
-      
-      // Constructor
-      ImportDirIter(ImportDirList& Parent) 
-        : m_pParent(&Parent), 
-        m_PeFile(Parent.m_PeFile), 
-        m_ImportDir(*m_PeFile), 
-        m_Num(0)
-      {
-        if (!m_ImportDir->IsValid() || !m_ImportDir->GetCharacteristics())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_ImportDir = boost::optional<ImportDir>();
-          m_Num = static_cast<DWORD>(-1);
-        }
-      }
-      
-      // Copy constructor
-      ImportDirIter(ImportDirIter const& Rhs) 
-        : m_pParent(Rhs.m_pParent), 
-        m_PeFile(Rhs.m_PeFile), 
-        m_ImportDir(Rhs.m_ImportDir), 
-        m_Num(Rhs.m_Num)
-      { }
-      
-      // Assignment operator
-      ImportDirIter& operator=(ImportDirIter const& Rhs) 
-      {
-        m_pParent = Rhs.m_pParent;
-        m_PeFile = Rhs.m_PeFile;
-        m_ImportDir = Rhs.m_ImportDir;
-        m_Num = Rhs.m_Num;
-        return *this;
-      }
-
-    private:
-      // Give Boost.Iterator access to internals
-      friend class boost::iterator_core_access;
-
-      // Increment iterator
-      void increment() 
-      {
-        ++m_Num;
-        auto pImpDesc = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
-          m_ImportDir->GetBase());
-        m_ImportDir = ImportDir(*m_PeFile, ++pImpDesc);
-        if (!m_ImportDir->GetCharacteristics())
-        {
-          m_pParent = nullptr;
-          m_ImportDir = boost::optional<ImportDir>();
-          m_PeFile = boost::optional<PeFile>();
-          m_Num = static_cast<DWORD>(-1);
-        }
-      }
-      
-      // Check iterator for equality
-      bool equal(ImportDirIter const& Rhs) const
-      {
-        return this->m_pParent == Rhs.m_pParent && this->m_Num == Rhs.m_Num;
-      }
-  
-      // Dereference iterator
-      ImportDir& dereference() const 
-      {
-        return *m_ImportDir;
-      }
-
-      // Parent
-      class ImportDirList* m_pParent;
-      // PE file
-      boost::optional<PeFile> m_PeFile;
-      // ImportDir object
-      mutable boost::optional<ImportDir> m_ImportDir;
-      // Import dir num
-      DWORD m_Num;
-    };
     
-    // ImportDir list iterator types
-    typedef ImportDirIter iterator;
+    // Import dir list iterator types
+    typedef ImportDirIter<ImportDir> iterator;
+    typedef ImportDirIter<ImportDir const> const_iterator;
     
     // Constructor
-    ImportDirList(PeFile const& MyPeFile)
-      : m_PeFile(MyPeFile)
+    explicit ImportDirList(PeFile const& MyPeFile);
+    
+    // Move constructor
+    ImportDirList(ImportDirList&& Other);
+    
+    // Move assignment operator
+    ImportDirList& operator=(ImportDirList&& Other);
+    
+    // Get start of import dir list
+    iterator begin();
+    
+    // Get end of import dir list
+    iterator end();
+    
+    // Get start of import dir list
+    const_iterator begin() const;
+     
+    // Get end of import dir list
+    const_iterator end() const;
+    
+    // Get start of import dir list
+    const_iterator cbegin() const;
+     
+    // Get end of import dir list
+    const_iterator cend() const;
+    
+  protected:
+    // Disable copying and copy-assignment
+    ImportDirList(ImportDirList const& Other);
+    ImportDirList& operator=(ImportDirList const& Other);
+    
+  private:
+    // Give ExportIter access to internals
+    template <typename> friend class ImportDirIter;
+    
+    // Get import dir from cache by number
+    boost::optional<ImportDir&> GetByNum(DWORD Num) const;
+    
+    // PeFile instance
+    PeFile m_PeFile;
+    
+    // Import dir cache
+    mutable std::vector<ImportDir> m_Cache;
+  };
+
+  // Import dir iterator
+  template <typename ImportDirT>
+  class ImportDirIter : public boost::iterator_facade<
+    ImportDirIter<ImportDirT>, ImportDirT, boost::forward_traversal_tag>
+  {
+  public:
+    // ImportDirIter error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    ImportDirIter()
+      : m_pParent(nullptr), 
+      m_Number(static_cast<DWORD>(-1)), 
+      m_Current()
     { }
     
-    // Get start of importdir list
-    iterator begin()
+    // Constructor
+    ImportDirIter(class ImportDirList const& Parent)
+      : m_pParent(&Parent), 
+      m_Number(0), 
+      m_Current()
     {
-      return iterator(*this);
-    }
-    
-    // Get end of importdir list
-    iterator end()
-    {
-      return iterator();
+      boost::optional<ImportDir&> Temp = m_pParent->GetByNum(m_Number);
+      if (Temp)
+      {
+        m_Current = *Temp;
+      }
+      else
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
     }
     
   private:
-    // Give iterator access to internals
-    friend class ImportDirIter;
-    
-    // PE file
-    PeFile m_PeFile;
-  };
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
 
+    // Increment iterator
+    void increment()
+    {
+      boost::optional<ImportDir&> Temp = m_pParent->GetByNum(++m_Number);
+      m_Current = Temp ? *Temp : boost::optional<ImportDir>();
+      if (!Temp)
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
+    
+    // Check iterator for equality
+    bool equal(ImportDirIter const& Rhs) const
+    {
+      return this->m_pParent == Rhs.m_pParent && 
+        this->m_Number == Rhs.m_Number;
+    }
+
+    // Dereference iterator
+    ImportDirT& dereference() const
+    {
+      return *m_Current;
+    }
+
+    // Parent list instance
+    class ImportDirList const* m_pParent;
+    
+    // Import dir number
+    DWORD m_Number;
+    
+    // Current import dir instance
+    mutable boost::optional<ImportDir> m_Current;
+  };
+  
   // Import thunk wrapper
   class ImportThunk
   {
@@ -243,6 +271,24 @@ namespace HadesMem
 
     // Constructor
     ImportThunk(PeFile const& MyPeFile, PVOID pThunk);
+      
+    // Copy constructor
+    ImportThunk(ImportThunk const& Other);
+    
+    // Copy assignment operator
+    ImportThunk& operator=(ImportThunk const& Other);
+    
+    // Move constructor
+    ImportThunk(ImportThunk&& Other);
+    
+    // Move assignment operator
+    ImportThunk& operator=(ImportThunk&& Other);
+    
+    // Destructor
+    ~ImportThunk();
+    
+    // Get base
+    PVOID GetBase() const;
 
     // Whether thunk is valid
     bool IsValid() const;
@@ -250,189 +296,196 @@ namespace HadesMem
     // Ensure thunk is valid
     void EnsureValid() const;
 
-    // Advance to next thunk
-    void Advance() const;
-
     // Get address of data
     DWORD_PTR GetAddressOfData() const;
 
-    // Set address of data
-    void SetAddressOfData(DWORD_PTR AddressOfData) const;
-
     // Get ordinal (raw)
     DWORD_PTR GetOrdinalRaw() const;
-
-    // Set ordinal (raw)
-    void SetOrdinalRaw(DWORD_PTR OrdinalRaw) const;
     
     // Whether import is by ordinal
     bool ByOrdinal() const;
 
     // Get ordinal
     WORD GetOrdinal() const;
-      
-    // Todo: SetOrdinal function
 
     // Get function
     DWORD_PTR GetFunction() const;
 
-    // Set function
-    void SetFunction(DWORD_PTR Function) const;
-
     // Get hint
     WORD GetHint() const;
 
-    // Set hint
-    void SetHint(WORD Hint) const;
-
     // Get name
     std::string GetName() const;
+
+    // Set address of data
+    void SetAddressOfData(DWORD_PTR AddressOfData) const;
+
+    // Set ordinal (raw)
+    void SetOrdinalRaw(DWORD_PTR OrdinalRaw) const;
+      
+    // Todo: SetOrdinal function
+
+    // Set function
+    void SetFunction(DWORD_PTR Function) const;
+
+    // Set hint
+    void SetHint(WORD Hint) const;
       
     // Todo: SetName function
     
-    // Get base
-    PVOID GetBase() const;
+    // Equality operator
+    bool operator==(ImportThunk const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(ImportThunk const& Rhs) const;
 
   private:
+    // PE file
     PeFile m_PeFile;
 
+    // Memory instance
     MemoryMgr m_Memory;
 
-    mutable PIMAGE_THUNK_DATA m_pThunk;
-
+    // Base pointer
     mutable PBYTE m_pBase;
   };
+    
+  // Forward declaration of ImportThunkIter
+  template <typename ImportThunkT>
+  class ImportThunkIter;
   
-  // ImportThunk enumeration class
+  // Import thunk enumeration class
   class ImportThunkList
   {
   public:
-    // ImportThunk list error class
+    // ImportThunkList exception type
     class Error : public virtual HadesMemError
     { };
-      
-    // ImportThunk iterator
-    class ImportThunkIter : public boost::iterator_facade<ImportThunkIter, 
-      ImportThunk, boost::forward_traversal_tag>
-    {
-    public:
-      // ImportThunk iterator error class
-      class Error : public virtual HadesMemError
-      { };
-
-      // Constructor
-      ImportThunkIter() 
-        : m_pParent(nullptr), 
-        m_PeFile(), 
-        m_pThunk(nullptr), 
-        m_ImportThunk()
-      { }
-      
-      // Constructor
-      ImportThunkIter(ImportThunkList& Parent, DWORD FirstThunk) 
-        : m_pParent(&Parent), 
-        m_PeFile(Parent.m_PeFile), 
-        m_pThunk(nullptr), 
-        m_ImportThunk()
-      {
-        m_pThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(m_PeFile->RvaToVa(
-          FirstThunk));
-        m_ImportThunk = ImportThunk(*m_PeFile, m_pThunk);
-        if (!m_ImportThunk->IsValid())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_pThunk = nullptr;
-          m_ImportThunk = boost::optional<ImportThunk>();
-        }
-      }
-      
-      // Copy constructor
-      ImportThunkIter(ImportThunkIter const& Rhs) 
-        : m_pParent(Rhs.m_pParent), 
-        m_PeFile(Rhs.m_PeFile), 
-        m_pThunk(Rhs.m_pThunk), 
-        m_ImportThunk(Rhs.m_ImportThunk)
-      { }
-      
-      // Assignment operator
-      ImportThunkIter& operator=(ImportThunkIter const& Rhs) 
-      {
-        m_pParent = Rhs.m_pParent;
-        m_PeFile = Rhs.m_PeFile;
-        m_pThunk = Rhs.m_pThunk;
-        m_ImportThunk = Rhs.m_ImportThunk;
-        return *this;
-      }
-
-    private:
-      // Give Boost.Iterator access to internals
-      friend class boost::iterator_core_access;
-
-      // Increment iterator
-      void increment() 
-      {
-        m_ImportThunk = ImportThunk(*m_PeFile, ++m_pThunk);
-        if (!m_ImportThunk->IsValid())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_pThunk = nullptr;
-          m_ImportThunk = boost::optional<ImportThunk>();
-        }
-      }
-      
-      // Check iterator for equality
-      bool equal(ImportThunkIter const& Rhs) const
-      {
-        return this->m_pParent == Rhs.m_pParent && 
-          this->m_pThunk == Rhs.m_pThunk;
-      }
-  
-      // Dereference iterator
-      ImportThunk& dereference() const 
-      {
-        return *m_ImportThunk;
-      }
-
-      // Parent
-      class ImportThunkList* m_pParent;
-      // PE file
-      boost::optional<PeFile> m_PeFile;
-      // Current thunk pointer
-      PIMAGE_THUNK_DATA m_pThunk;
-      // ImportThunk object
-      mutable boost::optional<ImportThunk> m_ImportThunk;
-    };
     
-    // ImportThunk list iterator types
-    typedef ImportThunkIter iterator;
+    // Import dir list iterator types
+    typedef ImportThunkIter<ImportThunk> iterator;
+    typedef ImportThunkIter<ImportThunk const> const_iterator;
     
     // Constructor
-    ImportThunkList(PeFile const& MyPeFile, DWORD FirstThunk)
-      : m_PeFile(MyPeFile), 
-      m_FirstThunk(FirstThunk)
+    explicit ImportThunkList(PeFile const& MyPeFile, DWORD FirstThunk);
+    
+    // Move constructor
+    ImportThunkList(ImportThunkList&& Other);
+    
+    // Move assignment operator
+    ImportThunkList& operator=(ImportThunkList&& Other);
+    
+    // Get start of import thunk list
+    iterator begin();
+    
+    // Get end of import thunk list
+    iterator end();
+    
+    // Get start of import thunk list
+    const_iterator begin() const;
+     
+    // Get end of import thunk list
+    const_iterator end() const;
+    
+    // Get start of import thunk list
+    const_iterator cbegin() const;
+     
+    // Get end of import thunk list
+    const_iterator cend() const;
+    
+  protected:
+    // Disable copying and copy-assignment
+    ImportThunkList(ImportThunkList const& Other);
+    ImportThunkList& operator=(ImportThunkList const& Other);
+    
+  private:
+    // Give ImportThunkIter access to internals
+    template <typename> friend class ImportThunkIter;
+    
+    // Get import thunk from cache by number
+    boost::optional<ImportThunk&> GetByNum(DWORD Num) const;
+    
+    // PeFile instance
+    PeFile m_PeFile;
+    
+    // First thunk
+    DWORD m_FirstThunk;
+    
+    // Import thunk cache
+    mutable std::vector<ImportThunk> m_Cache;
+  };
+
+  // Import thunk iterator
+  template <typename ImportThunkT>
+  class ImportThunkIter : public boost::iterator_facade<
+    ImportThunkIter<ImportThunkT>, ImportThunkT, boost::forward_traversal_tag>
+  {
+  public:
+    // ImportThunkIter error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    ImportThunkIter()
+      : m_pParent(nullptr), 
+      m_Number(static_cast<DWORD>(-1)), 
+      m_Current()
     { }
     
-    // Get start of importthunk list
-    iterator begin()
+    // Constructor
+    ImportThunkIter(class ImportThunkList const& Parent)
+      : m_pParent(&Parent), 
+      m_Number(0), 
+      m_Current()
     {
-      return iterator(*this, m_FirstThunk);
-    }
-    
-    // Get end of importthunk list
-    iterator end()
-    {
-      return iterator();
+      boost::optional<ImportThunk&> Temp = m_pParent->GetByNum(m_Number);
+      if (Temp)
+      {
+        m_Current = *Temp;
+      }
+      else
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
     }
     
   private:
-    // Give iterator access to internals
-    friend class ImportThunkIter;
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
+
+    // Increment iterator
+    void increment()
+    {
+      boost::optional<ImportThunk&> Temp = m_pParent->GetByNum(++m_Number);
+      m_Current = Temp ? *Temp : boost::optional<ImportThunk>();
+      if (!Temp)
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
     
-    // PE file
-    PeFile m_PeFile;
-    // First thunk
-    DWORD m_FirstThunk;
+    // Check iterator for equality
+    bool equal(ImportThunkIter const& Rhs) const
+    {
+      return this->m_pParent == Rhs.m_pParent && 
+        this->m_Number == Rhs.m_Number;
+    }
+
+    // Dereference iterator
+    ImportThunkT& dereference() const
+    {
+      return *m_Current;
+    }
+
+    // Parent list instance
+    class ImportThunkList const* m_pParent;
+    
+    // Import dir number
+    DWORD m_Number;
+    
+    // Current import thunk instance
+    mutable boost::optional<ImportThunk> m_Current;
   };
 }

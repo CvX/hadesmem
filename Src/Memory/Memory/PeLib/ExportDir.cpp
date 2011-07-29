@@ -620,43 +620,43 @@ namespace HadesMem
     return *this;
   }
   
-  // Get start of module list
+  // Get start of export list
   ExportList::iterator ExportList::begin()
   {
     return iterator(*this);
   }
   
-  // Get end of module list
+  // Get end of export list
   ExportList::iterator ExportList::end()
   {
     return iterator();
   }
   
-  // Get start of module list
+  // Get start of export list
   ExportList::const_iterator ExportList::begin() const
   {
     return const_iterator(*this);
   }
   
-  // Get end of module list
+  // Get end of export list
   ExportList::const_iterator ExportList::end() const
   {
     return const_iterator();
   }
   
-  // Get start of module list
+  // Get start of export list
   ExportList::const_iterator ExportList::cbegin() const
   {
     return const_iterator(*this);
   }
   
-  // Get end of module list
+  // Get end of export list
   ExportList::const_iterator ExportList::cend() const
   {
     return const_iterator();
   }
   
-  // Get module from cache by number
+  // Get export from cache by number
   boost::optional<Export&> ExportList::GetByNum(DWORD Num) const
   {
     while (Num >= m_Cache.size())
