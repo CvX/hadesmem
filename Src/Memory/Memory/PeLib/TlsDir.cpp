@@ -263,4 +263,16 @@ namespace HadesMem
         ErrorString("Could not set data. Verification mismatch."));
     }
   }
+  
+  // Equality operator
+  bool TlsDir::operator==(TlsDir const& Rhs) const
+  {
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool TlsDir::operator!=(TlsDir const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 }

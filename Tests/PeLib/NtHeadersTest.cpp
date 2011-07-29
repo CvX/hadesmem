@@ -28,8 +28,30 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE NtHeadersTest
 #include <boost/test/unit_test.hpp>
 
-// NT headers component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create NT headers
+  HadesMem::NtHeaders MyNtHeaders(MyPeFile);
+  
+  // Test copying, assignement, and moving
+  HadesMem::NtHeaders OtherNtHeaders(MyNtHeaders);
+  BOOST_CHECK(MyNtHeaders == OtherNtHeaders);
+  MyNtHeaders = OtherNtHeaders;
+  BOOST_CHECK(MyNtHeaders == OtherNtHeaders);
+  HadesMem::NtHeaders MovedNtHeaders(std::move(OtherNtHeaders));
+  BOOST_CHECK(MovedNtHeaders == MyNtHeaders);
+  HadesMem::NtHeaders NewTestNtHeaders(MyNtHeaders);
+  MyNtHeaders = std::move(NewTestNtHeaders);
+  BOOST_CHECK(MyNtHeaders == MovedNtHeaders);
+}
+
+BOOST_AUTO_TEST_CASE(DataTest)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
@@ -101,10 +123,7 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       MyNtHeaders.SetSizeOfHeapCommit(MyNtHeaders.GetSizeOfHeapCommit());
       MyNtHeaders.SetLoaderFlags(MyNtHeaders.GetLoaderFlags());
       MyNtHeaders.SetNumberOfRvaAndSizes(MyNtHeaders.GetNumberOfRvaAndSizes());
-      // Todo: Investigate whether this should be checking NumberOfRvaAndSizes 
-      // instead of IMAGE_NUMBEROF_DIRECTORY_ENTRIES. Especially when working 
-      // with an on-disk representation of a PE file.
-      for (std::size_t i = 0; i < IMAGE_NUMBEROF_DIRECTORY_ENTRIES; ++i)
+      for (std::size_t i = 0; i < MyNtHeaders.GetNumberOfRvaAndSizes(); ++i)
       {
         auto Dir = static_cast<HadesMem::NtHeaders::DataDir>(i);
         MyNtHeaders.SetDataDirectoryVirtualAddress(Dir, MyNtHeaders.

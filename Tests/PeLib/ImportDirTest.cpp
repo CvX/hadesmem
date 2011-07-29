@@ -29,15 +29,40 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE ImportDirTest
 #include <boost/test/unit_test.hpp>
 
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create import dir
+  HadesMem::ImportDir MyImportDir(MyPeFile);
+  
+  // Test copying, assignement, and moving
+  HadesMem::ImportDir OtherImportDir(MyImportDir);
+  BOOST_CHECK(MyImportDir == OtherImportDir);
+  MyImportDir = OtherImportDir;
+  BOOST_CHECK(MyImportDir == OtherImportDir);
+  HadesMem::ImportDir MovedImportDir(std::move(OtherImportDir));
+  BOOST_CHECK(MovedImportDir == MyImportDir);
+  HadesMem::ImportDir NewTestImportDir(MyImportDir);
+  MyImportDir = std::move(NewTestImportDir);
+  BOOST_CHECK(MyImportDir == MovedImportDir);
+  
+  // TODO: Test ImportThunk constructors
+}
+
 // ImportDir component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(DataTest)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
   
   // Enumerate module list and run section tests on all modules
   HadesMem::ModuleList Modules(MyMemory);
-  std::for_each(Modules.begin(), Modules.end(), 
+  std::for_each(Modules.cbegin(), Modules.cend(), 
     [&] (HadesMem::Module const& Mod) 
     {
       // Open module as a memory-based PeFile
@@ -50,7 +75,26 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       HadesMem::ImportDirList ImportDirs(MyPeFile);
       if (Mod.GetHandle() == GetModuleHandle(NULL))
       {
-        BOOST_CHECK(ImportDirs.begin() != ImportDirs.end());
+        BOOST_CHECK(ImportDirs.cbegin() != ImportDirs.cend());
+        
+        auto Iter = std::find_if(ImportDirs.cbegin(), ImportDirs.cend(), 
+          [] (HadesMem::ImportDir const& I)
+          {
+            return I.GetName() == "kernel32" || 
+              I.GetName() == "kernel32.dll" || 
+              I.GetName() == "KERNEL32.dll" || 
+              I.GetName() == "KERNEL32.DLL";
+          });
+        BOOST_CHECK(Iter != ImportDirs.cend());
+        
+        HadesMem::ImportThunkList ImportThunks(MyPeFile, 
+          Iter->GetCharacteristics());
+        auto Iter2 = std::find_if(ImportThunks.cbegin(), ImportThunks.cend(), 
+          [] (HadesMem::ImportThunk const& I)
+          {
+            return I.ByOrdinal() ? false : I.GetName() == "EncodePointer";
+          });
+        BOOST_CHECK(Iter2 != ImportThunks.cend());
       }
       std::for_each(ImportDirs.begin(), ImportDirs.end(), 
         [&] (HadesMem::ImportDir const& D)
@@ -86,10 +130,7 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
           // Enumerate import thunks for import dir
           HadesMem::ImportThunkList ImportThunks(MyPeFile, 
             D.GetCharacteristics());
-          if (Mod.GetHandle() == GetModuleHandle(NULL))
-          {
-            BOOST_CHECK(ImportThunks.begin() != ImportThunks.end());
-          }
+          BOOST_CHECK(ImportThunks.begin() != ImportThunks.end());
           std::for_each(ImportThunks.begin(), ImportThunks.end(), 
             [&] (HadesMem::ImportThunk const& T)
             {

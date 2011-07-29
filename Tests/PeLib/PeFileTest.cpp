@@ -25,8 +25,27 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE PeFileTest
 #include <boost/test/unit_test.hpp>
 
-// PeFile component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+  
+  // Test copying, assignement, and moving
+  HadesMem::PeFile OtherPeFile(MyPeFile);
+  BOOST_CHECK(MyPeFile == OtherPeFile);
+  MyPeFile = OtherPeFile;
+  BOOST_CHECK(MyPeFile == OtherPeFile);
+  HadesMem::PeFile MovedPeFile(std::move(OtherPeFile));
+  BOOST_CHECK(MovedPeFile == MyPeFile);
+  HadesMem::PeFile NewTestPeFile(MyPeFile);
+  MyPeFile = std::move(NewTestPeFile);
+  BOOST_CHECK(MyPeFile == MovedPeFile);
+}
+
+BOOST_AUTO_TEST_CASE(DataTest)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());

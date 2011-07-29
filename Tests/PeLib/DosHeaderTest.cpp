@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(DataTests)
   
   // Enumerate module list and run DOS header tests on all modules
   HadesMem::ModuleList Modules(MyMemory);
-  std::for_each(Modules.begin(), Modules.end(), 
+  std::for_each(Modules.cbegin(), Modules.cend(), 
     [&] (HadesMem::Module const& Mod) 
     {
       // Open module as a memory-based PeFile

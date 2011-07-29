@@ -32,8 +32,30 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE SectionTest
 #include <boost/test/unit_test.hpp>
 
-// Section component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create section
+  HadesMem::Section MySection(MyPeFile, 0);
+  
+  // Test copying, assignement, and moving
+  HadesMem::Section OtherSection(MySection);
+  BOOST_CHECK(MySection == OtherSection);
+  MySection = OtherSection;
+  BOOST_CHECK(MySection == OtherSection);
+  HadesMem::Section MovedSection(std::move(OtherSection));
+  BOOST_CHECK(MovedSection == MySection);
+  HadesMem::Section NewTestSection(MySection);
+  MySection = std::move(NewTestSection);
+  BOOST_CHECK(MySection == MovedSection);
+}
+
+BOOST_AUTO_TEST_CASE(DataTest)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
@@ -55,6 +77,13 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       if (Mod.GetHandle() == GetModuleHandle(NULL))
       {
         BOOST_CHECK(Sections.begin() != Sections.end());
+        
+        auto Iter = std::find_if(Sections.cbegin(), Sections.cend(), 
+          [] (HadesMem::Section const& S)
+          {
+            return S.GetName() == ".text";
+          });
+        BOOST_CHECK(Iter != Sections.cend());
       }
       std::for_each(Sections.begin(), Sections.end(), 
         [&] (HadesMem::Section const& S)

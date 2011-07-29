@@ -107,6 +107,12 @@ namespace HadesMem
     std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
       
     // Todo: SetCallbacks function
+    
+    // Equality operator
+    bool operator==(TlsDir const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(TlsDir const& Rhs) const;
 
   private:
     // PE file

@@ -41,8 +41,31 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #pragma GCC diagnostic pop
 #endif
 #include <boost/test/unit_test.hpp>
-// TLS component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create TLS dir
+  HadesMem::TlsDir MyTlsDir(MyPeFile);
+  
+  // Test copying, assignement, and moving
+  HadesMem::TlsDir OtherTlsDir(MyTlsDir);
+  BOOST_CHECK(MyTlsDir == OtherTlsDir);
+  MyTlsDir = OtherTlsDir;
+  BOOST_CHECK(MyTlsDir == OtherTlsDir);
+  HadesMem::TlsDir MovedTlsDir(std::move(OtherTlsDir));
+  BOOST_CHECK(MovedTlsDir == MyTlsDir);
+  HadesMem::TlsDir NewTestTlsDir(MyTlsDir);
+  MyTlsDir = std::move(NewTestTlsDir);
+  BOOST_CHECK(MyTlsDir == MovedTlsDir);
+}
+
+BOOST_AUTO_TEST_CASE(DataTest)
 {
   // Use threads and TSS to ensure that at least one module has a TLS dir
   auto const DoNothing = [] () { };
@@ -64,10 +87,17 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       HadesMem::DosHeader const MyDosHeader(MyPeFile);
       HadesMem::NtHeaders const MyNtHeaders(MyPeFile);
       
-      // Ensure module has a TLS directory before continuing
-      // Todo: Ensure via test that at least one module with a TLS dir is 
-      // processed (i.e. this one)
+      // Create TLS dir
       HadesMem::TlsDir MyTlsDir(MyPeFile);
+        
+      // Check self
+      if (Mod.GetHandle() == GetModuleHandle(NULL))
+      {
+        BOOST_CHECK(MyTlsDir.IsValid());
+        BOOST_CHECK(!MyTlsDir.GetCallbacks().empty());
+      }
+      
+      // Ensure module has a TLS directory before continuing
       if (!MyTlsDir.IsValid())
       {
         return;

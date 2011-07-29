@@ -706,4 +706,16 @@ namespace HadesMem
       IMAGE_DATA_DIRECTORY) + FIELD_OFFSET(IMAGE_DATA_DIRECTORY, Size), 
       DataDirectorySize);
   }
+  
+  // Equality operator
+  bool NtHeaders::operator==(NtHeaders const& Rhs) const
+  {
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool NtHeaders::operator!=(NtHeaders const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 }

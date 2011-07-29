@@ -169,4 +169,16 @@ namespace HadesMem
   {
     return m_Type;
   }
+  
+  // Equality operator
+  bool PeFile::operator==(PeFile const& Rhs) const
+  {
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool PeFile::operator!=(PeFile const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 }

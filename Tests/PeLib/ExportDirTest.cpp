@@ -30,18 +30,42 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/config.hpp>
 #include <boost/test/unit_test.hpp>
 
-// Export a function to ensure that at least one module has an export dir
-BOOST_SYMBOL_EXPORT void TestExport() { }
+// Export functions for use in tests
+extern "C" BOOST_SYMBOL_EXPORT void FooExport() { }
+extern "C" BOOST_SYMBOL_EXPORT void TestExport() { }
+extern "C" BOOST_SYMBOL_EXPORT void BarExport() { }
 
-// ExportDir component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create PeFile
+  HadesMem::PeFile MyPeFile(MyMemory, GetModuleHandle(NULL));
+    
+  // Create export dir
+  HadesMem::ExportDir MyExportDir(MyPeFile);
+  
+  // Test copying, assignement, and moving
+  HadesMem::ExportDir OtherExportDir(MyExportDir);
+  BOOST_CHECK(MyExportDir == OtherExportDir);
+  MyExportDir = OtherExportDir;
+  BOOST_CHECK(MyExportDir == OtherExportDir);
+  HadesMem::ExportDir MovedExportDir(std::move(OtherExportDir));
+  BOOST_CHECK(MovedExportDir == MyExportDir);
+  HadesMem::ExportDir NewTestExportDir(MyExportDir);
+  MyExportDir = std::move(NewTestExportDir);
+  BOOST_CHECK(MyExportDir == MovedExportDir);
+}
+
+BOOST_AUTO_TEST_CASE(DataTests)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
   
   // Enumerate module list and run section tests on all modules
   HadesMem::ModuleList Modules(MyMemory);
-  std::for_each(Modules.begin(), Modules.end(), 
+  std::for_each(Modules.cbegin(), Modules.cend(), 
     [&] (HadesMem::Module const& Mod) 
     {
       // Open module as a memory-based PeFile
@@ -52,11 +76,26 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
       
       // Get export dir
       HadesMem::ExportDir MyExportDir(MyPeFile);
-        
-      // Ensure validity check is correct
+      
+      // Do some extra checks for known values on self
       if (Mod.GetHandle() == GetModuleHandle(NULL))
       {
+        // Ensure validity check is correct
         BOOST_CHECK(MyExportDir.IsValid());
+        
+        // Ensure export enumeration works
+        HadesMem::ExportList Exports(MyPeFile);
+        BOOST_CHECK(Exports.begin() != Exports.end());
+        auto Iter = std::find_if(Exports.cbegin(), Exports.cend(), 
+          [] (HadesMem::Export const& E)
+          {
+            return E.GetName() == "TestExport" || 
+              E.GetName() == "_TestExport";
+          });
+        BOOST_REQUIRE(Iter != Exports.cend());
+        BOOST_CHECK_EQUAL(Iter->ByName(), true);
+        BOOST_CHECK_EQUAL(Iter->Forwarded(), false);
+        BOOST_CHECK(Iter->GetVa() == &TestExport);
       }
       
       // Ensure module has an export directory before continuing
@@ -98,10 +137,6 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
         
       // Enumerate exports for module
       HadesMem::ExportList Exports(MyPeFile);
-      if (Mod.GetHandle() == GetModuleHandle(NULL))
-      {
-        BOOST_CHECK(Exports.begin() != Exports.end());
-      }
       std::for_each(Exports.begin(), Exports.end(), 
         [&] (HadesMem::Export const& E)
         {

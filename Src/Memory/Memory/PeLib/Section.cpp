@@ -374,4 +374,16 @@ namespace HadesMem
     
     return m_Cache[Num];
   }
+  
+  // Equality operator
+  bool Section::operator==(Section const& Rhs) const
+  {
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool Section::operator!=(Section const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 }

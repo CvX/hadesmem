@@ -73,6 +73,12 @@ namespace HadesMem
 
     // Get file type
     FileType GetType() const;
+    
+    // Equality operator
+    bool operator==(PeFile const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(PeFile const& Rhs) const;
 
   protected:
     // Memory instance
