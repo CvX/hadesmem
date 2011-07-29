@@ -318,7 +318,7 @@ namespace HadesMem
   // Equality operator
   bool ExportDir::operator==(ExportDir const& Rhs) const
   {
-    return m_pBase = Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
   }
   
   // Inequality operator
@@ -588,13 +588,13 @@ namespace HadesMem
   }
   
   // Equality operator
-  bool Export::operator==(DosHeader const& Rhs) const
+  bool Export::operator==(Export const& Rhs) const
   {
-    return m_Ordinal = Rhs.m_Ordinal && m_Memory == Rhs.m_Memory;
+    return m_Ordinal == Rhs.m_Ordinal && m_Memory == Rhs.m_Memory;
   }
   
   // Inequality operator
-  bool Export::operator!=(DosHeader const& Rhs) const
+  bool Export::operator!=(Export const& Rhs) const
   {
     return !(*this == Rhs);
   }
@@ -670,8 +670,8 @@ namespace HadesMem
       {
         if (Num < MyExportDir.GetNumberOfFunctions())
         {
-          m_Cache.push_back(Export(m_PeFile, MyExportDir.GetOrdinalBase() + 
-            m_Cache.size()));
+          m_Cache.push_back(Export(m_PeFile, static_cast<DWORD>(
+            MyExportDir.GetOrdinalBase() + m_Cache.size())));
         }
         else
         {

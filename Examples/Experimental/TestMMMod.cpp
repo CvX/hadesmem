@@ -17,16 +17,21 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Boost
-#include <boost/thread.hpp>
-#include <boost/exception/all.hpp>
-
-// Windows API
-#include <crtdbg.h>
-#include <Windows.h>
-
 // Hades
 #include <HadesMemory/Memory.hpp>
+#include <HadesMemory/PeLib/PeLib.hpp>
+#include <HadesMemory/Detail/Config.hpp>
+
+// Boost
+#ifdef HADES_MSVC
+#include <boost/thread.hpp>
+#include <boost/exception/all.hpp>
+#endif
+
+// Windows API
+#include <Windows.h>
+
+#ifdef HADES_MSVC
 
 // Image base linker 'trick'
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
@@ -135,16 +140,16 @@ void TestRelocs()
 void InitializeSEH()
 {
 #if defined(_M_AMD64) 
-  Hades::Memory::MemoryMgr MyMemory(GetCurrentProcessId());
-  Hades::Memory::PeFile MyPeFile(MyMemory, &__ImageBase);
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+  HadesMem::PeFile MyPeFile(MyMemory, &__ImageBase);
 
-  Hades::Memory::DosHeader MyDosHeader(MyPeFile);
-  Hades::Memory::NtHeaders MyNtHeaders(MyPeFile);
+  HadesMem::DosHeader MyDosHeader(MyPeFile);
+  HadesMem::NtHeaders MyNtHeaders(MyPeFile);
 
-  DWORD ExceptDirSize = MyNtHeaders.GetDataDirectorySize(Hades::Memory::
+  DWORD ExceptDirSize = MyNtHeaders.GetDataDirectorySize(HadesMem::
     NtHeaders::DataDir_Exception);
-  DWORD ExceptDirRva = MyNtHeaders.GetDataDirectoryVirtualAddress(Hades::
-    Memory::NtHeaders::DataDir_Exception);
+  DWORD ExceptDirRva = MyNtHeaders.GetDataDirectoryVirtualAddress(
+    HadesMem::NtHeaders::DataDir_Exception);
   if (!ExceptDirSize || !ExceptDirRva)
   {
     MessageBox(nullptr, L"Image has no exception directory.", 
@@ -229,6 +234,8 @@ extern "C" __declspec(dllexport) DWORD __stdcall Test(HMODULE /*Module*/)
   // Test return values
   return 1337;
 }
+
+#endif
 
 extern "C" __declspec(dllexport) DWORD __stdcall Initialize(HMODULE /*Module*/)
 {

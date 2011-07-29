@@ -373,7 +373,7 @@ namespace HadesMem
   // Equality operator
   bool DosHeader::operator==(DosHeader const& Rhs) const
   {
-    return m_pBase = Rhs.m_pBase && m_Memory == Rhs.m_Memory;
+    return m_pBase == Rhs.m_pBase && m_Memory == Rhs.m_Memory;
   }
   
   // Inequality operator

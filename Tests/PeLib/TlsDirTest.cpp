@@ -18,11 +18,11 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Hades
-#include <HadesCommon/Config.hpp>
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/PeLib/TlsDir.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
+#include <HadesMemory/Detail/Config.hpp>
 #include <HadesMemory/PeLib/DosHeader.hpp>
 #include <HadesMemory/PeLib/NtHeaders.hpp>
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
     {
       // Open module as a memory-based PeFile
       // Todo: Also test FileType_Data
-      HadesMem::PeFile const MyPeFile(MyMemory, Mod.GetBase());
+      HadesMem::PeFile const MyPeFile(MyMemory, Mod.GetHandle());
       HadesMem::DosHeader const MyDosHeader(MyPeFile);
       HadesMem::NtHeaders const MyNtHeaders(MyPeFile);
       
