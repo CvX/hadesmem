@@ -172,40 +172,7 @@ int wmain(int argc, wchar_t* argv[])
     HadesMem::ManualMap const MyManualMapper(MyMemory);
     
     // Inject DLL
-    PVOID ModRemote = nullptr;
-    ModRemote = MyManualMapper.InjectDll(ModulePath, Export);
-#if 0
-    if (ModulePath.is_absolute())
-    {
-      if (boost::filesystem::exists(ModulePath))
-      {
-        std::wcout << "Absolute module path detected, and file located. "
-          "Attempting injection without path resolution.\n";
-      }
-      else
-      {
-        std::wcout << "Absolute module path detected, but file could not be. "
-          "located. Attempting injection without path resolution anyway.\n";
-      }
-      
-      ModRemote = MyManualMapper.InjectDll(ModulePath, Export);
-    }
-    else
-    {
-      if (boost::filesystem::exists(boost::filesystem::absolute(ModulePath)))
-      {
-        std::wcout << "Relative module path detected, and file located. "
-          "Attempting injection with path resolution.\n";
-      }
-      else
-      {
-        std::wcout << "Relative module path detected, but file could not be "
-          "located. Attempting injection with path resolution anyway.\n";
-      }
-      
-      ModRemote = MyManualMapper.InjectDll(ModulePath, Export);
-    }
-#endif
+    PVOID ModRemote = MyManualMapper.InjectDll(ModulePath, Export);
     
     std::wcout << "Module successfully injected. Base = " << ModRemote << 
       ".\n";

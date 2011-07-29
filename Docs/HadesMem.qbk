@@ -133,7 +133,7 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
   * `TlsDir`
 * Added experimental `ManualMap` API. Subject to change and availability, not 
 for production use, heavy restrictions (please read docs).
-* Added experimental manual mapping example.
+* Added experimental manual mapping example program.
 
 [*Bug Fixes]
 
