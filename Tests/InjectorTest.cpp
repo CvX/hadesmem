@@ -28,8 +28,27 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOST_TEST_MODULE InjectorTest
 #include <boost/test/unit_test.hpp>
 
-// Injector component tests
-BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
+BOOST_AUTO_TEST_CASE(ConstructorsTest)
+{
+  // Create memory manager for self
+  HadesMem::MemoryMgr MyMemory(GetCurrentProcessId());
+    
+  // Create injector
+  HadesMem::Injector MyInjector(MyMemory);
+      
+  // Test copying, assignement, and moving
+  HadesMem::Injector MyOtherInjector(MyInjector);
+  BOOST_CHECK(MyInjector == MyOtherInjector);
+  MyInjector = MyOtherInjector;
+  BOOST_CHECK(MyInjector == MyOtherInjector);
+  HadesMem::Injector MovedInjector(std::move(MyOtherInjector));
+  BOOST_CHECK(MovedInjector == MyInjector);
+  HadesMem::Injector NewTestInjector(MyInjector);
+  MyInjector = std::move(NewTestInjector);
+  BOOST_CHECK(MyInjector == MovedInjector);
+}
+
+BOOST_AUTO_TEST_CASE(InjectionTest)
 {
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());

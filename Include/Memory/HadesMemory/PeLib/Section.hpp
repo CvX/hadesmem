@@ -261,7 +261,7 @@ namespace HadesMem
     
   private:
     // Give iterator access to internals
-    friend class ExportIter;
+    friend class SectionIter;
     
     // PE file
     PeFile m_PeFile;

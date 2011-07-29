@@ -214,6 +214,18 @@ namespace HadesMem
     return m_Memory.Call(reinterpret_cast<PVOID>(pExportAddrTemp), 
       MemoryMgr::CallConv_Default, ExportArgs);
   }
+  
+  // Equality operator
+  bool Injector::operator==(Injector const& Rhs) const
+  {
+    return m_Memory == Rhs.m_Memory;
+  }
+  
+  // Inequality operator
+  bool Injector::operator!=(Injector const& Rhs) const
+  {
+    return !(*this == Rhs);
+  }
 
   // Constructor
   CreateAndInjectData::CreateAndInjectData(MemoryMgr const& MyMemory, 

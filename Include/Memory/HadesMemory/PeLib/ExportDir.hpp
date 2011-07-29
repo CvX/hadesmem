@@ -20,13 +20,13 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 // Hades
-#include <HadesMemory/Detail/Fwd.hpp>
-#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
+#include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 
 // C++ Standard Library
 #include <string>
+#include <vector>
 #include <utility>
 #include <iterator>
 
@@ -50,80 +50,77 @@ namespace HadesMem
     // Constructor
     explicit ExportDir(PeFile const& MyPeFile);
 
+    // Get base of export dir
+    PVOID GetBase() const;
+
     // Whether export directory is valid
     bool IsValid() const;
 
     // Ensure export directory is valid
     void EnsureValid() const;
 
+    // Get module name
+    std::string GetName() const;
+
     // Get characteristics
     DWORD GetCharacteristics() const;
-
-    // Set characteristics
-    void SetCharacteristics(DWORD Characteristics) const;
 
     // Get time date stamp
     DWORD GetTimeDateStamp() const;
 
-    // Set time date stamp
-    void SetTimeDateStamp(DWORD TimeDateStamp) const;
-
     // Get major version
     WORD GetMajorVersion() const;
-
-    // Set major version
-    void SetMajorVersion(WORD MajorVersion) const;
 
     // Get minor version
     WORD GetMinorVersion() const;
 
-    // Set minor version
-    void SetMinorVersion(WORD MinorVersion) const;
-
-    // Get module name
-    std::string GetName() const;
-
     // Get ordinal base
     DWORD GetOrdinalBase() const;
-
-    // Set ordinal base
-    void SetOrdinalBase(DWORD OrdinalBase) const;
 
     // Get number of functions
     DWORD GetNumberOfFunctions() const;
 
-    // Set number of functions
-    void SetNumberOfFunctions(DWORD NumberOfFunctions) const;
-
     // Get number of names
     DWORD GetNumberOfNames() const;
-
-    // Set number of names
-    void SetNumberOfNames(DWORD NumberOfNames) const;
 
     // Get address of functions
     DWORD GetAddressOfFunctions() const;
 
-    // Set address of functions
-    void SetAddressOfFunctions(DWORD AddressOfFunctions) const;
-
     // Get address of names
     DWORD GetAddressOfNames() const;
-
-    // Set address of names
-    void SetAddressOfNames(DWORD AddressOfNames) const;
 
     // Get address of name ordinals
     DWORD GetAddressOfNameOrdinals() const;
 
+    // Set characteristics
+    void SetCharacteristics(DWORD Characteristics) const;
+
+    // Set time date stamp
+    void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+    // Set major version
+    void SetMajorVersion(WORD MajorVersion) const;
+
+    // Set minor version
+    void SetMinorVersion(WORD MinorVersion) const;
+
+    // Set ordinal base
+    void SetOrdinalBase(DWORD OrdinalBase) const;
+
+    // Set number of functions
+    void SetNumberOfFunctions(DWORD NumberOfFunctions) const;
+
+    // Set number of names
+    void SetNumberOfNames(DWORD NumberOfNames) const;
+
+    // Set address of functions
+    void SetAddressOfFunctions(DWORD AddressOfFunctions) const;
+
+    // Set address of names
+    void SetAddressOfNames(DWORD AddressOfNames) const;
+
     // Set address of name ordinals
     void SetAddressOfNameOrdinals(DWORD AddressOfNameOrdinals) const;
-
-    // Get base of export dir
-    PBYTE GetBase() const;
-
-    // Get raw export dir
-    IMAGE_EXPORT_DIRECTORY GetExportDirRaw() const;
 
   private:
     // PE file
@@ -201,159 +198,140 @@ namespace HadesMem
     // If entry is forwarded
     bool m_Forwarded;
   };
+    
+  // Forward declaration of ExportIter
+  template <typename ExportT>
+  class ExportIter;
   
   // Export enumeration class
   class ExportList
   {
   public:
-    // Export list error class
+    // ExportList exception type
     class Error : public virtual HadesMemError
     { };
-      
-    // Export iterator
-    class ExportIter : public boost::iterator_facade<ExportIter, Export, 
-      boost::forward_traversal_tag>
-    {
-    public:
-      // Export iterator error class
-      class Error : public virtual HadesMemError
-      { };
-
-      // Constructor
-      ExportIter() 
-        : m_pParent(nullptr), 
-        m_PeFile(), 
-        m_NumFuncs(static_cast<DWORD>(-1)), 
-        m_OrdBase(static_cast<DWORD>(-1)), 
-        m_Export(), 
-        m_CurNum(static_cast<DWORD>(-1))
-      { }
-      
-      // Constructor
-      ExportIter(ExportList& Parent) 
-        : m_pParent(&Parent), 
-        m_PeFile(Parent.m_PeFile), 
-        m_NumFuncs(0), 
-        m_OrdBase(0), 
-        m_Export(), 
-        m_CurNum(0)
-      {
-        ExportDir const MyExportDir(*m_PeFile);
-        if (!MyExportDir.IsValid() || !MyExportDir.GetNumberOfFunctions())
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_NumFuncs = static_cast<DWORD>(-1);
-          m_OrdBase = static_cast<DWORD>(-1);
-          m_Export = boost::optional<Export>();
-          m_CurNum = static_cast<DWORD>(-1);
-        }
-        else
-        {
-          m_NumFuncs = MyExportDir.GetNumberOfFunctions();
-          m_OrdBase = MyExportDir.GetOrdinalBase();
-          m_Export = Export(*m_PeFile, MyExportDir.GetOrdinalBase());
-        }
-      }
-      
-      // Copy constructor
-      ExportIter(ExportIter const& Rhs) 
-        : m_pParent(Rhs.m_pParent), 
-        m_PeFile(Rhs.m_PeFile), 
-        m_NumFuncs(Rhs.m_NumFuncs), 
-        m_OrdBase(Rhs.m_OrdBase), 
-        m_Export(Rhs.m_Export), 
-        m_CurNum(Rhs.m_CurNum)
-      { }
-      
-      // Assignment operator
-      ExportIter& operator=(ExportIter const& Rhs) 
-      {
-        m_pParent = Rhs.m_pParent;
-        m_PeFile = Rhs.m_PeFile;
-        m_NumFuncs = Rhs.m_NumFuncs;
-        m_OrdBase = Rhs.m_OrdBase;
-        m_Export = Rhs.m_Export;
-        m_CurNum = Rhs.m_CurNum;
-        return *this;
-      }
-
-    private:
-      // Give Boost.Iterator access to internals
-      friend class boost::iterator_core_access;
-
-      // Increment iterator
-      void increment() 
-      {
-        ++m_CurNum;
-        DWORD const NextOrdinal = m_Export->GetOrdinal() + 1;
-        if (NextOrdinal - m_OrdBase < m_NumFuncs)
-        {
-          m_Export = Export(*m_PeFile, NextOrdinal);
-        }
-        else
-        {
-          m_pParent = nullptr;
-          m_PeFile = boost::optional<PeFile>();
-          m_NumFuncs = static_cast<DWORD>(-1);
-          m_OrdBase = static_cast<DWORD>(-1);
-          m_Export = boost::optional<Export>();
-          m_CurNum = static_cast<DWORD>(-1);
-        }
-      }
-      
-      // Check iterator for equality
-      bool equal(ExportIter const& Rhs) const
-      {
-        return this->m_pParent == Rhs.m_pParent && 
-          this->m_CurNum == Rhs.m_CurNum;
-      }
-  
-      // Dereference iterator
-      Export& dereference() const 
-      {
-        return *m_Export;
-      }
-
-      // Parent
-      class ExportList* m_pParent;
-      // PE file
-      boost::optional<PeFile> m_PeFile;
-      // Number of functions
-      DWORD m_NumFuncs;
-      // Ordinal base
-      DWORD m_OrdBase;
-      // Export object
-      mutable boost::optional<Export> m_Export;
-      // Current export number
-      DWORD m_CurNum;
-    };
     
-    // Export list iterator types
-    typedef ExportIter iterator;
+    // Module list iterator types
+    typedef ExportIter<Export> iterator;
+    typedef ExportIter<Export const> const_iterator;
     
     // Constructor
-    ExportList(PeFile const& MyPeFile)
-      : m_PeFile(MyPeFile)
+    explicit ExportList(PeFile const& MyPeFile);
+    
+    // Move constructor
+    ExportList(ExportList&& Other);
+    
+    // Move assignment operator
+    ExportList& operator=(ExportList&& Other);
+    
+    // Get start of module list
+    iterator begin();
+    
+    // Get end of module list
+    iterator end();
+    
+    // Get start of module list
+    const_iterator begin() const;
+     
+    // Get end of module list
+    const_iterator end() const;
+    
+    // Get start of module list
+    const_iterator cbegin() const;
+     
+    // Get end of module list
+    const_iterator cend() const;
+    
+  protected:
+    // Disable copying and copy-assignment
+    ExportList(ExportList const& Other);
+    ExportList& operator=(ExportList const& Other);
+    
+  private:
+    // Give ExportIter access to internals
+    template <typename> friend class ExportIter;
+    
+    // Get module from cache by number
+    boost::optional<Export&> GetByNum(DWORD Num) const;
+    
+    // PeFile instance
+    PeFile m_PeFile;
+    
+    // Module cache
+    mutable std::vector<Export> m_Cache;
+  };
+
+  // Export iterator
+  template <typename ExportT>
+  class ExportIter : public boost::iterator_facade<ExportIter<ExportT>, 
+    ExportT, boost::forward_traversal_tag>
+  {
+  public:
+    // Module iterator error class
+    class Error : public virtual HadesMemError
+    { };
+
+    // Constructor
+    ExportIter()
+      : m_pParent(nullptr), 
+      m_Number(static_cast<DWORD>(-1)), 
+      m_Current()
     { }
     
-    // Get start of export list
-    iterator begin()
+    // Constructor
+    ExportIter(class ExportList const& Parent)
+      : m_pParent(&Parent), 
+      m_Number(0), 
+      m_Current()
     {
-      return iterator(*this);
-    }
-    
-    // Get end of export list
-    iterator end()
-    {
-      return iterator();
+      boost::optional<Export&> Temp = m_pParent->GetByNum(m_Number);
+      if (Temp)
+      {
+        m_Current = *Temp;
+      }
+      else
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
     }
     
   private:
-    // Give iterator access to internals
-    friend class ExportIter;
+    // Give Boost.Iterator access to internals
+    friend class boost::iterator_core_access;
+
+    // Increment iterator
+    void increment()
+    {
+      boost::optional<Export&> Temp = m_pParent->GetByNum(++m_Number);
+      m_Current = Temp ? *Temp : boost::optional<Export>();
+      if (!Temp)
+      {
+        m_pParent = nullptr;
+        m_Number = static_cast<DWORD>(-1);
+      }
+    }
     
-    // PE file
-    PeFile m_PeFile;
+    // Check iterator for equality
+    bool equal(ExportIter const& Rhs) const
+    {
+      return this->m_pParent == Rhs.m_pParent && 
+        this->m_Number == Rhs.m_Number;
+    }
+
+    // Dereference iterator
+    ExportT& dereference() const
+    {
+      return *m_Current;
+    }
+
+    // Parent list instance
+    class ExportList const* m_pParent;
+    
+    // Export number
+    DWORD m_Number;
+    
+    // Current export instance
+    mutable boost::optional<Export> m_Current;
   };
 }

@@ -86,7 +86,6 @@ BOOST_AUTO_TEST_CASE(BOOST_TEST_MODULE)
         GetAddressOfNameOrdinals());
       MyExportDir.SetCharacteristics(MyExportDir.GetCharacteristics());
       BOOST_CHECK(!MyExportDir.GetName().empty());
-      MyExportDir.GetExportDirRaw();
       
       // Get raw export dir data again (using the member function this time)
       auto const ExpDirRawNew = MyMemory.Read<IMAGE_EXPORT_DIRECTORY>(

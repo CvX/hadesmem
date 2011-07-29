@@ -36,215 +36,8 @@ namespace HadesMem
     m_pBase(nullptr)
   { }
 
-  // Whether export directory is valid
-  bool ExportDir::IsValid() const
-  {
-    // Get NT headers
-    NtHeaders const MyNtHeaders(m_PeFile);
-
-    // Get export dir data
-    DWORD const DataDirSize(MyNtHeaders.GetDataDirectorySize(NtHeaders::
-      DataDir_Export));
-    DWORD const DataDirVa(MyNtHeaders.GetDataDirectoryVirtualAddress(
-      NtHeaders::DataDir_Export));
-
-    // Export dir is valid if size and rva are valid
-    return DataDirSize && DataDirVa;
-  }
-
-  // Ensure export directory is valid
-  void ExportDir::EnsureValid() const
-  {
-    if (!IsValid())
-    {
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("ExportDir::EnsureValid") << 
-        ErrorString("Export directory is invalid."));
-    }
-  }
-
-  // Get characteristics
-  DWORD ExportDir::GetCharacteristics() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, Characteristics));
-  }
-
-  // Set characteristics
-  void ExportDir::SetCharacteristics(DWORD Characteristics) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      Characteristics), Characteristics);
-  }
-
-  // Get time date stamp
-  DWORD ExportDir::GetTimeDateStamp() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, TimeDateStamp));
-  }
-
-  // Set time date stamp
-  void ExportDir::SetTimeDateStamp(DWORD TimeDateStamp) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      TimeDateStamp), TimeDateStamp);
-  }
-
-  // Get major version
-  WORD ExportDir::GetMajorVersion() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<WORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, MajorVersion));
-  }
-
-  // Set major version
-  void ExportDir::SetMajorVersion(WORD MajorVersion) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      MajorVersion), MajorVersion);
-  }
-
-  // Get minor version
-  WORD ExportDir::GetMinorVersion() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<WORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, MinorVersion));
-  }
-
-  // Set major version
-  void ExportDir::SetMinorVersion(WORD MinorVersion) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      MinorVersion), MinorVersion);
-  }
-
-  // Get module name
-  std::string ExportDir::GetName() const
-  {
-    // Get base of export dir
-    PBYTE const pExpDirBase = GetBase();
-
-    // Read RVA of module name
-    DWORD const NameRva = m_Memory.Read<DWORD>(pExpDirBase + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, Name));
-
-    // Ensure there is a module name to process
-    if (!NameRva)
-    {
-      return std::string();
-    }
-
-    // Read module name
-    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(NameRva));
-  }
-
-  // Get ordinal base
-  DWORD ExportDir::GetOrdinalBase() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, Base));
-  }
-
-  // Set ordinal base
-  void ExportDir::SetOrdinalBase(DWORD Base) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      Base), Base);
-  }
-
-  // Get number of functions
-  DWORD ExportDir::GetNumberOfFunctions() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, NumberOfFunctions));
-  }
-
-  // Set number of functions
-  void ExportDir::SetNumberOfFunctions(DWORD NumberOfFunctions) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      NumberOfFunctions), NumberOfFunctions);
-  }
-
-  // Get number of names
-  DWORD ExportDir::GetNumberOfNames() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, NumberOfNames));
-  }
-
-  // Set number of names
-  void ExportDir::SetNumberOfNames(DWORD NumberOfNames) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      NumberOfNames), NumberOfNames);
-  }
-
-  // Get address of functions
-  DWORD ExportDir::GetAddressOfFunctions() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, AddressOfFunctions));
-  }
-
-  // Set address of functions
-  void ExportDir::SetAddressOfFunctions(DWORD AddressOfFunctions) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      AddressOfFunctions), AddressOfFunctions);
-  }
-
-  // Get address of names
-  DWORD ExportDir::GetAddressOfNames() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, AddressOfNames));
-  }
-
-  // Set address of names
-  void ExportDir::SetAddressOfNames(DWORD AddressOfNames) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      AddressOfNames), AddressOfNames);
-  }
-
-  // Get address of name ordinals
-  DWORD ExportDir::GetAddressOfNameOrdinals() const
-  {
-    PBYTE const pExportDir = GetBase();
-    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, AddressOfNameOrdinals));
-  }
-
-  // Set address of name ordinals
-  void ExportDir::SetAddressOfNameOrdinals(DWORD AddressOfNameOrdinals) const
-  {
-    PBYTE const pExportDir = GetBase();
-    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
-      AddressOfNameOrdinals), AddressOfNameOrdinals);
-  }
-
   // Get base of export dir
-  PBYTE ExportDir::GetBase() const
+  PVOID ExportDir::GetBase() const
   {
     // Initialize base address if necessary
     if (!m_pBase)
@@ -272,11 +65,211 @@ namespace HadesMem
     return m_pBase;
   }
 
-  // Get raw export dir
-  IMAGE_EXPORT_DIRECTORY ExportDir::GetExportDirRaw() const
+  // Whether export directory is valid
+  bool ExportDir::IsValid() const
   {
-    // Get raw export dir
-    return m_Memory.Read<IMAGE_EXPORT_DIRECTORY>(GetBase());
+    // Get NT headers
+    NtHeaders const MyNtHeaders(m_PeFile);
+
+    // Get export dir data
+    DWORD const DataDirSize(MyNtHeaders.GetDataDirectorySize(NtHeaders::
+      DataDir_Export));
+    DWORD const DataDirVa(MyNtHeaders.GetDataDirectoryVirtualAddress(
+      NtHeaders::DataDir_Export));
+
+    // Export dir is valid if size and rva are valid
+    return DataDirSize && DataDirVa;
+  }
+
+  // Ensure export directory is valid
+  void ExportDir::EnsureValid() const
+  {
+    if (!IsValid())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ExportDir::EnsureValid") << 
+        ErrorString("Export directory is invalid."));
+    }
+  }
+
+  // Get module name
+  std::string ExportDir::GetName() const
+  {
+    // Get base of export dir
+    PBYTE const pExpDirBase = static_cast<PBYTE>(GetBase());
+
+    // Read RVA of module name
+    DWORD const NameRva = m_Memory.Read<DWORD>(pExpDirBase + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, Name));
+
+    // Ensure there is a module name to process
+    if (!NameRva)
+    {
+      return std::string();
+    }
+
+    // Read module name
+    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(NameRva));
+  }
+
+  // Get characteristics
+  DWORD ExportDir::GetCharacteristics() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, Characteristics));
+  }
+
+  // Get time date stamp
+  DWORD ExportDir::GetTimeDateStamp() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, TimeDateStamp));
+  }
+
+  // Get major version
+  WORD ExportDir::GetMajorVersion() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<WORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, MajorVersion));
+  }
+
+  // Get minor version
+  WORD ExportDir::GetMinorVersion() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<WORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, MinorVersion));
+  }
+
+  // Get ordinal base
+  DWORD ExportDir::GetOrdinalBase() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, Base));
+  }
+
+  // Get number of functions
+  DWORD ExportDir::GetNumberOfFunctions() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, NumberOfFunctions));
+  }
+
+  // Get number of names
+  DWORD ExportDir::GetNumberOfNames() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, NumberOfNames));
+  }
+
+  // Get address of functions
+  DWORD ExportDir::GetAddressOfFunctions() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, AddressOfFunctions));
+  }
+
+  // Get address of names
+  DWORD ExportDir::GetAddressOfNames() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, AddressOfNames));
+  }
+
+  // Get address of name ordinals
+  DWORD ExportDir::GetAddressOfNameOrdinals() const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    return m_Memory.Read<DWORD>(pExportDir + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, AddressOfNameOrdinals));
+  }
+
+  // Set characteristics
+  void ExportDir::SetCharacteristics(DWORD Characteristics) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      Characteristics), Characteristics);
+  }
+
+  // Set time date stamp
+  void ExportDir::SetTimeDateStamp(DWORD TimeDateStamp) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      TimeDateStamp), TimeDateStamp);
+  }
+
+  // Set major version
+  void ExportDir::SetMajorVersion(WORD MajorVersion) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      MajorVersion), MajorVersion);
+  }
+
+  // Set major version
+  void ExportDir::SetMinorVersion(WORD MinorVersion) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      MinorVersion), MinorVersion);
+  }
+
+  // Set ordinal base
+  void ExportDir::SetOrdinalBase(DWORD Base) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      Base), Base);
+  }
+
+  // Set number of functions
+  void ExportDir::SetNumberOfFunctions(DWORD NumberOfFunctions) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      NumberOfFunctions), NumberOfFunctions);
+  }
+
+  // Set number of names
+  void ExportDir::SetNumberOfNames(DWORD NumberOfNames) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      NumberOfNames), NumberOfNames);
+  }
+
+  // Set address of functions
+  void ExportDir::SetAddressOfFunctions(DWORD AddressOfFunctions) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      AddressOfFunctions), AddressOfFunctions);
+  }
+
+  // Set address of names
+  void ExportDir::SetAddressOfNames(DWORD AddressOfNames) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      AddressOfNames), AddressOfNames);
+  }
+
+  // Set address of name ordinals
+  void ExportDir::SetAddressOfNameOrdinals(DWORD AddressOfNameOrdinals) const
+  {
+    PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
+    m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
+      AddressOfNameOrdinals), AddressOfNameOrdinals);
   }
 
   // Constructor
@@ -451,5 +444,89 @@ namespace HadesMem
   bool Export::Forwarded() const
   {
     return m_Forwarded;
+  }
+  
+  // Constructor
+  ExportList::ExportList(PeFile const& MyPeFile)
+    : m_PeFile(MyPeFile), 
+    m_Cache()
+  { }
+    
+  // Move constructor
+  ExportList::ExportList(ExportList&& Other)
+    : m_PeFile(std::move(Other.m_PeFile)), 
+    m_Cache(std::move(Other.m_Cache))
+  { }
+  
+  // Move assignment operator
+  ExportList& ExportList::operator=(ExportList&& Other)
+  {
+    this->m_PeFile = std::move(Other.m_PeFile);
+    this->m_Cache = std::move(Other.m_Cache);
+    
+    return *this;
+  }
+  
+  // Get start of module list
+  ExportList::iterator ExportList::begin()
+  {
+    return iterator(*this);
+  }
+  
+  // Get end of module list
+  ExportList::iterator ExportList::end()
+  {
+    return iterator();
+  }
+  
+  // Get start of module list
+  ExportList::const_iterator ExportList::begin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of module list
+  ExportList::const_iterator ExportList::end() const
+  {
+    return const_iterator();
+  }
+  
+  // Get start of module list
+  ExportList::const_iterator ExportList::cbegin() const
+  {
+    return const_iterator(*this);
+  }
+  
+  // Get end of module list
+  ExportList::const_iterator ExportList::cend() const
+  {
+    return const_iterator();
+  }
+  
+  // Get module from cache by number
+  boost::optional<Export&> ExportList::GetByNum(DWORD Num) const
+  {
+    while (Num >= m_Cache.size())
+    {
+      ExportDir const MyExportDir(m_PeFile);
+      if (!MyExportDir.IsValid() || !MyExportDir.GetNumberOfFunctions())
+      {
+        return boost::optional<Export&>();
+      }
+      else
+      {
+        if (Num < MyExportDir.GetNumberOfFunctions())
+        {
+          m_Cache.push_back(Export(m_PeFile, MyExportDir.GetOrdinalBase() + 
+            m_Cache.size()));
+        }
+        else
+        {
+          return boost::optional<Export&>();
+        }
+      }
+    }
+    
+    return m_Cache[Num];
   }
 }

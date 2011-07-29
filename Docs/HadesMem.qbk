@@ -124,12 +124,21 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
 
 * Added new `Injector` APIs.
 * Added new `PeLib` APIs.
+  * `DosHeader`
+  * `ExportDir`
+  * `ImportDir`
+  * `NtHeaders`
+  * `PeFile`
+  * `Section`
+  * `TlsDir`
 * Added experimental `ManualMap` API. Subject to change and availability, not 
 for production use, heavy restrictions (please read docs).
+* Added experimental manual mapping example.
 
 [*Bug Fixes]
 
 * Added `Module` (and `Injector`) to '''Memory.hpp'''.
+* Fixed Boost build scripts.
 
 [*Changes]
 
@@ -990,7 +999,7 @@ after the function call.]]
     typedef unspecified iterator;
     typedef unspecified const_iterator;
     
-    ModuleList(MemoryMgr const& MyMemory);
+    explicit ModuleList(MemoryMgr const& MyMemory);
     
     iterator begin();
     
@@ -1252,7 +1261,7 @@ Implementation type unspecified.
 
 [h4 ModuleList constructor]
 
-  ModuleList(MemoryMgr const& MyMemory);
+  explicit ModuleList(MemoryMgr const& MyMemory);
 
 [variablelist
 

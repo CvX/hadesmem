@@ -62,7 +62,9 @@ lib Memory
     [ glob Memory/Experimental/*.cpp ] 
     /Dependencies//AsmJit 
     /Dependencies//BeaEngine 
-    /boost//filesystem/<link>shared 
+    /boost//filesystem/<link>static 
+    /boost//thread/<link>static 
+    /boost//date_time/<link>static 
     user32 
     advapi32 
     dbghelp 
