@@ -168,7 +168,7 @@ int wmain(int argc, wchar_t* argv[])
     HadesMem::MemoryMgr const MyMemory(ProcId == static_cast<DWORD>(-1) ? 
       GetCurrentProcessId() : ProcId);
         
-    // Create injector
+    // Create manual mapper
     HadesMem::ManualMap const MyManualMapper(MyMemory);
     
     // Inject DLL
