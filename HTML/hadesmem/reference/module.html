@@ -1,91 +1,133 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<title>Module</title>
+<title>DosHeader</title>
 <link rel="stylesheet" href="../../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
-<link rel="home" href="../../index.html" title="HadesMem 1.2.0">
+<link rel="home" href="../../index.html" title="HadesMem 1.3.0">
 <link rel="up" href="../reference.html" title="Reference">
-<link rel="prev" href="memorymgr.html" title="MemoryMgr">
+<link rel="prev" href="module.html" title="Module">
 <link rel="next" href="../acknowledge.html" title="Acknowledgements">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr><td valign="top"><img alt="HadesMem" width="300" height="100" src="../../Images/Logo.png"></td></tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="memorymgr.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../acknowledge.html"><img src="../../images/next.png" alt="Next"></a>
+<a accesskey="p" href="module.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../acknowledge.html"><img src="../../images/next.png" alt="Next"></a>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="hadesmem.reference.module"></a><a class="link" href="module.html" title="Module">Module</a>
+<a name="hadesmem.reference.module"></a><a class="link" href="module.html" title="Module">DosHeader</a>
 </h3></div></div></div>
 <a name="hadesmem.reference.module.synopsis"></a><h4>
 <a name="hadesmem.reference.module.synopsis-heading"></a>
         <a class="link" href="module.html#hadesmem.reference.module.synopsis">Synopsis</a>
       </h4>
-<pre class="programlisting"><span class="comment">// In header: &lt;HadesMemory/Module.hpp&gt;</span>
+<pre class="programlisting"><span class="comment">// In header: &lt;HadesMemory/PeLib/DosHeader.hpp&gt;</span>
 
-<span class="keyword">class</span> <span class="identifier">Module</span>
+<span class="keyword">class</span> <span class="identifier">DosHeader</span>
 <span class="special">{</span>
 <span class="keyword">public</span><span class="special">:</span>
-  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
-  
-  <span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">HMODULE</span> <span class="identifier">Handle</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ModuleName</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">MODULEENTRY32</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ModuleEntry</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">(</span><span class="identifier">Module</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-  
-  <span class="identifier">Module</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Module</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-  
-  <span class="special">~</span><span class="identifier">Module</span><span class="special">();</span>
-  
-  <span class="identifier">HMODULE</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">DWORD</span> <span class="identifier">GetSize</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="identifier">GetPath</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">FARPROC</span> <span class="identifier">FindProcedure</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Name</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">FARPROC</span> <span class="identifier">FindProcedure</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Ordinal</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-<span class="special">};</span>
+  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span>
+  <span class="special">{</span> <span class="special">};</span>
 
-<span class="identifier">Module</span> <span class="identifier">GetRemoteModule</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">LPCWSTR</span> <span class="identifier">ModuleName</span><span class="special">);</span>
+  <span class="keyword">explicit</span> <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
+    
+  <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="special">~</span><span class="identifier">DosHeader</span><span class="special">();</span>
+  
+  <span class="identifier">PVOID</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-<span class="keyword">class</span> <span class="identifier">ModuleList</span>
-<span class="special">{</span>
-<span class="keyword">public</span><span class="special">:</span>
-  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="identifier">IsMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">EnsureMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetMagic</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetBytesOnLastPage</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetPagesInFile</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetRelocations</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetSizeOfHeaderInParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetMinExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetMaxExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetInitialSS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetInitialSP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetChecksum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetInitialIP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetInitialCS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetRelocTableFileAddr</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetOverlayNum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords1</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetOEMID</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetOEMInfo</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords2</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">LONG</span> <span class="identifier">GetNewHeaderOffset</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetMagic</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Magic</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetBytesOnLastPage</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">BytesOnLastPage</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetPagesInFile</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">PagesInFile</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetRelocations</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Relocations</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetSizeOfHeaderInParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">SizeOfHeaderInParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetMinExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetMaxExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MaxExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetInitialSS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetInitialSP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetChecksum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Checksum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetInitialIP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialIP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetInitialCS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialCS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetRelocTableFileAddr</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">RelocTableFileAddr</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetOverlayNum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OverlayNum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetReservedWords1</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetOEMID</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMID</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetOEMInfo</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMInfo</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetReservedWords2</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords2</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">void</span> <span class="identifier">SetNewHeaderOffset</span><span class="special">(</span><span class="identifier">LONG</span> <span class="identifier">Offset</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
   
-  <span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">iterator</span><span class="special">;</span>
-  <span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">const_iterator</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
   
-  <span class="identifier">ModuleList</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">);</span>
-  
-  <span class="identifier">iterator</span> <span class="identifier">begin</span><span class="special">();</span>
-  
-  <span class="identifier">iterator</span> <span class="identifier">end</span><span class="special">();</span>
-  
-  <span class="identifier">const_iterator</span> <span class="identifier">begin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">const_iterator</span> <span class="identifier">end</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">const_iterator</span> <span class="identifier">cbegin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-  
-  <span class="identifier">const_iterator</span> <span class="identifier">cend</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 <span class="special">};</span>
 </pre>
 <a name="hadesmem.reference.module.description"></a><h4>
@@ -93,51 +135,38 @@
         <a class="link" href="module.html#hadesmem.reference.module.description">Description</a>
       </h4>
 <p>
-        The <code class="computeroutput"><span class="identifier">Module</span></code> class provides
-        functionality for finding and working with modules (a.k.a DLLs or EXEs).
+        The <code class="computeroutput"><span class="identifier">DosHeader</span></code> class provides
+        functionality for working with the DOS header of a PE file.
       </p>
-<p>
-        The GetRemoteModuleHandle free function provides an 'extension' of the <code class="computeroutput"><span class="identifier">GetModuleHandle</span></code> Windows API to allow lookup
-        in a remote process.
-      </p>
-<p>
-        The <code class="computeroutput"><span class="identifier">ModuleList</span></code> class provides
-        STL-compatible iterators for module enumeration. Module enumeration is 'lazy'
-        to keep the API performant. Lazy in this context means that module lookup
-        and initialization is only performed on-demmand, rather than the list being
-        pre-processed. Furthermore, caching is implemented to improve performance
-        when the list is used in multi-pass algorithms.
-      </p>
-<a name="hadesmem.reference.module.module_public_types"></a><h4>
-<a name="hadesmem.reference.module.module_public_types-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_public_types">Module public
-        types</a>
+<a name="hadesmem.reference.module.dosheader_public_types"></a><h4>
+<a name="hadesmem.reference.module.dosheader_public_types-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_types">DosHeader
+        public types</a>
       </h4>
 <pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
 </pre>
 <p>
-        Exception type thrown by <code class="computeroutput"><span class="identifier">Module</span></code>
+        Exception type thrown by <code class="computeroutput"><span class="identifier">DosHeader</span></code>
         methods when an error occurs.
       </p>
-<a name="hadesmem.reference.module.module_public_construct_copy_destruct_move"></a><h4>
-<a name="hadesmem.reference.module.module_public_construct_copy_destruct_move-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_public_construct_copy_destruct_move">Module
+<a name="hadesmem.reference.module.dosheader_public_construct_copy_destruct_move"></a><h4>
+<a name="hadesmem.reference.module.dosheader_public_construct_copy_destruct_move-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_construct_copy_destruct_move">DosHeader
         public construct/copy/destruct/move</a>
       </h4>
-<a name="hadesmem.reference.module.module_handle_constructor"></a><h5>
-<a name="hadesmem.reference.module.module_handle_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_handle_constructor">Module
-        handle constructor</a>
+<a name="hadesmem.reference.module.constructor"></a><h5>
+<a name="hadesmem.reference.module.constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.constructor">Constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">HMODULE</span> <span class="identifier">Handle</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">Module</span></code>
-              instance that refers to the specified module.
+              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              instance that refers to the specified PE file.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -145,62 +174,20 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.module_name_constructor"></a><h5>
-<a name="hadesmem.reference.module.module_name_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_name_constructor">Module
-        name constructor</a>
-      </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ModuleName</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">Module</span></code>
-              instance that refers to the specified module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_module_entry_constructor"></a><h5>
-<a name="hadesmem.reference.module.module_module_entry_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_module_entry_constructor">Module
-        module entry constructor</a>
-      </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">MODULEENTRY32</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ModuleEntry</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">Module</span></code>
-              instance from the data in the module entry.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_copy_constructor"></a><h5>
-<a name="hadesmem.reference.module.module_copy_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_copy_constructor">Module
+<a name="hadesmem.reference.module.dosheader_copy_constructor"></a><h5>
+<a name="hadesmem.reference.module.dosheader_copy_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_copy_constructor">DosHeader
         copy constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">Module</span></code>
-              that refers to the same module as <code class="computeroutput"><span class="identifier">Other</span></code>.
+              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -208,12 +195,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.module_copy_assignment_operator"></a><h5>
-<a name="hadesmem.reference.module.module_copy_assignment_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_copy_assignment_operator">Module
+<a name="hadesmem.reference.module.dosheader_copy_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.dosheader_copy_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_copy_assignment_operator">DosHeader
         copy assignment operator</a>
       </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -228,20 +215,20 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.module_move_constructor"></a><h5>
-<a name="hadesmem.reference.module.module_move_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_move_constructor">Module
+<a name="hadesmem.reference.module.dosheader_move_constructor"></a><h5>
+<a name="hadesmem.reference.module.dosheader_move_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_move_constructor">DosHeader
         move constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">(</span><span class="identifier">Module</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">Module</span></code>
-              that refers to the same module as <code class="computeroutput"><span class="identifier">Other</span></code>
+              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
               via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
@@ -250,19 +237,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.module_move_assignment_operator"></a><h5>
-<a name="hadesmem.reference.module.module_move_assignment_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_move_assignment_operator">Module
+<a name="hadesmem.reference.module.dosheader_move_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.dosheader_move_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_move_assignment_operator">DosHeader
         move assignment operator</a>
       </h5>
-<pre class="programlisting"><span class="identifier">Module</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Module</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets self to refer to the same module as <code class="computeroutput"><span class="identifier">Other</span></code>
+              Sets self to refer to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
               via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
@@ -271,298 +258,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.module_destructor"></a><h5>
-<a name="hadesmem.reference.module.module_destructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_destructor">Module destructor</a>
-      </h5>
-<pre class="programlisting"><span class="special">~</span><span class="identifier">Module</span><span class="special">();</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Destroys the instance and frees all resources.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              No.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_public_member_functions"></a><h4>
-<a name="hadesmem.reference.module.module_public_member_functions-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_public_member_functions">Module
-        public member functions</a>
-      </h4>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getbase__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getbase__phrase___code_">Module
-        member function <code class="computeroutput"><span class="identifier">GetBase</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">HMODULE</span> <span class="identifier">GetHandle</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Handle (a.k.a base address) to module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getsize__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getsize__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getsize__phrase___code_">Module
-        member function <code class="computeroutput"><span class="identifier">GetSize</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetSize</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Size of module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getname__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getname__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getname__phrase___code_">Module
-        member function <code class="computeroutput"><span class="identifier">GetName</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Name of module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getpath__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getpath__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_member_function__code__phrase_role__identifier__getpath__phrase___code_">Module
-        member function <code class="computeroutput"><span class="identifier">GetPath</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span> <span class="identifier">GetPath</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Path to module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__findprocedure__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.module_member_function__code__phrase_role__identifier__findprocedure__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_member_function__code__phrase_role__identifier__findprocedure__phrase___code_">Module
-        member function <code class="computeroutput"><span class="identifier">FindProcedure</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">FARPROC</span> <span class="identifier">FindProcedure</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Name</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-<span class="identifier">FARPROC</span> <span class="identifier">FindProcedure</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Ordinal</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Looks for procedure in export address table of module, either via name
-              <code class="computeroutput"><span class="identifier">Name</span></code> or ordinal <code class="computeroutput"><span class="identifier">Ordinal</span></code>.
-            </p></dd>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Address of procedure.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_equality_operator"></a><h5>
-<a name="hadesmem.reference.module.module_equality_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_equality_operator">Module
-        equality operator</a>
-      </h5>
-<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              the same module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              No.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.module_inequality_operator"></a><h5>
-<a name="hadesmem.reference.module.module_inequality_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.module_inequality_operator">Module
-        inequality operator</a>
-      </h5>
-<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">Module</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              a different module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              No.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.free_functions"></a><h4>
-<a name="hadesmem.reference.module.free_functions-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.free_functions">Free functions</a>
-      </h4>
-<a name="hadesmem.reference.module.free_function__code__phrase_role__identifier__getremotemodule__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.free_function__code__phrase_role__identifier__getremotemodule__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.free_function__code__phrase_role__identifier__getremotemodule__phrase___code_">Free
-        function <code class="computeroutput"><span class="identifier">GetRemoteModule</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">Module</span> <span class="identifier">GetRemoteModule</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">LPCWSTR</span> <span class="identifier">ModuleName</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Has the same effects as the Windows API <a href="http://msdn.microsoft.com/en-us/library/ms683199.aspx" target="_top">GetModuleHandle</a>.
-            </p></dd>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              Requested module.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.modulelist_public_types"></a><h4>
-<a name="hadesmem.reference.module.modulelist_public_types-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_public_types">ModuleList
-        public types</a>
-      </h4>
-<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
-</pre>
-<p>
-        Exception type thrown by <code class="computeroutput"><span class="identifier">ModuleList</span></code>
-        methods when an error occurs.
-      </p>
-<pre class="programlisting"><span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">iterator</span><span class="special">;</span>
-</pre>
-<p>
-        Iterator type for module list. Models the <a href="http://www.sgi.com/tech/stl/ForwardIterator.html" target="_top">ForwardIterator</a>
-        concept. Implementation type unspecified.
-      </p>
-<a name="hadesmem.reference.module.modulelist_public_construct_copy_destruct_move"></a><h4>
-<a name="hadesmem.reference.module.modulelist_public_construct_copy_destruct_move-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_public_construct_copy_destruct_move">ModuleList
-        public construct/copy/destruct/move</a>
-      </h4>
-<a name="hadesmem.reference.module.modulelist_constructor"></a><h5>
-<a name="hadesmem.reference.module.modulelist_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_constructor">ModuleList
-        constructor</a>
-      </h5>
-<pre class="programlisting"><span class="identifier">ModuleList</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">ModuleList</span></code>
-              instance targetting the process specified by <code class="computeroutput"><span class="identifier">MyMemory</span></code>.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.modulelist_move_constructor"></a><h5>
-<a name="hadesmem.reference.module.modulelist_move_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_move_constructor">ModuleList
-        move constructor</a>
-      </h5>
-<pre class="programlisting"><span class="identifier">ModuleList</span><span class="special">(</span><span class="identifier">ModuleList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">ModuleList</span></code>
-              that refers to the same module list as <code class="computeroutput"><span class="identifier">Other</span></code>
-              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.modulelist_move_assignment_operator"></a><h5>
-<a name="hadesmem.reference.module.modulelist_move_assignment_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_move_assignment_operator">ModuleList
-        move assignment operator</a>
-      </h5>
-<pre class="programlisting"><span class="identifier">ModuleList</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ModuleList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets self to refer to the same module list as <code class="computeroutput"><span class="identifier">Other</span></code>
-              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.modulelist_destructor"></a><h5>
-<a name="hadesmem.reference.module.modulelist_destructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_destructor">ModuleList
+<a name="hadesmem.reference.module.dosheader_destructor"></a><h5>
+<a name="hadesmem.reference.module.dosheader_destructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_destructor">DosHeader
         destructor</a>
       </h5>
-<pre class="programlisting"><span class="special">~</span><span class="identifier">ModuleList</span><span class="special">();</span>
+<pre class="programlisting"><span class="special">~</span><span class="identifier">DosHeader</span><span class="special">();</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -577,25 +278,24 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.modulelist_public_member_functions"></a><h4>
-<a name="hadesmem.reference.module.modulelist_public_member_functions-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_public_member_functions">ModuleList
+<a name="hadesmem.reference.module.dosheader_public_member_functions"></a><h4>
+<a name="hadesmem.reference.module.dosheader_public_member_functions-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_member_functions">DosHeader
         public member functions</a>
       </h4>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__begin__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__begin__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__begin__phrase___code_">ModuleList
-        member function <code class="computeroutput"><span class="identifier">begin</span></code></a>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetBase</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">iterator</span> <span class="identifier">begin</span><span class="special">();</span>
-<span class="identifier">const_iterator</span> <span class="identifier">begin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">PVOID</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              STL-compatible iterator or const_iterator for start of module list.
+              Base address of DOS header.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -603,21 +303,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__end__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__end__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__end__phrase___code_">ModuleList
-        member function <code class="computeroutput"><span class="identifier">end</span></code></a>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">IsMagicValid</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">iterator</span> <span class="identifier">end</span><span class="special">();</span>
-<span class="identifier">const_iterator</span> <span class="identifier">end</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">IsMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              STL-compatible iterator or const_iterator for off-the-end of module
-              list.
+              Whether the target is a valid DOS header.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -625,19 +323,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cbegin__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cbegin__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cbegin__phrase___code_">ModuleList
-        member function <code class="computeroutput"><span class="identifier">cbegin</span></code></a>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">EnsureMagicValid</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">const_iterator</span> <span class="identifier">cbegin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">EnsureMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
-<dt><span class="term">Returns:</span></dt>
+<dt><span class="term">Effects:</span></dt>
 <dd><p>
-              STL-compatible const_iterator for start of module list.
+              Throw if the target is an invalid DOS header.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -645,23 +343,805 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cend__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cend__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.modulelist_member_function__code__phrase_role__identifier__cend__phrase___code_">ModuleList
-        member function <code class="computeroutput"><span class="identifier">cend</span></code></a>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetMagic</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">const_iterator</span> <span class="identifier">cend</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMagic</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              STL-compatible const_iterator for off-the-end of module list.
+              IMAGE_DOS_HEADER.e_magic.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
               Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetBytesOnLastPage</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetBytesOnLastPage</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_cblp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetPagesInFile</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetPagesInFile</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_cp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetRelocations</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocations</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_crlc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetSizeOfHeaderInParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetSizeOfHeaderInParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_cparhdr.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetMinExtraParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMinExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_minalloc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetMaxExtraParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMaxExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_maxalloc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetInitialSS</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_ss.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetInitialSP</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_sp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetChecksum</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetChecksum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_csum.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetInitialIP</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialIP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_ip.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetInitialCS</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialCS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_cs.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetRelocTableFileAddr</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocTableFileAddr</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_lfarlc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetOverlayNum</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOverlayNum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_ovno.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetReservedWords1</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords1</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_res.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetOEMID</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMID</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_oemid.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetOEMInfo</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMInfo</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_oeminfo.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetReservedWords2</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords2</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_res2.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">GetNewHeaderOffset</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">LONG</span> <span class="identifier">GetNewHeaderOffset</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              IMAGE_DOS_HEADER.e_lfanew.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetMagic</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMagic</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Magic</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_magic.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetBytesOnLastPage</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetBytesOnLastPage</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">BytesOnLastPage</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_cblp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetPagesInFile</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetPagesInFile</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">PagesInFile</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_cp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetRelocations</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocations</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Relocations</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_crlc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetSizeOfHeaderInParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetSizeOfHeaderInParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">SizeOfHeaderInParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_cparhdr.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetMinExtraParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMinExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_minalloc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetMaxExtraParagraphs</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMaxExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MaxExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_maxalloc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetInitialSS</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_ss.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetInitialSP</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_sp.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetChecksum</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetChecksum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Checksum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_csum.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetInitialIP</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialIP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialIP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_ip.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetInitialCS</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialCS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialCS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_cs.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetRelocTableFileAddr</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocTableFileAddr</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">RelocTableFileAddr</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_lfarlc.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetOverlayNum</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOverlayNum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OverlayNum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_ovno.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetReservedWords1</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords1</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_res.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetOEMID</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMID</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMID</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_oemid.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetOEMInfo</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMInfo</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMInfo</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_oeminfo.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetReservedWords2</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords2</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords2</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_res2.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_">DosHeader
+        member function <code class="computeroutput"><span class="identifier">SetNewHeaderOffset</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetNewHeaderOffset</span><span class="special">(</span><span class="identifier">LONG</span> <span class="identifier">Offset</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets IMAGE_DOS_HEADER.e_lfanew.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_equality_operator"></a><h5>
+<a name="hadesmem.reference.module.dosheader_equality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_equality_operator">DosHeader
+        equality operator</a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+              the same target.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.dosheader_inequality_operator"></a><h5>
+<a name="hadesmem.reference.module.dosheader_inequality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.dosheader_inequality_operator">DosHeader
+        inequality operator</a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+              a different target.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
             </p></dd>
 </dl>
 </div>
@@ -675,7 +1155,7 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="memorymgr.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../acknowledge.html"><img src="../../images/next.png" alt="Next"></a>
+<a accesskey="p" href="module.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../acknowledge.html"><img src="../../images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

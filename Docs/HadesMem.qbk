@@ -1081,7 +1081,7 @@ entry.]]
 
 [variablelist
 
-[[Effects:] [Constructs a `Module` that refers to the same module as 
+[[Effects:] [Constructs a `Module` that refers to the same target as 
 `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -1106,7 +1106,7 @@ entry.]]
 
 [variablelist
 
-[[Effects:] [Constructs a `Module` that refers to the same module as 
+[[Effects:] [Constructs a `Module` that refers to the same target as 
 `Other` via move semantics. Invalidates `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -1119,7 +1119,7 @@ entry.]]
 
 [variablelist
 
-[[Effects:] [Sets self to refer to the same module as `Other` via move 
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
 semantics. Invalidates `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -1140,7 +1140,7 @@ semantics. Invalidates `Other`.]]
 
 [h3 Module public member functions]
 
-[h4 Module member function `GetBase`]
+[h4 Module member function `GetHandle`]
 
   HMODULE GetHandle() const;
 
@@ -1365,6 +1365,726 @@ module list.]]
 ]
 
 [endsect] [/ Module]
+
+[section:module DosHeader]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/DosHeader.hpp>
+
+  class DosHeader
+  {
+  public:
+    class Error : public virtual HadesMemError
+    { };
+
+    explicit DosHeader(PeFile const& MyPeFile);
+      
+    DosHeader(DosHeader const& Other);
+    
+    DosHeader& operator=(DosHeader const& Other);
+    
+    DosHeader(DosHeader&& Other);
+    
+    DosHeader& operator=(DosHeader&& Other);
+    
+    ~DosHeader();
+    
+    PVOID GetBase() const;
+
+    bool IsMagicValid() const;
+
+    void EnsureMagicValid() const;
+
+    WORD GetMagic() const;
+
+    WORD GetBytesOnLastPage() const;
+
+    WORD GetPagesInFile() const;
+
+    WORD GetRelocations() const;
+
+    WORD GetSizeOfHeaderInParagraphs() const;
+
+    WORD GetMinExtraParagraphs() const;
+
+    WORD GetMaxExtraParagraphs() const;
+
+    WORD GetInitialSS() const;
+
+    WORD GetInitialSP() const;
+
+    WORD GetChecksum() const;
+
+    WORD GetInitialIP() const;
+
+    WORD GetInitialCS() const;
+
+    WORD GetRelocTableFileAddr() const;
+
+    WORD GetOverlayNum() const;
+
+    std::array<WORD, 4> GetReservedWords1() const;
+
+    WORD GetOEMID() const;
+
+    WORD GetOEMInfo() const;
+
+    std::array<WORD, 10> GetReservedWords2() const;
+
+    LONG GetNewHeaderOffset() const;
+
+    void SetMagic(WORD Magic) const;
+
+    void SetBytesOnLastPage(WORD BytesOnLastPage) const;
+
+    void SetPagesInFile(WORD PagesInFile) const;
+
+    void SetRelocations(WORD Relocations) const;
+
+    void SetSizeOfHeaderInParagraphs(WORD SizeOfHeaderInParagraphs) const;
+
+    void SetMinExtraParagraphs(WORD MinExtraParagraphs) const;
+
+    void SetMaxExtraParagraphs(WORD MaxExtraParagraphs) const;
+
+    void SetInitialSS(WORD InitialSS) const;
+
+    void SetInitialSP(WORD InitialSP) const;
+
+    void SetChecksum(WORD Checksum) const;
+
+    void SetInitialIP(WORD InitialIP) const;
+
+    void SetInitialCS(WORD InitialCS) const;
+
+    void SetRelocTableFileAddr(WORD RelocTableFileAddr) const;
+
+    void SetOverlayNum(WORD OverlayNum) const;
+
+    void SetReservedWords1(std::array<WORD, 4> const& ReservedWords1) const;
+
+    void SetOEMID(WORD OEMID) const;
+
+    void SetOEMInfo(WORD OEMInfo) const;
+
+    void SetReservedWords2(std::array<WORD, 10> const& ReservedWords2) const;
+
+    void SetNewHeaderOffset(LONG Offset) const;
+    
+    bool operator==(DosHeader const& Rhs) const;
+    
+    bool operator!=(DosHeader const& Rhs) const;
+  };
+
+[h3 Description]
+
+The `DosHeader` class provides functionality for working with the DOS header 
+of a PE file.
+
+[h3 DosHeader public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `DosHeader` methods when an error occurs.
+
+[h3 DosHeader public construct/copy/destruct/move]
+
+[h4 Constructor]
+
+  DosHeader(PeFile const& MyPeFile);
+
+[variablelist
+
+[[Effects:] [Constructs a `DosHeader` instance that refers to the specified 
+PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader copy constructor]
+
+  DosHeader(DosHeader const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `DosHeader` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader copy assignment operator]
+
+  DosHeader& operator=(DosHeader const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader move constructor]
+
+  DosHeader(DosHeader&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `DosHeader` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader move assignment operator]
+
+  DosHeader& operator=(DosHeader&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader destructor]
+
+  ~DosHeader();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 DosHeader public member functions]
+
+[h4 DosHeader member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of DOS header.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `IsMagicValid`]
+
+  bool IsMagicValid() const;
+
+[variablelist
+
+[[Returns:] [Whether the target is a valid DOS header.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `EnsureMagicValid`]
+
+  void EnsureMagicValid() const;
+
+[variablelist
+
+[[Effects:] [Throw if the target is an invalid DOS header.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetMagic`]
+
+  WORD GetMagic() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_magic.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetBytesOnLastPage`]
+
+  WORD GetBytesOnLastPage() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_cblp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetPagesInFile`]
+
+  WORD GetPagesInFile() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_cp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetRelocations`]
+
+  WORD GetRelocations() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_crlc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetSizeOfHeaderInParagraphs`]
+
+  WORD GetSizeOfHeaderInParagraphs() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_cparhdr.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetMinExtraParagraphs`]
+
+  WORD GetMinExtraParagraphs() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_minalloc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetMaxExtraParagraphs`]
+
+  WORD GetMaxExtraParagraphs() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_maxalloc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetInitialSS`]
+
+  WORD GetInitialSS() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_ss.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetInitialSP`]
+
+  WORD GetInitialSP() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_sp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetChecksum`]
+
+  WORD GetChecksum() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_csum.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetInitialIP`]
+
+  WORD GetInitialIP() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_ip.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetInitialCS`]
+
+  WORD GetInitialCS() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_cs.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetRelocTableFileAddr`]
+
+  WORD GetRelocTableFileAddr() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_lfarlc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetOverlayNum`]
+
+  WORD GetOverlayNum() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_ovno.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetReservedWords1`]
+
+  std::array<WORD, 4> GetReservedWords1() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_res.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetOEMID`]
+
+  WORD GetOEMID() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_oemid.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetOEMInfo`]
+
+  WORD GetOEMInfo() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_oeminfo.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetReservedWords2`]
+
+  std::array<WORD, 10> GetReservedWords2() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_res2.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `GetNewHeaderOffset`]
+
+  LONG GetNewHeaderOffset() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_DOS_HEADER.e_lfanew.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetMagic`]
+
+  void SetMagic(WORD Magic) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_magic.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetBytesOnLastPage`]
+
+  void SetBytesOnLastPage(WORD BytesOnLastPage) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_cblp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetPagesInFile`]
+
+  void SetPagesInFile(WORD PagesInFile) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_cp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetRelocations`]
+
+  void SetRelocations(WORD Relocations) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_crlc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetSizeOfHeaderInParagraphs`]
+
+  void SetSizeOfHeaderInParagraphs(WORD SizeOfHeaderInParagraphs) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_cparhdr.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetMinExtraParagraphs`]
+
+  void SetMinExtraParagraphs(WORD MinExtraParagraphs) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_minalloc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetMaxExtraParagraphs`]
+
+  void SetMaxExtraParagraphs(WORD MaxExtraParagraphs) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_maxalloc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetInitialSS`]
+
+  void SetInitialSS(WORD InitialSS) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_ss.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetInitialSP`]
+
+  void SetInitialSP(WORD InitialSP) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_sp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetChecksum`]
+
+  void SetChecksum(WORD Checksum) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_csum.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetInitialIP`]
+
+  void SetInitialIP(WORD InitialIP) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_ip.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetInitialCS`]
+
+  void SetInitialCS(WORD InitialCS) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_cs.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetRelocTableFileAddr`]
+
+  void SetRelocTableFileAddr(WORD RelocTableFileAddr) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_lfarlc.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetOverlayNum`]
+
+  void SetOverlayNum(WORD OverlayNum) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_ovno.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetReservedWords1`]
+
+  void SetReservedWords1(std::array<WORD, 4> const& ReservedWords1) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_res.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetOEMID`]
+
+  void SetOEMID(WORD OEMID) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_oemid.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetOEMInfo`]
+
+  void SetOEMInfo(WORD OEMInfo) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_oeminfo.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetReservedWords2`]
+
+  void SetReservedWords2(std::array<WORD, 10> const& ReservedWords2) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_res2.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `SetNewHeaderOffset`]
+
+  void SetNewHeaderOffset(LONG Offset) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_DOS_HEADER.e_lfanew.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader equality operator]
+
+  bool operator==(DosHeader const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 DosHeader inequality operator]
+
+  bool operator!=(DosHeader const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[endsect] [/ DosHeader]
 
 [endsect] [/ Reference]
 
