@@ -135,26 +135,6 @@ namespace HadesMem
     }
   }
 
-  // Get module name
-  std::string ExportDir::GetName() const
-  {
-    // Get base of export dir
-    PBYTE const pExpDirBase = static_cast<PBYTE>(GetBase());
-
-    // Read RVA of module name
-    DWORD const NameRva = m_Memory.Read<DWORD>(pExpDirBase + FIELD_OFFSET(
-      IMAGE_EXPORT_DIRECTORY, Name));
-
-    // Ensure there is a module name to process
-    if (!NameRva)
-    {
-      return std::string();
-    }
-
-    // Read module name
-    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(NameRva));
-  }
-
   // Get characteristics
   DWORD ExportDir::GetCharacteristics() const
   {
@@ -185,6 +165,26 @@ namespace HadesMem
     PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
     return m_Memory.Read<WORD>(pExportDir + FIELD_OFFSET(
       IMAGE_EXPORT_DIRECTORY, MinorVersion));
+  }
+
+  // Get module name
+  std::string ExportDir::GetName() const
+  {
+    // Get base of export dir
+    PBYTE const pExpDirBase = static_cast<PBYTE>(GetBase());
+
+    // Read RVA of module name
+    DWORD const NameRva = m_Memory.Read<DWORD>(pExpDirBase + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, Name));
+
+    // Ensure there is a module name to process
+    if (!NameRva)
+    {
+      return std::string();
+    }
+
+    // Read module name
+    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(NameRva));
   }
 
   // Get ordinal base
@@ -265,6 +265,40 @@ namespace HadesMem
     PBYTE const pExportDir = static_cast<PBYTE>(GetBase());
     m_Memory.Write(pExportDir + FIELD_OFFSET(IMAGE_EXPORT_DIRECTORY, 
       MinorVersion), MinorVersion);
+  }
+
+  // Set name
+  void ExportDir::SetName(std::string const& Name) const
+  {
+    // Get base of export dir
+    PBYTE const pExpDirBase = static_cast<PBYTE>(GetBase());
+
+    // Read RVA of module name
+    DWORD const NameRva = m_Memory.Read<DWORD>(pExpDirBase + FIELD_OFFSET(
+      IMAGE_EXPORT_DIRECTORY, Name));
+
+    // Ensure there is a module name to process
+    if (!NameRva)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ExportDir::SetName") << 
+        ErrorString("Export dir has no name. Cannot overwrite."));
+    }
+
+    // Read module name
+    std::string const CurrentName = m_Memory.ReadString<std::string>(
+      m_PeFile.RvaToVa(NameRva));
+    
+    // Ensure new name is not longer than the current
+    if (Name.size() > CurrentName.size())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ExportDir::SetName") << 
+        ErrorString("Cannot overwrite name with longer string."));
+    }
+    
+    // Set new name
+    m_Memory.Write(m_PeFile.RvaToVa(NameRva), Name);
   }
 
   // Set ordinal base

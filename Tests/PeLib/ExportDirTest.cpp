@@ -114,8 +114,9 @@ BOOST_AUTO_TEST_CASE(DataTests)
       MyExportDir.EnsureValid();
       MyExportDir.SetCharacteristics(MyExportDir.GetCharacteristics());
       MyExportDir.SetTimeDateStamp(MyExportDir.GetTimeDateStamp());
-      MyExportDir.SetMajorVersion(MyExportDir.GetMajorVersion());
+      MyExportDir.SetMajorVersion(MyExportDir.GetMajorVersion());
       MyExportDir.SetMinorVersion(MyExportDir.GetMinorVersion());
+      MyExportDir.SetName(MyExportDir.GetName());
       MyExportDir.SetOrdinalBase(MyExportDir.GetOrdinalBase());
       MyExportDir.SetNumberOfFunctions(MyExportDir.GetNumberOfFunctions());
       MyExportDir.SetNumberOfNames(MyExportDir.GetNumberOfNames());
@@ -123,7 +124,6 @@ BOOST_AUTO_TEST_CASE(DataTests)
       MyExportDir.SetAddressOfNames(MyExportDir.GetAddressOfNames());
       MyExportDir.SetAddressOfNameOrdinals(MyExportDir.
         GetAddressOfNameOrdinals());
-      MyExportDir.SetCharacteristics(MyExportDir.GetCharacteristics());
       BOOST_CHECK(!MyExportDir.GetName().empty());
       
       // Get raw export dir data again (using the member function this time)

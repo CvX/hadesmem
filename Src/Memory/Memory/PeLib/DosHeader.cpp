@@ -84,13 +84,13 @@ namespace HadesMem
   }
 
   // Whether magic is valid
-  bool DosHeader::IsMagicValid() const
+  bool DosHeader::IsValid() const
   {
     return IMAGE_DOS_SIGNATURE == GetMagic();
   }
 
   // Ensure magic is valid
-  void DosHeader::EnsureMagicValid() const
+  void DosHeader::EnsureValid() const
   {
     if (!IsMagicValid())
     {

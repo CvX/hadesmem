@@ -1,12 +1,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<title>DosHeader</title>
+<title>ExportDir</title>
 <link rel="stylesheet" href="../../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
 <link rel="home" href="../../index.html" title="HadesMem 1.3.0">
 <link rel="up" href="../reference.html" title="Reference">
-<link rel="prev" href="module.html" title="Module">
+<link rel="prev" href="module.html" title="DosHeader">
 <link rel="next" href="../acknowledge.html" title="Acknowledgements">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -17,117 +17,147 @@
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
-<a name="hadesmem.reference.module"></a><a class="link" href="module.html" title="Module">DosHeader</a>
+<a name="hadesmem.reference.module"></a><a class="link" href="module.html" title="Module">ExportDir</a>
 </h3></div></div></div>
 <a name="hadesmem.reference.module.synopsis"></a><h4>
 <a name="hadesmem.reference.module.synopsis-heading"></a>
         <a class="link" href="module.html#hadesmem.reference.module.synopsis">Synopsis</a>
       </h4>
-<pre class="programlisting"><span class="comment">// In header: &lt;HadesMemory/PeLib/DosHeader.hpp&gt;</span>
+<pre class="programlisting"><span class="comment">// In header: &lt;HadesMemory/PeLib/ExportDir.hpp&gt;</span>
 
-<span class="keyword">class</span> <span class="identifier">DosHeader</span>
+<span class="keyword">class</span> <span class="identifier">ExportDir</span>
 <span class="special">{</span>
 <span class="keyword">public</span><span class="special">:</span>
-  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span>
-  <span class="special">{</span> <span class="special">};</span>
+  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
 
-  <span class="keyword">explicit</span> <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
+  <span class="keyword">explicit</span> <span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
     
-  <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  <span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
   
-  <span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  <span class="identifier">ExportDir</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
   
-  <span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  <span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">ExportDir</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
   
-  <span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  <span class="identifier">ExportDir</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportDir</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
   
-  <span class="special">~</span><span class="identifier">DosHeader</span><span class="special">();</span>
-  
+  <span class="special">~</span><span class="identifier">ExportDir</span><span class="special">();</span>
+
   <span class="identifier">PVOID</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="keyword">bool</span> <span class="identifier">IsMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="identifier">IsValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="keyword">void</span> <span class="identifier">EnsureMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">EnsureValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetMagic</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetCharacteristics</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetBytesOnLastPage</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetTimeDateStamp</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetPagesInFile</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">WORD</span> <span class="identifier">GetMajorVersion</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetRelocations</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">WORD</span> <span class="identifier">GetMinorVersion</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetSizeOfHeaderInParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetMinExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetOrdinalBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetMaxExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetNumberOfFunctions</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetInitialSS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetNumberOfNames</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetInitialSP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetAddressOfFunctions</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetChecksum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetAddressOfNames</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetInitialIP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">DWORD</span> <span class="identifier">GetAddressOfNameOrdinals</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetInitialCS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetCharacteristics</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">Characteristics</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetRelocTableFileAddr</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetTimeDateStamp</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">TimeDateStamp</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetOverlayNum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetMajorVersion</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MajorVersion</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords1</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetMinorVersion</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinorVersion</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetOEMID</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetOrdinalBase</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">OrdinalBase</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">WORD</span> <span class="identifier">GetOEMInfo</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetNumberOfFunctions</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">NumberOfFunctions</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords2</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetNumberOfNames</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">NumberOfNames</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="identifier">LONG</span> <span class="identifier">GetNewHeaderOffset</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetAddressOfFunctions</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfFunctions</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="keyword">void</span> <span class="identifier">SetMagic</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Magic</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetAddressOfNames</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfNames</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
-  <span class="keyword">void</span> <span class="identifier">SetBytesOnLastPage</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">BytesOnLastPage</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetPagesInFile</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">PagesInFile</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetRelocations</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Relocations</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetSizeOfHeaderInParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">SizeOfHeaderInParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetMinExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetMaxExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MaxExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetInitialSS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetInitialSP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetChecksum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Checksum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetInitialIP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialIP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetInitialCS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialCS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetRelocTableFileAddr</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">RelocTableFileAddr</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetOverlayNum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OverlayNum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetReservedWords1</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetOEMID</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMID</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetOEMInfo</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMInfo</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetReservedWords2</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords2</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-
-  <span class="keyword">void</span> <span class="identifier">SetNewHeaderOffset</span><span class="special">(</span><span class="identifier">LONG</span> <span class="identifier">Offset</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">SetAddressOfNameOrdinals</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfNameOrdinals</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
   
-  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
   
-  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">class</span> <span class="identifier">Export</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="identifier">Export</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">,</span> <span class="identifier">DWORD</span> <span class="identifier">Ordinal</span><span class="special">);</span>
+    
+  <span class="identifier">Export</span><span class="special">(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">Export</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">Export</span><span class="special">(</span><span class="identifier">Export</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">Export</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Export</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="special">~</span><span class="identifier">Export</span><span class="special">();</span>
+
+  <span class="identifier">DWORD</span> <span class="identifier">GetRva</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">PVOID</span> <span class="identifier">GetVa</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarder</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarderModule</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarderFunction</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="identifier">WORD</span> <span class="identifier">GetOrdinal</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">bool</span> <span class="identifier">ByName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="keyword">bool</span> <span class="identifier">Forwarded</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  
+  <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">class</span> <span class="identifier">ExportList</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
+  
+  <span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">iterator</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">const_iterator</span><span class="special">;</span>
+  
+  <span class="keyword">explicit</span> <span class="identifier">ExportList</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
+  
+  <span class="identifier">ExportList</span><span class="special">(</span><span class="identifier">ExportList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">ExportList</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+  
+  <span class="identifier">iterator</span> <span class="identifier">begin</span><span class="special">();</span>
+  
+  <span class="identifier">iterator</span> <span class="identifier">end</span><span class="special">();</span>
+  
+  <span class="identifier">const_iterator</span> <span class="identifier">begin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+   
+  <span class="identifier">const_iterator</span> <span class="identifier">end</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+  
+  <span class="identifier">const_iterator</span> <span class="identifier">cbegin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+   
+  <span class="identifier">const_iterator</span> <span class="identifier">cend</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 <span class="special">};</span>
 </pre>
 <a name="hadesmem.reference.module.description"></a><h4>
@@ -135,37 +165,46 @@
         <a class="link" href="module.html#hadesmem.reference.module.description">Description</a>
       </h4>
 <p>
-        The <code class="computeroutput"><span class="identifier">DosHeader</span></code> class provides
-        functionality for working with the DOS header of a PE file.
+        The <code class="computeroutput"><span class="identifier">ExportDir</span></code> and <code class="computeroutput"><span class="identifier">Export</span></code> classes provide functionality for
+        working with the export directory of a PE file.
       </p>
-<a name="hadesmem.reference.module.dosheader_public_types"></a><h4>
-<a name="hadesmem.reference.module.dosheader_public_types-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_types">DosHeader
+<p>
+        See the <a href="http://msdn.microsoft.com/en-us/windows/hardware/gg463119" target="_top">PE
+        and COFF Specification</a> for more information on working with the PE
+        file format.
+      </p>
+<p>
+        The <code class="computeroutput"><span class="identifier">ExportList</span></code> class provides
+        STL-compatible iterators for export enumeration.
+      </p>
+<a name="hadesmem.reference.module.exportdir_public_types"></a><h4>
+<a name="hadesmem.reference.module.exportdir_public_types-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_public_types">ExportDir
         public types</a>
       </h4>
 <pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
 </pre>
 <p>
-        Exception type thrown by <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+        Exception type thrown by <code class="computeroutput"><span class="identifier">ExportDir</span></code>
         methods when an error occurs.
       </p>
-<a name="hadesmem.reference.module.dosheader_public_construct_copy_destruct_move"></a><h4>
-<a name="hadesmem.reference.module.dosheader_public_construct_copy_destruct_move-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_construct_copy_destruct_move">DosHeader
+<a name="hadesmem.reference.module.exportdir_public_construct_copy_destruct_move"></a><h4>
+<a name="hadesmem.reference.module.exportdir_public_construct_copy_destruct_move-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_public_construct_copy_destruct_move">ExportDir
         public construct/copy/destruct/move</a>
       </h4>
 <a name="hadesmem.reference.module.constructor"></a><h5>
 <a name="hadesmem.reference.module.constructor-heading"></a>
         <a class="link" href="module.html#hadesmem.reference.module.constructor">Constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              Constructs an <code class="computeroutput"><span class="identifier">ExportDir</span></code>
               instance that refers to the specified PE file.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
@@ -174,19 +213,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_copy_constructor"></a><h5>
-<a name="hadesmem.reference.module.dosheader_copy_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_copy_constructor">DosHeader
+<a name="hadesmem.reference.module.exportdir_copy_constructor"></a><h5>
+<a name="hadesmem.reference.module.exportdir_copy_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_copy_constructor">ExportDir
         copy constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              Constructs an <code class="computeroutput"><span class="identifier">ExportDir</span></code>
               that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
@@ -195,12 +234,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_copy_assignment_operator"></a><h5>
-<a name="hadesmem.reference.module.dosheader_copy_assignment_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_copy_assignment_operator">DosHeader
+<a name="hadesmem.reference.module.exportdir_copy_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.exportdir_copy_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_copy_assignment_operator">ExportDir
         copy assignment operator</a>
       </h5>
-<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">ExportDir</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -215,19 +254,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_move_constructor"></a><h5>
-<a name="hadesmem.reference.module.dosheader_move_constructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_move_constructor">DosHeader
+<a name="hadesmem.reference.module.exportdir_move_constructor"></a><h5>
+<a name="hadesmem.reference.module.exportdir_move_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_move_constructor">ExportDir
         move constructor</a>
       </h5>
-<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">ExportDir</span><span class="special">(</span><span class="identifier">ExportDir</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+              Constructs an <code class="computeroutput"><span class="identifier">ExportDir</span></code>
               that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
               via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
             </p></dd>
@@ -237,12 +276,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_move_assignment_operator"></a><h5>
-<a name="hadesmem.reference.module.dosheader_move_assignment_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_move_assignment_operator">DosHeader
+<a name="hadesmem.reference.module.exportdir_move_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.exportdir_move_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_move_assignment_operator">ExportDir
         move assignment operator</a>
       </h5>
-<pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">ExportDir</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportDir</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -258,12 +297,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_destructor"></a><h5>
-<a name="hadesmem.reference.module.dosheader_destructor-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_destructor">DosHeader
+<a name="hadesmem.reference.module.exportdir_destructor"></a><h5>
+<a name="hadesmem.reference.module.exportdir_destructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_destructor">ExportDir
         destructor</a>
       </h5>
-<pre class="programlisting"><span class="special">~</span><span class="identifier">DosHeader</span><span class="special">();</span>
+<pre class="programlisting"><span class="special">~</span><span class="identifier">ExportDir</span><span class="special">();</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -278,14 +317,14 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_public_member_functions"></a><h4>
-<a name="hadesmem.reference.module.dosheader_public_member_functions-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_public_member_functions">DosHeader
+<a name="hadesmem.reference.module.exportdir_public_member_functions"></a><h4>
+<a name="hadesmem.reference.module.exportdir_public_member_functions-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_public_member_functions">ExportDir
         public member functions</a>
       </h4>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_">DosHeader
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getbase__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getbase__phrase___code_">ExportDir
         member function <code class="computeroutput"><span class="identifier">GetBase</span></code></a>
       </h5>
 <pre class="programlisting"><span class="identifier">PVOID</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
@@ -295,7 +334,7 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Base address of DOS header.
+              Base address of export directory.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -303,19 +342,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ismagicvalid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">IsMagicValid</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__isvalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__isvalid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__isvalid__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">IsValid</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">IsMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">IsValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Whether the target is a valid DOS header.
+              Whether the target is a valid export dir.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -323,19 +362,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__ensuremagicvalid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">EnsureMagicValid</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">EnsureValid</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">EnsureMagicValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">EnsureValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Throw if the target is an invalid DOS header.
+              Throw if the target is an invalid export dir.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -343,19 +382,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMagic</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getcharacteristics__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getcharacteristics__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getcharacteristics__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetCharacteristics</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMagic</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetCharacteristics</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_magic.
+              IMAGE_EXPORT_DIRECTORY.Characteristics.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -363,19 +402,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetBytesOnLastPage</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__gettimedatestamp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__gettimedatestamp__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__gettimedatestamp__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetTimeDateStamp</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetBytesOnLastPage</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetTimeDateStamp</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cblp.
+              IMAGE_EXPORT_DIRECTORY.TimeDateStamp.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -383,19 +422,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetPagesInFile</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getmajorversion__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getmajorversion__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getmajorversion__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetMajorVersion</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetPagesInFile</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMajorVersion</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cp.
+              IMAGE_EXPORT_DIRECTORY.MajorVersion.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -403,19 +442,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetRelocations</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getminorversion__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getminorversion__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getminorversion__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetMinorVersion</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocations</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMinorVersion</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_crlc.
+              IMAGE_EXPORT_DIRECTORY.MinorVersion.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -423,19 +462,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetSizeOfHeaderInParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getname__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getname__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getname__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetName</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetSizeOfHeaderInParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cparhdr.
+              IMAGE_EXPORT_DIRECTORY.Name.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -443,19 +482,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMinExtraParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getordinalbase__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getordinalbase__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getordinalbase__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetOrdinalBase</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMinExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetOrdinalBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_minalloc.
+              IMAGE_EXPORT_DIRECTORY.Base.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -463,19 +502,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMaxExtraParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberoffunctions__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberoffunctions__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberoffunctions__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetNumberOfFunctions</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMaxExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetNumberOfFunctions</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_maxalloc.
+              IMAGE_EXPORT_DIRECTORY.NumberOfFunctions.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -483,19 +522,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialSS</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberofnames__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberofnames__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getnumberofnames__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetNumberOfNames</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetNumberOfNames</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_ss.
+              IMAGE_EXPORT_DIRECTORY.NumberOfNames.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -503,19 +542,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialSP</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressoffunctions__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressoffunctions__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressoffunctions__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetAddressOfFunctions</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetAddressOfFunctions</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_sp.
+              IMAGE_EXPORT_DIRECTORY.AddressOfFunctions.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -523,19 +562,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetChecksum</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnames__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnames__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnames__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetAddressOfNames</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetChecksum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetAddressOfNames</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_csum.
+              IMAGE_EXPORT_DIRECTORY.AddressOfNames.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -543,19 +582,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialIP</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnameordinals__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnameordinals__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__getaddressofnameordinals__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">GetAddressOfNameOrdinals</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialIP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetAddressOfNameOrdinals</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_ip.
+              IMAGE_EXPORT_DIRECTORY.AddressOfNameOrdinals.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -563,179 +602,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialCS</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setcharacteristics__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setcharacteristics__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setcharacteristics__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetCharacteristics</span></code></a>
       </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialCS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_cs.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetRelocTableFileAddr</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocTableFileAddr</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_lfarlc.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOverlayNum</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOverlayNum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_ovno.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetReservedWords1</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords1</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_res.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOEMID</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMID</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_oemid.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOEMInfo</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMInfo</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_oeminfo.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetReservedWords2</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords2</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_res2.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetNewHeaderOffset</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="identifier">LONG</span> <span class="identifier">GetNewHeaderOffset</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Returns:</span></dt>
-<dd><p>
-              IMAGE_DOS_HEADER.e_lfanew.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMagic</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMagic</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Magic</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetCharacteristics</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">Characteristics</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_magic.
+              Sets IMAGE_EXPORT_DIRECTORY.Characteristics.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -743,19 +622,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetBytesOnLastPage</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__settimedatestamp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__settimedatestamp__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__settimedatestamp__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetTimeDateStamp</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetBytesOnLastPage</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">BytesOnLastPage</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetTimeDateStamp</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">TimeDateStamp</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cblp.
+              Sets IMAGE_EXPORT_DIRECTORY.TimeDateStamp.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -763,19 +642,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetPagesInFile</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setmajorversion__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setmajorversion__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setmajorversion__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetMajorVersion</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetPagesInFile</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">PagesInFile</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMajorVersion</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MajorVersion</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cp.
+              Sets IMAGE_EXPORT_DIRECTORY.MajorVersion.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -783,19 +662,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetRelocations</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setminorversion__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setminorversion__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setminorversion__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetMinorVersion</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocations</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Relocations</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMinorVersion</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinorVersion</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_crlc.
+              Sets IMAGE_EXPORT_DIRECTORY.MinorVersion.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -803,39 +682,49 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetSizeOfHeaderInParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setname__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setname__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setname__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetName</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetSizeOfHeaderInParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">SizeOfHeaderInParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetName</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Name</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cparhdr.
+              Sets IMAGE_EXPORT_DIRECTORY.Name.
             </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
+<dt><span class="term">Notes:</span></dt>
+<dd>
+<p>
+              Length of new name must be equal to or less than the length of the
+              current name. Allocating space for a new string in the file is currently
+              unsupported.
+            </p>
+<p>
+              [Throws:
+            </p>
+<p>
               Yes.
-            </p></dd>
+            </p>
+</dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMinExtraParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setordinalbase__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setordinalbase__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setordinalbase__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetOrdinalBase</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMinExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOrdinalBase</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">OrdinalBase</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_minalloc.
+              Sets IMAGE_EXPORT_DIRECTORY.Base.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -843,19 +732,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMaxExtraParagraphs</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberoffunctions__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberoffunctions__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberoffunctions__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetNumberOfFunctions</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMaxExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MaxExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetNumberOfFunctions</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">NumberOfFunctions</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_maxalloc.
+              Sets IMAGE_EXPORT_DIRECTORY.NumberOfFunctions.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -863,19 +752,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialSS</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberofnames__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberofnames__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setnumberofnames__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetNumberOfNames</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetNumberOfNames</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">NumberOfNames</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_ss.
+              Sets IMAGE_EXPORT_DIRECTORY.NumberOfNames.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -883,19 +772,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialSP</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressoffunctions__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressoffunctions__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressoffunctions__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetAddressOfFunctions</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetAddressOfFunctions</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfFunctions</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_sp.
+              Sets IMAGE_EXPORT_DIRECTORY.AddressOfFunctions.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -903,19 +792,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetChecksum</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnames__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnames__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnames__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetAddressOfNames</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetChecksum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Checksum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetAddressOfNames</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfNames</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_csum.
+              Sets IMAGE_EXPORT_DIRECTORY.AddressOfNames.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -923,19 +812,19 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialIP</span></code></a>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnameordinals__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnameordinals__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_member_function__code__phrase_role__identifier__setaddressofnameordinals__phrase___code_">ExportDir
+        member function <code class="computeroutput"><span class="identifier">SetAddressOfNameOrdinals</span></code></a>
       </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialIP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialIP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetAddressOfNameOrdinals</span><span class="special">(</span><span class="identifier">DWORD</span> <span class="identifier">AddressOfNameOrdinals</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_ip.
+              Sets IMAGE_EXPORT_DIRECTORY.AddressOfNameOrdinals.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -943,172 +832,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialCS</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialCS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialCS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_cs.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetRelocTableFileAddr</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocTableFileAddr</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">RelocTableFileAddr</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_lfarlc.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOverlayNum</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOverlayNum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OverlayNum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_ovno.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetReservedWords1</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords1</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_res.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOEMID</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMID</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMID</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_oemid.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOEMInfo</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMInfo</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMInfo</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_oeminfo.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetReservedWords2</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords2</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords2</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_res2.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_"></a><h5>
-<a name="hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetNewHeaderOffset</span></code></a>
-      </h5>
-<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetNewHeaderOffset</span><span class="special">(</span><span class="identifier">LONG</span> <span class="identifier">Offset</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
-</pre>
-<div class="variablelist">
-<p class="title"><b></b></p>
-<dl>
-<dt><span class="term">Effects:</span></dt>
-<dd><p>
-              Sets IMAGE_DOS_HEADER.e_lfanew.
-            </p></dd>
-<dt><span class="term">Throws:</span></dt>
-<dd><p>
-              Yes.
-            </p></dd>
-</dl>
-</div>
-<a name="hadesmem.reference.module.dosheader_equality_operator"></a><h5>
-<a name="hadesmem.reference.module.dosheader_equality_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_equality_operator">DosHeader
+<a name="hadesmem.reference.module.exportdir_equality_operator"></a><h5>
+<a name="hadesmem.reference.module.exportdir_equality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_equality_operator">ExportDir
         equality operator</a>
       </h5>
-<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -1116,7 +845,7 @@
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
               Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              the same target.
+              the same export dir.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
@@ -1124,12 +853,12 @@
             </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.module.dosheader_inequality_operator"></a><h5>
-<a name="hadesmem.reference.module.dosheader_inequality_operator-heading"></a>
-        <a class="link" href="module.html#hadesmem.reference.module.dosheader_inequality_operator">DosHeader
+<a name="hadesmem.reference.module.exportdir_inequality_operator"></a><h5>
+<a name="hadesmem.reference.module.exportdir_inequality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportdir_inequality_operator">ExportDir
         inequality operator</a>
       </h5>
-<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">ExportDir</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -1137,11 +866,560 @@
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
               Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              a different target.
+              a different export dir.
             </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
               No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_public_construct_copy_destruct_move"></a><h4>
+<a name="hadesmem.reference.module.export_public_construct_copy_destruct_move-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_public_construct_copy_destruct_move">Export
+        public construct/copy/destruct/move</a>
+      </h4>
+<a name="hadesmem.reference.module.constructor"></a><h5>
+<a name="hadesmem.reference.module.constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.constructor">Constructor</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">Export</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">,</span> <span class="identifier">DWORD</span> <span class="identifier">Ordinal</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Constructs an <code class="computeroutput"><span class="identifier">ExportDir</span></code>
+              instance that refers to the specified PE file and ordinal.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_copy_constructor"></a><h5>
+<a name="hadesmem.reference.module.export_copy_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_copy_constructor">Export
+        copy constructor</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">Export</span><span class="special">(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Constructs an <code class="computeroutput"><span class="identifier">Export</span></code>
+              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_copy_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.export_copy_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_copy_assignment_operator">Export
+        copy assignment operator</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">Export</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets self to refer to the same target as the other instance.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_move_constructor"></a><h5>
+<a name="hadesmem.reference.module.export_move_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_move_constructor">Export
+        move constructor</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">Export</span><span class="special">(</span><span class="identifier">Export</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Constructs an <code class="computeroutput"><span class="identifier">Export</span></code>
+              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
+              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_move_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.export_move_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_move_assignment_operator">Export
+        move assignment operator</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">Export</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">Export</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets self to refer to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
+              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_destructor"></a><h5>
+<a name="hadesmem.reference.module.export_destructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_destructor">Export destructor</a>
+      </h5>
+<pre class="programlisting"><span class="special">~</span><span class="identifier">Export</span><span class="special">();</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Destroys the instance and frees all resources.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_public_member_functions"></a><h4>
+<a name="hadesmem.reference.module.export_public_member_functions-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_public_member_functions">Export
+        public member functions</a>
+      </h4>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getrva__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getrva__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getrva__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetRva</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">DWORD</span> <span class="identifier">GetRva</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              RVA of export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getva__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getva__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getva__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetVa</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">PVOID</span> <span class="identifier">GetVa</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              VA of export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getname__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getname__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getname__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetName</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Name of export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarder__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarder__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarder__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetForwarder</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarder</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Full unprocessed forwarder of export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwardermodule__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwardermodule__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwardermodule__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetForwarderModule</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarderModule</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Name part of export forwarder.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarderfunction__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarderfunction__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getforwarderfunction__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetForwarderFunction</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">GetForwarderFunction</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Function part of export forwarder.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getordinal__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getordinal__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__getordinal__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">GetOrdinal</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOrdinal</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Ordinal of export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__byname__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__byname__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__byname__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">ByName</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">ByName</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether entry is exported by name.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__forwarded__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.export_member_function__code__phrase_role__identifier__forwarded__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_member_function__code__phrase_role__identifier__forwarded__phrase___code_">Export
+        member function <code class="computeroutput"><span class="identifier">Forwarded</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">Forwarded</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether entry is forwarded.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_equality_operator"></a><h5>
+<a name="hadesmem.reference.module.export_equality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_equality_operator">Export
+        equality operator</a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+              the same export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.export_inequality_operator"></a><h5>
+<a name="hadesmem.reference.module.export_inequality_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.export_inequality_operator">Export
+        inequality operator</a>
+      </h5>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">Export</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+              a different export.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_public_types"></a><h4>
+<a name="hadesmem.reference.module.exportlist_public_types-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_public_types">ExportList
+        public types</a>
+      </h4>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
+</pre>
+<p>
+        Exception type thrown by <code class="computeroutput"><span class="identifier">ExportList</span></code>
+        methods when an error occurs.
+      </p>
+<pre class="programlisting"><span class="keyword">typedef</span> <span class="identifier">unspecified</span> <span class="identifier">iterator</span><span class="special">;</span>
+</pre>
+<p>
+        Iterator type for export list. Models the <a href="http://www.sgi.com/tech/stl/ForwardIterator.html" target="_top">ForwardIterator</a>
+        concept. Implementation type unspecified.
+      </p>
+<a name="hadesmem.reference.module.exportlist_public_construct_copy_destruct_move"></a><h4>
+<a name="hadesmem.reference.module.exportlist_public_construct_copy_destruct_move-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_public_construct_copy_destruct_move">ExportList
+        public construct/copy/destruct/move</a>
+      </h4>
+<a name="hadesmem.reference.module.exportlist_constructor"></a><h5>
+<a name="hadesmem.reference.module.exportlist_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_constructor">ExportList
+        constructor</a>
+      </h5>
+<pre class="programlisting"><span class="keyword">explicit</span> <span class="identifier">ExportList</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Constructs a <code class="computeroutput"><span class="identifier">ExportList</span></code>
+              instance targetting the PE file specified by <code class="computeroutput"><span class="identifier">MyPeFile</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_move_constructor"></a><h5>
+<a name="hadesmem.reference.module.exportlist_move_constructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_move_constructor">ExportList
+        move constructor</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">ExportList</span><span class="special">(</span><span class="identifier">ExportList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Constructs a <code class="computeroutput"><span class="identifier">ExportList</span></code>
+              that refers to the same export list as <code class="computeroutput"><span class="identifier">Other</span></code>
+              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_move_assignment_operator"></a><h5>
+<a name="hadesmem.reference.module.exportlist_move_assignment_operator-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_move_assignment_operator">ExportList
+        move assignment operator</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">ExportList</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">ExportList</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Sets self to refer to the same export list as <code class="computeroutput"><span class="identifier">Other</span></code>
+              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_destructor"></a><h5>
+<a name="hadesmem.reference.module.exportlist_destructor-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_destructor">ExportList
+        destructor</a>
+      </h5>
+<pre class="programlisting"><span class="special">~</span><span class="identifier">ExportList</span><span class="special">();</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Effects:</span></dt>
+<dd><p>
+              Destroys the instance and frees all resources.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              No.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_public_member_functions"></a><h4>
+<a name="hadesmem.reference.module.exportlist_public_member_functions-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_public_member_functions">ExportList
+        public member functions</a>
+      </h4>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__begin__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__begin__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__begin__phrase___code_">ExportList
+        member function <code class="computeroutput"><span class="identifier">begin</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">iterator</span> <span class="identifier">begin</span><span class="special">();</span>
+<span class="identifier">const_iterator</span> <span class="identifier">begin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              STL-compatible iterator or const_iterator for start of export list.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__end__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__end__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__end__phrase___code_">ExportList
+        member function <code class="computeroutput"><span class="identifier">end</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">iterator</span> <span class="identifier">end</span><span class="special">();</span>
+<span class="identifier">const_iterator</span> <span class="identifier">end</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              STL-compatible iterator or const_iterator for off-the-end of export
+              list.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cbegin__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cbegin__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cbegin__phrase___code_">ExportList
+        member function <code class="computeroutput"><span class="identifier">cbegin</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">const_iterator</span> <span class="identifier">cbegin</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              STL-compatible const_iterator for start of export list.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
+            </p></dd>
+</dl>
+</div>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cend__phrase___code_"></a><h5>
+<a name="hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cend__phrase___code_-heading"></a>
+        <a class="link" href="module.html#hadesmem.reference.module.exportlist_member_function__code__phrase_role__identifier__cend__phrase___code_">ExportList
+        member function <code class="computeroutput"><span class="identifier">cend</span></code></a>
+      </h5>
+<pre class="programlisting"><span class="identifier">const_iterator</span> <span class="identifier">cend</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl>
+<dt><span class="term">Returns:</span></dt>
+<dd><p>
+              STL-compatible const_iterator for off-the-end of export list.
+            </p></dd>
+<dt><span class="term">Throws:</span></dt>
+<dd><p>
+              Yes.
             </p></dd>
 </dl>
 </div>

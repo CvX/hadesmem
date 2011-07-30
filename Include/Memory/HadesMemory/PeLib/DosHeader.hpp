@@ -62,10 +62,10 @@ namespace HadesMem
     PVOID GetBase() const;
 
     // Whether magic is valid
-    bool IsMagicValid() const;
+    bool IsValid() const;
 
     // Ensure magic is valid
-    void EnsureMagicValid() const;
+    void EnsureValid() const;
 
     // Get magic
     WORD GetMagic() const;

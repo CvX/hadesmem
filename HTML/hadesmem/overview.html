@@ -145,6 +145,17 @@
           string.
         </li>
 </ul></div>
+<a name="hadesmem.overview.iterators"></a><h4>
+<a name="hadesmem.overview.iterators-heading"></a>
+      <a class="link" href="overview.html#hadesmem.overview.iterators">Iterators</a>
+    </h4>
+<p>
+      HadesMem iterators are STL-compatible. Iterators are 'lazy' to keep the API
+      performant. Lazy in this context means that data enumeration and initialization
+      is only performed on-demmand, rather than lists being pre-processed. Furthermore,
+      caching is implemented to improve performance when the list is used in multi-pass
+      algorithms.
+    </p>
 <a name="hadesmem.overview.support"></a><h4>
 <a name="hadesmem.overview.support-heading"></a>
       <a class="link" href="overview.html#hadesmem.overview.support">Support</a>

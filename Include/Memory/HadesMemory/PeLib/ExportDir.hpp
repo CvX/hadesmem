@@ -74,9 +74,6 @@ namespace HadesMem
     // Ensure export directory is valid
     void EnsureValid() const;
 
-    // Get module name
-    std::string GetName() const;
-
     // Get characteristics
     DWORD GetCharacteristics() const;
 
@@ -88,6 +85,9 @@ namespace HadesMem
 
     // Get minor version
     WORD GetMinorVersion() const;
+
+    // Get module name
+    std::string GetName() const;
 
     // Get ordinal base
     DWORD GetOrdinalBase() const;
@@ -118,6 +118,9 @@ namespace HadesMem
 
     // Set minor version
     void SetMinorVersion(WORD MinorVersion) const;
+
+    // Set module name
+    void SetName(std::string const& Name) const;
 
     // Set ordinal base
     void SetOrdinalBase(DWORD OrdinalBase) const;
