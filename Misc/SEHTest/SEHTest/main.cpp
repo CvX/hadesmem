@@ -10,6 +10,21 @@
 // Stack unwinding. Crashing due to invalid handler, even though handlers are 
 // valid... Something fishy going on here.
 
+// Notes:
+//[3:44:02 AM] MaiN:     if (handler is on a non-executable page) { 
+//        if (ExecuteDispatchEnable bit set in the process flags) 
+//            return TRUE; 
+//        else 
+//            raise ACCESS_VIOLATION; // enforce DEP even if we have no hardware NX
+//[3:44:06 AM] MaiN: this is the easiest way :P
+//[3:44:37 AM] MaiN: if it was non executable
+//[3:44:39 AM] MaiN: it would be ez
+//[3:46:31 AM] MaiN: you can unwind until you're inside RtlDispatchException
+//[3:46:34 AM] MaiN: and set al to 1
+//[3:46:58 AM] MaiN: that will make it seem like RtlIsValidHandler returned 1
+//[3:47:12 AM] MaiN: it's hookable without hooking it because it raises exceptions
+// How would you bypass DEP though?
+
 typedef void (__stdcall *tRtlRaiseException)(PEXCEPTION_RECORD rec);
 
 static tRtlRaiseException RtlRaiseException;
