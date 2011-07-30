@@ -31,7 +31,7 @@ namespace HadesMem
     m_pBase(static_cast<PBYTE>(m_PeFile.GetBase()))
   {
     // Ensure magic is valid
-    EnsureMagicValid();
+    EnsureValid();
   }
       
   // Copy constructor
@@ -92,7 +92,7 @@ namespace HadesMem
   // Ensure magic is valid
   void DosHeader::EnsureValid() const
   {
-    if (!IsMagicValid())
+    if (!IsValid())
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("DosHeader::EnsureSignatureValid") << 

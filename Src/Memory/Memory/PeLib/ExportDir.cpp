@@ -298,7 +298,7 @@ namespace HadesMem
     }
     
     // Set new name
-    m_Memory.Write(m_PeFile.RvaToVa(NameRva), Name);
+    m_Memory.WriteString(m_PeFile.RvaToVa(NameRva), Name);
   }
 
   // Set ordinal base

@@ -85,6 +85,9 @@ namespace HadesMem
     // Get name (raw)
     DWORD GetNameRaw() const;
 
+    // Get name
+    std::string GetName() const;
+
     // Get first thunk
     DWORD GetFirstThunk() const;
 
@@ -99,14 +102,12 @@ namespace HadesMem
 
     // Set name (raw)
     void SetNameRaw(DWORD Name) const;
+    
+    // Set name
+    void SetName(std::string const& Name) const;
 
     // Set first thunk
     void SetFirstThunk(DWORD FirstThunk) const;
-
-    // Get name
-    std::string GetName() const;
-      
-    // Todo: SetName function
     
     // Equality operator
     bool operator==(ImportDir const& Rhs) const;

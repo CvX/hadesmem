@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_CASE(DataTests)
       
       // Ensure all member functions are called without exception, and 
       // overwrite the value of each field with the existing value
-      BOOST_CHECK_EQUAL(MyDosHdr.IsMagicValid(), true);
-      MyDosHdr.EnsureMagicValid();
+      BOOST_CHECK_EQUAL(MyDosHdr.IsValid(), true);
+      MyDosHdr.EnsureValid();
       MyDosHdr.SetMagic(MyDosHdr.GetMagic());
       MyDosHdr.SetBytesOnLastPage(MyDosHdr.GetBytesOnLastPage());
       MyDosHdr.SetPagesInFile(MyDosHdr.GetPagesInFile());

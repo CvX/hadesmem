@@ -115,6 +115,7 @@ BOOST_AUTO_TEST_CASE(DataTest)
           Test.SetTimeDateStamp(Test.GetTimeDateStamp());
           Test.SetForwarderChain(Test.GetForwarderChain());
           Test.SetNameRaw(Test.GetNameRaw());
+          Test.SetName(Test.GetName());
           Test.SetFirstThunk(Test.GetFirstThunk());
           BOOST_CHECK(!Test.GetName().empty());
           

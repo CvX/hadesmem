@@ -169,6 +169,12 @@ namespace HadesMem
       IMAGE_IMPORT_DESCRIPTOR, Name));
   }
 
+  // Get name
+  std::string ImportDir::GetName() const
+  {
+    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(GetNameRaw()));
+  }
+
   // Get first thunk
   DWORD ImportDir::GetFirstThunk() const
   {
@@ -201,12 +207,44 @@ namespace HadesMem
       ForwarderChain), ForwarderChain);
   }
 
-  // Set name (raw)
+  // Set name
   void ImportDir::SetNameRaw(DWORD Name) const
   {
     PBYTE pBase = static_cast<PBYTE>(GetBase());
-    return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
+    m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
       Name), Name);
+  }
+
+  // Set name (raw)
+  void ImportDir::SetName(std::string const& Name) const
+  {
+    PBYTE pBase = static_cast<PBYTE>(GetBase());
+    DWORD NameRva = m_Memory.Read<DWORD>(pBase + FIELD_OFFSET(
+      IMAGE_IMPORT_DESCRIPTOR, Name));
+    if (!NameRva)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ImportDir::SetName") << 
+        ErrorString("Name RVA is null."));
+    }
+    
+    PVOID pName = m_PeFile.RvaToVa(NameRva);
+    if (!pName)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ImportDir::SetName") << 
+        ErrorString("Name VA is null."));
+    }
+      
+    std::string const CurrentName = m_Memory.ReadString<std::string>(pName);
+    if (Name.size() > CurrentName.size())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ImportDir::SetName") << 
+        ErrorString("New name longer than existing name."));
+    }
+      
+    return m_Memory.WriteString(pName, Name);
   }
 
   // Set first thunk
@@ -215,12 +253,6 @@ namespace HadesMem
     PBYTE pBase = static_cast<PBYTE>(GetBase());
     return m_Memory.Write(pBase + FIELD_OFFSET(IMAGE_IMPORT_DESCRIPTOR, 
       FirstThunk), FirstThunk);
-  }
-
-  // Get name
-  std::string ImportDir::GetName() const
-  {
-    return m_Memory.ReadString<std::string>(m_PeFile.RvaToVa(GetNameRaw()));
   }
   
   // Equality operator
