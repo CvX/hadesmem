@@ -73,8 +73,8 @@ BOOST_AUTO_TEST_CASE(DataTest)
       
       // Ensure all member functions are called without exception, and 
       // overwrite the value of each field with the existing value
-      BOOST_CHECK_EQUAL(MyNtHeaders.IsSignatureValid(), true);
-      MyNtHeaders.EnsureSignatureValid();
+      BOOST_CHECK_EQUAL(MyNtHeaders.IsValid(), true);
+      MyNtHeaders.EnsureValid();
       MyNtHeaders.SetSignature(MyNtHeaders.GetSignature());
       MyNtHeaders.SetMachine(MyNtHeaders.GetMachine());
       MyNtHeaders.SetNumberOfSections(MyNtHeaders.GetNumberOfSections());

@@ -37,7 +37,7 @@ namespace HadesMem
       MyDosHeader.GetNewHeaderOffset();
     
     // Ensure signature is valid
-    EnsureSignatureValid();
+    EnsureValid();
   }
       
   // Copy constructor
@@ -91,18 +91,18 @@ namespace HadesMem
   }
 
   // Whether signature is valid
-  bool NtHeaders::IsSignatureValid() const
+  bool NtHeaders::IsValid() const
   {
     return IMAGE_NT_SIGNATURE == GetSignature();
   }
 
   // Ensure signature is valid
-  void NtHeaders::EnsureSignatureValid() const
+  void NtHeaders::EnsureValid() const
   {
-    if (!IsSignatureValid())
+    if (!IsValid())
     {
       BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("NtHeaders::EnsureSignatureValid") << 
+        ErrorFunction("NtHeaders::EnsureValid") << 
         ErrorString("NT headers signature invalid."));
     }
   }

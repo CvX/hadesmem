@@ -3987,6 +3987,1359 @@ list.]]
 
 [endsect] [/ ImportDir]
 
+[section:ntheaders NtHeaders]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/NtHeaders.hpp>
+
+  class NtHeaders
+  {
+  public:
+    class Error : public virtual HadesMemError;
+
+    enum DataDir
+    {
+      DataDir_Export, 
+      DataDir_Import, 
+      DataDir_Resource, 
+      DataDir_Exception, 
+      DataDir_Security, 
+      DataDir_BaseReloc, 
+      DataDir_Debug, 
+      DataDir_Architecture, 
+      DataDir_GlobalPTR, 
+      DataDir_TLS, 
+      DataDir_LoadConfig, 
+      DataDir_BoundImport, 
+      DataDir_IAT, 
+      DataDir_DelayImport, 
+      DataDir_COMDescriptor
+    };
+
+    explicit NtHeaders(PeFile const& MyPeFile);
+      
+    NtHeaders(NtHeaders const& Other);
+    
+    NtHeaders& operator=(NtHeaders const& Other);
+    
+    NtHeaders(NtHeaders&& Other);
+    
+    NtHeaders& operator=(NtHeaders&& Other);
+    
+    ~NtHeaders();
+
+    PVOID GetBase() const;
+
+    bool IsValid() const;
+
+    void EnsureValid() const;
+
+    DWORD GetSignature() const;
+
+    WORD GetMachine() const;
+
+    WORD GetNumberOfSections() const;
+
+    DWORD GetTimeDateStamp() const;
+
+    DWORD GetPointerToSymbolTable() const;
+
+    DWORD GetNumberOfSymbols() const;
+
+    WORD GetSizeOfOptionalHeader() const;
+
+    WORD GetCharacteristics() const;
+
+    WORD GetMagic() const;
+
+    BYTE GetMajorLinkerVersion() const;
+
+    BYTE GetMinorLinkerVersion() const;
+
+    DWORD GetSizeOfCode() const;
+
+    DWORD GetSizeOfInitializedData() const;
+
+    DWORD GetSizeOfUninitializedData() const;
+
+    DWORD GetAddressOfEntryPoint() const;
+
+    DWORD GetBaseOfCode() const;
+
+  #if defined(_M_IX86) 
+    DWORD GetBaseOfData() const;
+  #endif
+
+    ULONG_PTR GetImageBase() const;
+
+    DWORD GetSectionAlignment() const;
+
+    DWORD GetFileAlignment() const;
+
+    WORD GetMajorOperatingSystemVersion() const;
+
+    WORD GetMinorOperatingSystemVersion() const;
+
+    WORD GetMajorImageVersion() const;
+
+    WORD GetMinorImageVersion() const;
+
+    WORD GetMajorSubsystemVersion() const;
+
+    WORD GetMinorSubsystemVersion() const;
+
+    DWORD GetWin32VersionValue() const;
+
+    DWORD GetSizeOfImage() const;
+
+    DWORD GetSizeOfHeaders() const;
+
+    DWORD GetCheckSum() const;
+
+    WORD GetSubsystem() const;
+
+    WORD GetDllCharacteristics() const;
+
+    ULONG_PTR GetSizeOfStackReserve() const;
+
+    ULONG_PTR GetSizeOfStackCommit() const;
+
+    ULONG_PTR GetSizeOfHeapReserve() const;
+
+    ULONG_PTR GetSizeOfHeapCommit() const;
+
+    DWORD GetLoaderFlags() const;
+
+    DWORD GetNumberOfRvaAndSizes() const;
+
+    DWORD GetDataDirectoryVirtualAddress(DataDir MyDataDir) const;
+
+    DWORD GetDataDirectorySize(DataDir MyDataDir) const;
+
+    void SetSignature(DWORD Signature) const;
+
+    void SetMachine(WORD Machine) const;
+
+    void SetNumberOfSections(WORD NumberOfSections) const;
+
+    void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+    void SetPointerToSymbolTable(DWORD PointerToSymbolTable) const;
+
+    void SetNumberOfSymbols(DWORD NumberOfSymbols) const;
+
+    void SetSizeOfOptionalHeader(WORD SizeOfOptionalHeader) const;
+
+    void SetCharacteristics(WORD Characteristics) const;
+
+    void SetMagic(WORD Magic) const;
+
+    void SetMajorLinkerVersion(BYTE MajorLinkerVersion) const;
+
+    void SetMinorLinkerVersion(BYTE MinorLinkerVersion) const;
+
+    void SetSizeOfCode(DWORD SizeOfCode) const;
+
+    void SetSizeOfInitializedData(DWORD SizeOfInitializedData) const;
+
+    void SetSizeOfUninitializedData(DWORD SizeOfUninitializedData) const;
+
+    void SetAddressOfEntryPoint(DWORD AddressOfEntryPoint) const;
+
+    void SetBaseOfCode(DWORD BaseOfCode) const;
+
+  #if defined(_M_IX86) 
+    void SetBaseOfData(DWORD BaseOfData) const;
+  #endif
+
+    void SetImageBase(ULONG_PTR ImageBase) const;
+
+    void SetSectionAlignment(DWORD SectionAlignment) const;
+
+    void SetFileAlignment(DWORD FileAlignment) const;
+
+    void SetMajorOperatingSystemVersion(
+      WORD MajorOperatingSystemVersion) const;
+
+    void SetMinorOperatingSystemVersion(
+      WORD MinorOperatingSystemVersion) const;
+
+    void SetMajorImageVersion(WORD MajorImageVersion) const;
+
+    void SetMinorImageVersion(WORD MinorImageVersion) const;
+
+    void SetMajorSubsystemVersion(WORD MajorSubsystemVersion) const;
+
+    void SetMinorSubsystemVersion(WORD MinorSubsystemVersion) const;
+
+    void SetWin32VersionValue(DWORD Win32VersionValue) const;
+    
+    void SetSizeOfImage(DWORD SizeOfImage) const;
+
+    void SetSizeOfHeaders(DWORD SizeOfHeaders) const;
+
+    void SetCheckSum(DWORD CheckSum) const;
+
+    void SetSubsystem(WORD Subsystem) const;
+
+    void SetDllCharacteristics(WORD DllCharacteristics) const;
+
+    void SetSizeOfStackReserve(ULONG_PTR SizeOfStackReserve) const;
+
+    void SetSizeOfStackCommit(ULONG_PTR SizeOfStackCommit) const;
+
+    void SetSizeOfHeapReserve(ULONG_PTR SizeOfHeapReserve) const;
+
+    void SetSizeOfHeapCommit(ULONG_PTR SizeOfHeapCommit) const;
+
+    void SetLoaderFlags(DWORD LoaderFlags) const;
+
+    void SetNumberOfRvaAndSizes(DWORD NumberOfRvaAndSizes) const;
+
+    void SetDataDirectoryVirtualAddress(DataDir MyDataDir, 
+      DWORD DataDirectoryVirtualAddress) const;
+
+    void SetDataDirectorySize(DataDir MyDataDir, 
+      DWORD DataDirectorySize) const;
+    
+    bool operator==(NtHeaders const& Rhs) const;
+    
+    bool operator!=(NtHeaders const& Rhs) const;
+  };
+
+[h3 Description]
+
+The `NtHeaders` class provides functionality for working with the NT headers 
+of a PE file.
+
+See the [@http://msdn.microsoft.com/en-us/windows/hardware/gg463119 PE and 
+COFF Specification] for more information on working with the PE file format.
+
+[h3 NtHeaders public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `DosHeader` methods when an error occurs.
+
+  enum DataDir;
+
+Data directories as specified by Microsoft.
+
+[h3 NtHeaders public construct/copy/destruct/move]
+
+[h4 NtHeaders constructor]
+
+  NtHeaders(PeFile const& MyPeFile);
+
+[variablelist
+
+[[Effects:] [Constructs a `NtHeaders` instance that refers to the specified 
+PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders copy constructor]
+
+  NtHeaders(NtHeaders const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `NtHeaders` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders copy assignment operator]
+
+  NtHeaders& operator=(NtHeaders const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders move constructor]
+
+  NtHeaders(NtHeaders&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `DosHeader` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders move assignment operator]
+
+  NtHeaders& operator=(NtHeaders&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders destructor]
+
+  ~NtHeaders();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 NtHeaders public member functions]
+
+[h4 NtHeaders member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of NT headers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `IsValid`]
+
+  bool IsValid() const;
+
+[variablelist
+
+[[Returns:] [Whether the target is a valid NT headers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 DosHeader member function `EnsureValid`]
+
+  void EnsureValid() const;
+
+[variablelist
+
+[[Effects:] [Throw if the target is an invalid NT headers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSignature`]
+
+  DWORD GetSignature() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.Signature.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMachine`]
+
+  WORD GetMachine() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.Machine.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetNumberOfSections`]
+
+  WORD GetNumberOfSections() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.NumberOfSections.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetTimeDateStamp`]
+
+  DWORD GetTimeDateStamp() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.TimeDateStamp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetPointerToSymbolTable`]
+
+  DWORD GetPointerToSymbolTable() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.PointerToSymbolTable.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetNumberOfSymbols`]
+
+  DWORD GetNumberOfSymbols() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.NumberOfSymbols.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfOptionalHeader`]
+
+  WORD GetSizeOfOptionalHeader() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.SizeOfOptionalHeader.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetCharacteristics`]
+
+  WORD GetCharacteristics() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.FileHeader.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMagic`]
+
+  WORD GetMagic() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.Magic.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMajorLinkerVersion`]
+
+  BYTE GetMajorLinkerVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MajorLinkerVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMinorLinkerVersion`]
+
+  BYTE GetMinorLinkerVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MinorLinkerVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfCode`]
+
+  DWORD GetSizeOfCode() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfCode.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfInitializedData`]
+
+  DWORD GetSizeOfInitializedData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfInitializedData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfUninitializedData`]
+
+  DWORD GetSizeOfUninitializedData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfUninitializedData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetAddressOfEntryPoint`]
+
+  DWORD GetAddressOfEntryPoint() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.AddressOfEntryPoint.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetBaseOfCode`]
+
+  DWORD GetBaseOfCode() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.BaseOfCode.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetBaseOfData`]
+
+  DWORD GetBaseOfData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.BaseOfData.]]
+
+[[Notes:] [Available only under IA32.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetImageBase`]
+
+  ULONG_PTR GetImageBase() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.ImageBase.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSectionAlignment`]
+
+  DWORD GetSectionAlignment() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SectionAlignment.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetFileAlignment`]
+
+  DWORD GetFileAlignment() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.FileAlignment.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMajorOperatingSystemVersion`]
+
+  WORD GetMajorOperatingSystemVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MajorOperatingSystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMinorOperatingSystemVersion`]
+
+  WORD GetMinorOperatingSystemVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MinorOperatingSystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMajorImageVersion`]
+
+  WORD GetMajorImageVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MajorImageVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMinorImageVersion`]
+
+  WORD GetMinorImageVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MinorImageVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMajorSubsystemVersion`]
+
+  WORD GetMajorSubsystemVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MajorSubsystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetMinorSubsystemVersion`]
+
+  WORD GetMinorSubsystemVersion() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.MinorSubsystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetWin32VersionValue`]
+
+  DWORD GetWin32VersionValue() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.Win32VersionValue.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfImage`]
+
+  DWORD GetSizeOfImage() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfImage.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfHeaders`]
+
+  DWORD GetSizeOfHeaders() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeaders.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetCheckSum`]
+
+  DWORD GetCheckSum() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.CheckSum.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSubsystem`]
+
+  WORD GetSubsystem() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.Subsystem.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetDllCharacteristics`]
+
+  WORD GetDllCharacteristics() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.DllCharacteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfStackReserve`]
+
+  ULONG_PTR GetSizeOfStackReserve() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfStackReserve.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfStackCommit`]
+
+  ULONG_PTR GetSizeOfStackCommit() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfStackCommit.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfHeapReserve`]
+
+  ULONG_PTR GetSizeOfHeapReserve() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeapReserve.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetSizeOfHeapCommit`]
+
+  ULONG_PTR GetSizeOfHeapCommit() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeapCommit.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetLoaderFlags`]
+
+  DWORD GetLoaderFlags() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.LoaderFlags.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetNumberOfRvaAndSizes`]
+
+  DWORD GetNumberOfRvaAndSizes() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.NumberOfRvaAndSizes.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetDataDirectoryVirtualAddress`]
+
+  DWORD GetDataDirectoryVirtualAddress(DataDir MyDataDir) const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.DataDirectory\[MyDataDir\]
+.VirtualAddress.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `GetDataDirectorySize`]
+
+  DWORD GetDataDirectorySize(DataDir MyDataDir) const;
+
+[variablelist
+
+[[Returns:] [IMAGE_NT_HEADERS.OptionalHeader.DataDirectory\[MyDataDir\]
+.Size.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSignature`]
+
+  void SetSignature(DWORD Signature) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.Signature.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMachine`]
+
+  void SetMachine(WORD Machine) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.Machine.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetNumberOfSections`]
+
+  void SetNumberOfSections(WORD NumberOfSections) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.NumberOfSections.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetTimeDateStamp`]
+
+  void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.TimeDateStamp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetPointerToSymbolTable`]
+
+  void SetPointerToSymbolTable(DWORD PointerToSymbolTable) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.PointerToSymbolTable.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetNumberOfSymbols`]
+
+  void SetNumberOfSymbols(DWORD NumberOfSymbols) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.NumberOfSymbols.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfOptionalHeader`]
+
+  void SetSizeOfOptionalHeader(WORD SizeOfOptionalHeader) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.SizeOfOptionalHeader.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetCharacteristics`]
+
+  void SetCharacteristics(WORD Characteristics) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.FileHeader.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMagic`]
+
+  void SetMagic(WORD Magic) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.Magic.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMajorLinkerVersion`]
+
+  void SetMajorLinkerVersion(BYTE MajorLinkerVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MajorLinkerVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMinorLinkerVersion`]
+
+  void SetMinorLinkerVersion(BYTE MinorLinkerVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MinorLinkerVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfCode`]
+
+  void SetSizeOfCode(DWORD SizeOfCode) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfCode.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfInitializedData`]
+
+  void SetSizeOfInitializedData(DWORD SizeOfInitializedData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfInitializedData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfUninitializedData`]
+
+  void SetSizeOfUninitializedData(DWORD SizeOfUninitializedData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfUninitializedData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetAddressOfEntryPoint`]
+
+  void SetAddressOfEntryPoint(DWORD AddressOfEntryPoint) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.AddressOfEntryPoint.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetBaseOfCode`]
+
+  void SetBaseOfCode(DWORD BaseOfCode) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.BaseOfCode.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetBaseOfData`]
+
+  void SetBaseOfData(DWORD BaseOfData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.BaseOfData.]]
+
+[[Notes:] [Available only under IA32.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetImageBase`]
+
+  void SetImageBase(ULONG_PTR ImageBase) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.ImageBase.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSectionAlignment`]
+
+  void SetSectionAlignment(DWORD SectionAlignment) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SectionAlignment.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetFileAlignment`]
+
+  void SetFileAlignment(DWORD FileAlignment) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.FileAlignment.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMajorOperatingSystemVersion`]
+
+  void SetMajorOperatingSystemVersion(
+      WORD MajorOperatingSystemVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MajorOperatingSystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMinorOperatingSystemVersion`]
+
+  void SetMinorOperatingSystemVersion(
+      WORD MinorOperatingSystemVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MinorOperatingSystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMajorImageVersion`]
+
+  void SetMajorImageVersion(WORD MajorImageVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MajorImageVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMinorImageVersion`]
+
+  void SetMinorImageVersion(WORD MinorImageVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MinorImageVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMajorSubsystemVersion`]
+
+  void SetMajorSubsystemVersion(WORD MajorSubsystemVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MajorSubsystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetMinorSubsystemVersion`]
+
+  void SetMinorSubsystemVersion(WORD MinorSubsystemVersion) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.MinorSubsystemVersion.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetWin32VersionValue`]
+
+  void SetWin32VersionValue(DWORD Win32VersionValue) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.Win32VersionValue.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfImage`]
+
+  void SetSizeOfImage(DWORD SizeOfImage) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfImage.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfHeaders`]
+
+  void SetSizeOfHeaders(DWORD SizeOfHeaders) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeaders.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetCheckSum`]
+
+  void SetCheckSum(DWORD CheckSum) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.CheckSum.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSubsystem`]
+
+  void SetSubsystem(WORD Subsystem) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.Subsystem.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetDllCharacteristics`]
+
+  void SetDllCharacteristics(WORD DllCharacteristics) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.DllCharacteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfStackReserve`]
+
+  void SetSizeOfStackReserve(ULONG_PTR SizeOfStackReserve) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfStackReserve.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfStackCommit`]
+
+  void SetSizeOfStackCommit(ULONG_PTR SizeOfStackCommit) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfStackCommit.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfHeapReserve`]
+
+  void SetSizeOfHeapReserve(ULONG_PTR SizeOfHeapReserve) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeapReserve.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetSizeOfHeapCommit`]
+
+  void SetSizeOfHeapCommit(ULONG_PTR SizeOfHeapCommit) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.SizeOfHeapCommit.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetLoaderFlags`]
+
+  void SetLoaderFlags(DWORD LoaderFlags) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.LoaderFlags.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetNumberOfRvaAndSizes`]
+
+  void SetNumberOfRvaAndSizes(DWORD NumberOfRvaAndSizes) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.NumberOfRvaAndSizes.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetDataDirectoryVirtualAddress`]
+
+  void SetDataDirectoryVirtualAddress(DataDir MyDataDir, 
+      DWORD DataDirectoryVirtualAddress) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.DataDirectory\[MyDataDir\]
+.VirtualAddress.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders member function `SetDataDirectorySize`]
+
+  void SetDataDirectorySize(DataDir MyDataDir, 
+      DWORD DataDirectorySize) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_NT_HEADERS.OptionalHeader.DataDirectory\[MyDataDir\]
+.Size.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 NtHeaders equality operator]
+
+  bool operator==(NtHeaders const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 NtHeaders inequality operator]
+
+  bool operator!=(NtHeaders const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[endsect] [/ NtHeaders]
+
 [endsect] [/ Reference]
 
 [section:acknowledge Acknowledgements]

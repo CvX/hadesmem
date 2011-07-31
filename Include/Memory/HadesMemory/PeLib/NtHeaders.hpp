@@ -80,10 +80,10 @@ namespace HadesMem
     PVOID GetBase() const;
 
     // Whether signature is valid
-    bool IsSignatureValid() const;
+    bool IsValid() const;
 
     // Ensure signature is valid
-    void EnsureSignatureValid() const;
+    void EnsureValid() const;
 
     // Get signature
     DWORD GetSignature() const;

@@ -95,7 +95,7 @@ namespace HadesMem
     if (!IsValid())
     {
       BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("DosHeader::EnsureSignatureValid") << 
+        ErrorFunction("DosHeader::EnsureValid") << 
         ErrorString("DOS header magic invalid."));
     }
   }
