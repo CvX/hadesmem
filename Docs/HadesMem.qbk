@@ -151,6 +151,7 @@ for production use, heavy restrictions (please read docs).
 [*Changes]
 
 * Improved `Module` tests.
+* Improved documentation.
 
 [h3 v1.2.0]
 
