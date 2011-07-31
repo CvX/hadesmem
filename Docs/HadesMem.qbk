@@ -4318,7 +4318,7 @@ semantics. Invalidates `Other`.]]
 
 ]
 
-[h4 DosHeader member function `IsValid`]
+[h4 NtHeaders member function `IsValid`]
 
   bool IsValid() const;
 
@@ -4330,7 +4330,7 @@ semantics. Invalidates `Other`.]]
 
 ]
 
-[h4 DosHeader member function `EnsureValid`]
+[h4 NtHeaders member function `EnsureValid`]
 
   void EnsureValid() const;
 
