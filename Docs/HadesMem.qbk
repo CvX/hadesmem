@@ -1257,6 +1257,7 @@ via name `Name` or ordinal `Ordinal`.]]
 Exception type thrown by `ModuleList` methods when an error occurs.
 
   typedef unspecified iterator;
+  typedef unspecified const_iterator;
   
 Iterator type for module list. Models the 
 [@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
@@ -1371,7 +1372,7 @@ module list.]]
 
 [endsect] [/ Module]
 
-[section:module DosHeader]
+[section:dosheader DosHeader]
 
 [h3 Synopsis]
 
@@ -1497,7 +1498,7 @@ Exception type thrown by `DosHeader` methods when an error occurs.
 
 [h3 DosHeader public construct/copy/destruct/move]
 
-[h4 Constructor]
+[h4 DosHeader constructor]
 
   DosHeader(PeFile const& MyPeFile);
 
@@ -2093,7 +2094,7 @@ semantics. Invalidates `Other`.]]
 
 [endsect] [/ DosHeader]
 
-[section:module ExportDir]
+[section:exportdir ExportDir]
 
 [h3 Synopsis]
 
@@ -2253,7 +2254,7 @@ Exception type thrown by `ExportDir` methods when an error occurs.
 
 [h3 ExportDir public construct/copy/destruct/move]
 
-[h4 Constructor]
+[h4 ExportDir constructor]
 
   ExportDir(PeFile const& MyPeFile);
 
@@ -2661,7 +2662,7 @@ unsupported.]
 
 [h3 Export public construct/copy/destruct/move]
 
-[h4 Constructor]
+[h4 Export constructor]
 
   Export(PeFile const& MyPeFile, DWORD Ordinal);
 
@@ -2878,6 +2879,7 @@ semantics. Invalidates `Other`.]]
 Exception type thrown by `ExportList` methods when an error occurs.
 
   typedef unspecified iterator;
+  typedef unspecified const_iterator;
   
 Iterator type for export list. Models the 
 [@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
@@ -2904,7 +2906,7 @@ specified by `MyPeFile`.]]
 
 [variablelist
 
-[[Effects:] [Constructs a `ExportList` that refers to the same export list as 
+[[Effects:] [Constructs a `ExportList` that refers to the same target as 
 `Other` via move semantics. Invalidates `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -2917,7 +2919,7 @@ specified by `MyPeFile`.]]
 
 [variablelist
 
-[[Effects:] [Sets self to refer to the same export list as `Other` via move 
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
 semantics. Invalidates `Other`.]]
 
 [[Throws:] [Yes.]]
@@ -2991,6 +2993,999 @@ export list.]]
 ]
 
 [endsect] [/ ExportDir]
+
+[section:importdir ImportDir]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/ImportDir.hpp>
+  
+  class ImportDir
+  {
+  public:
+    class Error : public virtual HadesMemError
+    { };
+
+    explicit ImportDir(PeFile const& MyPeFile, 
+      PIMAGE_IMPORT_DESCRIPTOR pImpDesc = nullptr);
+      
+    ImportDir(ImportDir const& Other);
+    
+    ImportDir& operator=(ImportDir const& Other);
+    
+    ImportDir(ImportDir&& Other);
+    
+    ImportDir& operator=(ImportDir&& Other);
+    
+    ~ImportDir();
+
+    PVOID GetBase() const;
+
+    bool IsValid() const;
+
+    void EnsureValid() const;
+
+    DWORD GetCharacteristics() const;
+
+    DWORD GetTimeDateStamp() const;
+
+    DWORD GetForwarderChain() const;
+
+    DWORD GetNameRaw() const;
+
+    std::string GetName() const;
+
+    DWORD GetFirstThunk() const;
+
+    void SetCharacteristics(DWORD Characteristics) const;
+
+    void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+    void SetForwarderChain(DWORD ForwarderChain) const;
+
+    void SetNameRaw(DWORD Name) const;
+    
+    void SetName(std::string const& Name) const;
+
+    void SetFirstThunk(DWORD FirstThunk) const;
+    
+    bool operator==(ImportDir const& Rhs) const;
+    
+    bool operator!=(ImportDir const& Rhs) const;
+  };
+    
+  class ImportDirList
+  {
+  public:
+    class Error : public virtual HadesMemError;
+    
+    typedef unspecified iterator;
+    typedef unspecified const_iterator;
+    
+    explicit ImportDirList(PeFile const& MyPeFile);
+    
+    ImportDirList(ImportDirList&& Other);
+    
+    ImportDirList& operator=(ImportDirList&& Other);
+    
+    iterator begin();
+    
+    iterator end();
+    
+    const_iterator begin() const;
+     
+    const_iterator end() const;
+    
+    const_iterator cbegin() const;
+     
+    const_iterator cend() const;
+  };
+  
+  class ImportThunk
+  {
+  public:
+    class Error : public virtual HadesMemError;
+
+    ImportThunk(PeFile const& MyPeFile, PVOID pThunk);
+      
+    ImportThunk(ImportThunk const& Other);
+    
+    ImportThunk& operator=(ImportThunk const& Other);
+    
+    ImportThunk(ImportThunk&& Other);
+    
+    ImportThunk& operator=(ImportThunk&& Other);
+    
+    ~ImportThunk();
+    
+    PVOID GetBase() const;
+
+    bool IsValid() const;
+
+    void EnsureValid() const;
+
+    DWORD_PTR GetAddressOfData() const;
+
+    DWORD_PTR GetOrdinalRaw() const;
+    
+    bool ByOrdinal() const;
+
+    WORD GetOrdinal() const;
+
+    DWORD_PTR GetFunction() const;
+
+    WORD GetHint() const;
+
+    std::string GetName() const;
+
+    void SetAddressOfData(DWORD_PTR AddressOfData) const;
+
+    void SetOrdinalRaw(DWORD_PTR OrdinalRaw) const;
+    
+    void SetFunction(DWORD_PTR Function) const;
+
+    void SetHint(WORD Hint) const;
+    
+    bool operator==(ImportThunk const& Rhs) const;
+    
+    bool operator!=(ImportThunk const& Rhs) const;
+  };
+  
+  class ImportThunkList
+  {
+  public:
+    class Error : public virtual HadesMemError;
+    
+    typedef unspecified iterator;
+    typedef unspecified const_iterator;
+    
+    explicit ImportThunkList(PeFile const& MyPeFile, DWORD FirstThunk);
+    
+    ImportThunkList(ImportThunkList&& Other);
+    
+    ImportThunkList& operator=(ImportThunkList&& Other);
+    
+    iterator begin();
+    
+    iterator end();
+    
+    const_iterator begin() const;
+     
+    const_iterator end() const;
+    
+    const_iterator cbegin() const;
+
+    const_iterator cend() const;
+  };
+
+[h3 Description]
+
+The `ImportDir` and `ImportThunk` classes provide functionality for working 
+with the import directory of a PE file.
+
+See the [@http://msdn.microsoft.com/en-us/windows/hardware/gg463119 PE and 
+COFF Specification] for more information on working with the PE file format.
+
+The `ImportDirList` class provides STL-compatible iterators for import 
+directory  enumeration. The `ImportThunkList` class provides STL-compatible 
+iterators for import thunk enumeration.
+
+[h3 ImportDir public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `ImportDir` methods when an error occurs.
+
+[h3 ImportDir public construct/copy/destruct/move]
+
+[h4 ImportDir constructor]
+
+  ImportDir(PeFile const& MyPeFile, PIMAGE_IMPORT_DESCRIPTOR pImpDesc = 
+    nullptr);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportDir` instance that refers to the specified 
+PE file, and optionally, the specified import descriptor (or the first one in 
+the list by default).]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir copy constructor]
+
+  ImportDir(ImportDir const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportDir` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir copy assignment operator]
+
+  ImportDir& operator=(ImportDir const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir move constructor]
+
+  ImportDir(ImportDir&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportDir` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir move assignment operator]
+
+  ImportDir& operator=(ImportDir&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir destructor]
+
+  ~ImportDir();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportDir public member functions]
+
+[h4 ImportDir member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of import directory.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `IsValid`]
+
+  bool IsValid() const;
+
+[variablelist
+
+[[Returns:] [Whether the target is a valid import dir.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `EnsureValid`]
+
+  void EnsureValid() const;
+
+[variablelist
+
+[[Effects:] [Throw if the target is an invalid import dir.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetCharacteristics`]
+
+  DWORD GetCharacteristics() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetTimeDateStamp`]
+
+  DWORD GetTimeDateStamp() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.TimeDateStamp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetForwarderChain`]
+
+  DWORD GetForwarderChain() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.ForwarderChain.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetNameRaw`]
+
+  DWORD GetNameRaw() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.Name.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetName`]
+
+  std::string GetName() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.Name.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `GetFirstThunk`]
+
+  DWORD GetFirstThunk() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_DESCRIPTOR.FirstThunk.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetCharacteristics`]
+
+  void SetCharacteristics(DWORD Characteristics) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetTimeDateStamp`]
+
+  void SetTimeDateStamp(DWORD TimeDateStamp) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.TimeDateStamp.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetForwarderChain`]
+
+  void SetForwarderChain(DWORD ForwarderChain) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.ForwarderChain.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetNameRaw`]
+
+  void SetNameRaw(DWORD Name) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.Name.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetName`]
+
+  void SetName(std::string const& Name) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.Name.]]
+
+[[Notes:] [Length of new name must be equal to or less than the length of the 
+current name. Allocating space for a new string in the file is currently 
+unsupported.]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir member function `SetFirstThunk`]
+
+  void SetFirstThunk(DWORD FirstThunk) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_DESCRIPTOR.FirstThunk.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDir equality operator]
+
+  bool operator==(ImportDir const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same import dir.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 ImportDir inequality operator]
+
+  bool operator!=(ImportDir const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different import dir.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportDirList public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `ImportDirList` methods when an error occurs.
+
+  typedef unspecified iterator;
+  typedef unspecified const_iterator;
+  
+Iterator type for import dir list. Models the 
+[@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
+Implementation type unspecified.
+
+[h3 ImportDirList public construct/copy/destruct/move]
+
+[h4 ImportDirList constructor]
+
+  explicit ImportDirList(PeFile const& MyPeFile);
+
+[variablelist
+
+[[Effects:] [Constructs a `ImportDirList` instance targetting the PE file 
+specified by `MyPeFile`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList move constructor]
+
+  ImportDirList(ImportDirList&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `ImportDirList` that refers to the same target 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList move assignment operator]
+
+  ImportDirList& operator=(ImportDirList&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList destructor]
+
+  ~ImportDirList();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportDirList public member functions]
+
+[h4 ImportDirList member function `begin`]
+
+  iterator begin();
+  const_iterator begin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for start of import 
+list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList member function `end`]
+
+  iterator end();
+  const_iterator end() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for off-the-end of 
+import dir list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList member function `cbegin`]
+
+  const_iterator cbegin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for start of import dir list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportDirList member function `cend`]
+
+  const_iterator cend() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for off-the-end of import dir list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h3 ImportThunk public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `ImportThunk` methods when an error occurs.
+
+[h3 ImportThunk public construct/copy/destruct/move]
+
+[h4 ImportThunk constructor]
+
+  ImportThunk(PeFile const& MyPeFile, PVOID pThunk);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportThunk` instance that refers to the specified 
+import thunk in the specified PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk copy constructor]
+
+  ImportThunk(ImportThunk const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportThunk` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk copy assignment operator]
+
+  ImportThunk& operator=(ImportThunk const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk move constructor]
+
+  ImportThunk(ImportThunk&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs an `ImportThunk` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk move assignment operator]
+
+  ImportThunk& operator=(ImportThunk&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk destructor]
+
+  ~ImportThunk();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportThunk public member functions]
+
+[h4 ImportThunk member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of import thunk.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `IsValid`]
+
+  bool IsValid() const;
+
+[variablelist
+
+[[Returns:] [Whether the target is a valid import thunk.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `EnsureValid`]
+
+  void EnsureValid() const;
+
+[variablelist
+
+[[Effects:] [Throw if the target is an invalid import thunk.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetAddressOfData`]
+
+  DWORD_PTR GetAddressOfData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_THUNK_DATA.u1.AddressOfData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetOrdinalRaw`]
+
+  DWORD_PTR GetOrdinalRaw() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_THUNK_DATA.u1.Ordinal.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `ByOrdinal`]
+
+  bool ByOrdinal() const;
+
+[variablelist
+
+[[Returns:] [Whether import is by ordinal.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetOrdinal`]
+
+  WORD GetOrdinal() const;
+
+[variablelist
+
+[[Returns:] [Ordinal portion of IMAGE_THUNK_DATA.u1.Ordinal.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetFunction`]
+
+  DWORD_PTR GetFunction() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_THUNK_DATA.u1.Function.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetHint`]
+
+  WORD GetHint() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_BY_NAME.Hint.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `GetName`]
+
+  std::string GetName() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_IMPORT_BY_NAME.Name.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `SetAddressOfData`]
+
+  void SetAddressOfData(DWORD_PTR AddressOfData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_THUNK_DATA.u1.AddressOfData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `SetOrdinalRaw`]
+
+  void SetOrdinalRaw(DWORD_PTR OrdinalRaw) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_THUNK_DATA.u1.Ordinal.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `SetFunction`]
+
+  void SetFunction(DWORD_PTR Function) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_THUNK_DATA.u1.Function.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk member function `SetHint`]
+
+  void SetHint(WORD Hint) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_IMPORT_BY_NAME.Hint.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunk equality operator]
+
+  bool operator==(ImportThunk const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same import thunk.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 ImportThunk inequality operator]
+
+  bool operator!=(ImportThunk const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different import thunk.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportThunkList public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `ImportThunkList` methods when an error occurs.
+
+  typedef unspecified iterator;
+  typedef unspecified const_iterator;
+  
+Iterator type for import thunk list. Models the 
+[@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
+Implementation type unspecified.
+
+[h3 ImportThunkList public construct/copy/destruct/move]
+
+[h4 ImportThunkList constructor]
+
+  ImportThunkList(PeFile const& MyPeFile, DWORD FirstThunk);
+
+[variablelist
+
+[[Effects:] [Constructs a `ImportThunkList` instance targetting the PE file 
+specified by `MyPeFile` and the first thunk specified by `FirstThunk`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList move constructor]
+
+  ImportThunkList(ImportThunkList&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `ImportThunkList` that refers to the same target 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList move assignment operator]
+
+  ImportThunkList& operator=(ImportThunkList&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList destructor]
+
+  ~ImportThunkList();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 ImportThunkList public member functions]
+
+[h4 ImportThunkList member function `begin`]
+
+  iterator begin();
+  const_iterator begin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for start of import 
+thunk list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList member function `end`]
+
+  iterator end();
+  const_iterator end() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for off-the-end of 
+import thunk list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList member function `cbegin`]
+
+  const_iterator cbegin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for start of import thunk list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 ImportThunkList member function `cend`]
+
+  const_iterator cend() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for off-the-end of import thunk 
+list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[endsect] [/ ImportDir]
 
 [endsect] [/ Reference]
 
