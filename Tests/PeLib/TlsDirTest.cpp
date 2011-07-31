@@ -94,7 +94,6 @@ BOOST_AUTO_TEST_CASE(DataTest)
       if (Mod.GetHandle() == GetModuleHandle(NULL))
       {
         BOOST_CHECK(MyTlsDir.IsValid());
-        BOOST_CHECK(!MyTlsDir.GetCallbacks().empty());
       }
       
       // Ensure module has a TLS directory before continuing

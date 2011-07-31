@@ -95,7 +95,8 @@ BOOST_AUTO_TEST_CASE(DataTests)
         BOOST_REQUIRE(Iter != Exports.cend());
         BOOST_CHECK_EQUAL(Iter->ByName(), true);
         BOOST_CHECK_EQUAL(Iter->Forwarded(), false);
-        BOOST_CHECK(Iter->GetVa() == &TestExport);
+        BOOST_CHECK(Iter->GetVa() == reinterpret_cast<PVOID>(
+          reinterpret_cast<DWORD_PTR>(&TestExport)));
       }
       
       // Ensure module has an export directory before continuing
@@ -114,7 +115,7 @@ BOOST_AUTO_TEST_CASE(DataTests)
       MyExportDir.EnsureValid();
       MyExportDir.SetCharacteristics(MyExportDir.GetCharacteristics());
       MyExportDir.SetTimeDateStamp(MyExportDir.GetTimeDateStamp());
-      MyExportDir.SetMajorVersion(MyExportDir.GetMajorVersion());
+      MyExportDir.SetMajorVersion(MyExportDir.GetMajorVersion());
       MyExportDir.SetMinorVersion(MyExportDir.GetMinorVersion());
       MyExportDir.SetName(MyExportDir.GetName());
       MyExportDir.SetOrdinalBase(MyExportDir.GetOrdinalBase());

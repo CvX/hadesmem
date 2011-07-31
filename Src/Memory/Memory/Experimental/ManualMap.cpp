@@ -85,7 +85,7 @@ namespace HadesMem
     }
     
     // Open file for reading
-    boost::filesystem::basic_ifstream<BYTE> ModuleFile(Path, 
+    boost::filesystem::basic_ifstream<char> ModuleFile(Path, 
       std::ios::binary | std::ios::ate);
     if (!ModuleFile)
     {
@@ -100,7 +100,7 @@ namespace HadesMem
     // Allocate memory to hold file data
     // Doing this rather than copying data into a vector to avoid having to 
     // play with the page protection flags on the heap.
-    PBYTE const pBase = static_cast<PBYTE>(VirtualAlloc(nullptr, 
+    char* const pBase = static_cast<char*>(VirtualAlloc(nullptr, 
       static_cast<SIZE_T>(FileSize), MEM_COMMIT | MEM_RESERVE, 
       PAGE_READWRITE));
     if (!pBase)

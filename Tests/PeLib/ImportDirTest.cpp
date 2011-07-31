@@ -92,7 +92,8 @@ BOOST_AUTO_TEST_CASE(DataTest)
         auto Iter2 = std::find_if(ImportThunks.cbegin(), ImportThunks.cend(), 
           [] (HadesMem::ImportThunk const& I)
           {
-            return I.ByOrdinal() ? false : I.GetName() == "EncodePointer";
+            return I.ByOrdinal() ? false : I.GetName() == 
+              "GetCurrentProcessId";
           });
         BOOST_CHECK(Iter2 != ImportThunks.cend());
       }
