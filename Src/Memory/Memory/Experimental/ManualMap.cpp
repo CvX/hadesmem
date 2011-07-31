@@ -114,10 +114,20 @@ namespace HadesMem
     Detail::EnsureReleaseRegion const EnsureFreeLocalMod(pBase);
 
     // Seek to beginning of file
-    ModuleFile.seekg(0, std::ios::beg);
+    if (!ModuleFile.seekg(0, std::ios::beg))
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::Map") << 
+        ErrorString("Could not seek to beginning of file."));
+    }
 
     // Read file into memory
-    ModuleFile.read(pBase, FileSize);
+    if (!ModuleFile.read(pBase, FileSize))
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::Map") << 
+        ErrorString("Could not read file into memory."));
+    }
 
     // Create memory manager for local proc
     MemoryMgr MyMemoryLocal(GetCurrentProcessId());
