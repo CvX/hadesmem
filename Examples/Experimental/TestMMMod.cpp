@@ -117,13 +117,24 @@ LONG CALLBACK VectoredHandler(PEXCEPTION_POINTERS ExceptionInfo)
 }
 
 #pragma warning(push, 1)
-void TestSEH()
+void TestSEH2()
 {
   // Test SEH
   __try 
   {
     int* pInt = 0;
     *pInt = 0;
+  }
+  __except (EXCEPTION_CONTINUE_SEARCH)
+  { }
+}
+
+void TestSEH()
+{
+  // Test SEH
+  __try 
+  {
+    TestSEH2();
   }
   __except (EXCEPTION_EXECUTE_HANDLER)
   {

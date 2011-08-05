@@ -441,7 +441,16 @@ namespace HadesMem
         // Inject dependent DLL
         std::cout << "Injecting dependent DLL." << std::endl;
         Injector const MyInjector(m_Memory);
-        CurModBase = MyInjector.InjectDll(ModuleNameW);
+        CurModBase = nullptr;
+        try
+        {
+          CurModBase = MyInjector.InjectDll(ModuleNameW);
+        }
+        catch (std::exception const&)
+        {
+          CurModBase = MyInjector.InjectDll(ModuleNameW, 
+            Injector::InjectFlag_PathResolution);
+        }
         CurModName = ModuleNameW;
         
         // Search again for dependent DLL and set module path
