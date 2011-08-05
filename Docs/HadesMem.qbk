@@ -107,7 +107,13 @@ raptorfactor@raptorfactor.com.
 
 [section:lic License]
 
-This file is part of HadesMem.
+HadesMem is licensed under the GNU GPL v3. Dependencies are under their 
+respective (different) licenses. Please respect all license agreements.
+
+Dual-licensing for HadesMem is available upon request (via email, 
+raptorfactor@raptorfactor.com).
+
+[pre This file is part of HadesMem.
 
 HadesMem is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -121,6 +127,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
+]
 
 [endsect] [/ License]
 
@@ -140,7 +147,7 @@ along with HadesMem.  If not, see [@http://www.gnu.org/licenses/].
   * `Section`
   * `TlsDir`
 * Added experimental `ManualMap` API. Subject to change and availability, not 
-for production use, heavy restrictions (please read docs).
+for production use. Currently undocumented.
 * Added experimental manual mapping example program.
 
 [*Bug Fixes]
