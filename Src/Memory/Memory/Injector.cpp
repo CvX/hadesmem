@@ -244,6 +244,52 @@ namespace HadesMem
     m_ExportLastError(Other.m_ExportLastError)
   { }
   
+  // Copy assignment operator
+  CreateAndInjectData& CreateAndInjectData::operator=(
+    CreateAndInjectData const& Other)
+  {
+    this->m_Memory = Other.m_Memory;
+    this->m_Module = Other.m_Module;
+    this->m_ExportRet = Other.m_ExportRet;
+    this->m_ExportLastError = Other.m_ExportLastError;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  CreateAndInjectData::CreateAndInjectData(CreateAndInjectData&& Other)
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_Module(Other.m_Module), 
+    m_ExportRet(Other.m_ExportRet), 
+    m_ExportLastError(Other.m_ExportLastError)
+  {
+    Other.m_Module = nullptr;
+    Other.m_ExportRet = 0;
+    Other.m_ExportLastError = 0;
+  }
+  
+  // Move assignment operator
+  CreateAndInjectData& CreateAndInjectData::operator=(
+    CreateAndInjectData&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_Module = Other.m_Module;
+    Other.m_Module = nullptr;
+    
+    this->m_ExportRet = Other.m_ExportRet;
+    Other.m_ExportRet = 0;
+    
+    this->m_ExportLastError = Other.m_ExportLastError;
+    Other.m_ExportLastError = 0;
+    
+    return *this;
+  }
+  
+  // Destructor
+  CreateAndInjectData::~CreateAndInjectData()
+  { }
+  
   // Get memory manager
   MemoryMgr CreateAndInjectData::GetMemoryMgr() const
   {

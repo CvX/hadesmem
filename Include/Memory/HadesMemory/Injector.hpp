@@ -91,17 +91,35 @@ namespace HadesMem
   class CreateAndInjectData
   {
   public:
+    // Constructor
     CreateAndInjectData(MemoryMgr const& MyMemory, HMODULE Module, 
       DWORD_PTR ExportRet, DWORD ExportLastError);
-    
+      
+    // Copy constructor
     CreateAndInjectData(CreateAndInjectData const& Other);
     
+    // Copy assignment operator
+    CreateAndInjectData& operator=(CreateAndInjectData const& Other);
+    
+    // Move constructor
+    CreateAndInjectData(CreateAndInjectData&& Other);
+    
+    // Move assignment operator
+    CreateAndInjectData& operator=(CreateAndInjectData&& Other);
+    
+    // Destructor
+    ~CreateAndInjectData();
+    
+    // Get memory instance
     MemoryMgr GetMemoryMgr() const;
     
+    // Get module handle
     HMODULE GetModule() const;
     
+    // Get export return value
     DWORD_PTR GetExportRet() const;
     
+    // Get export last error code
     DWORD GetExportLastError() const;
     
   private:

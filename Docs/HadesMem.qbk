@@ -1373,6 +1373,422 @@ module list.]]
 
 [endsect] [/ Module]
 
+[section:injector Injector]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/Injector.hpp>
+
+  class Injector
+  {
+  public:
+    class Error : public virtual HadesMemError;
+
+    explicit Injector(MemoryMgr const& MyMemory);
+      
+    Injector(Injector const& Other);
+    
+    Injector& operator=(Injector const& Other);
+    
+    Injector(Injector&& Other);
+    
+    Injector& operator=(Injector&& Other);
+    
+    ~Injector();
+    
+    enum InjectFlags
+    {
+      InjectFlag_None, 
+      InjectFlag_PathResolution
+    };
+
+    HMODULE InjectDll(std::wstring const& Path, 
+      InjectFlags Flags = InjectFlag_None) const;
+      
+    void FreeDll(HMODULE Module) const;
+    
+    MemoryMgr::RemoteFunctionRet CallExport(HMODULE RemoteModule, 
+      std::string const& Export) const;
+    
+    bool operator==(Injector const& Rhs) const;
+    
+    bool operator!=(Injector const& Rhs) const;
+  };
+    
+  class CreateAndInjectData
+  {
+  public:
+    CreateAndInjectData(MemoryMgr const& MyMemory, HMODULE Module, 
+      DWORD_PTR ExportRet, DWORD ExportLastError);
+    
+    CreateAndInjectData(CreateAndInjectData const& Other);
+    
+    CreateAndInjectData& operator=(CreateAndInjectData const& Other);
+    
+    CreateAndInjectData(CreateAndInjectData&& Other);
+    
+    CreateAndInjectData& operator=(CreateAndInjectData&& Other);
+    
+    ~CreateAndInjectData();
+    
+    MemoryMgr GetMemoryMgr() const;
+    
+    HMODULE GetModule() const;
+    
+    DWORD_PTR GetExportRet() const;
+    
+    DWORD GetExportLastError() const;
+  };
+  
+  CreateAndInjectData CreateAndInject(
+    std::wstring const& Path, 
+    std::wstring const& WorkDir, 
+    std::vector<std::wstring> const& Args, 
+    std::wstring const& Module, 
+    std::string const& Export, 
+    Injector::InjectFlags Flags = Injector::InjectFlag_None);
+
+[h3 Description]
+
+The Injector class provides DLL injection and freeing/'ejection' 
+functionality.
+
+CreateAndInject is a free function is provided to facilitate the injection of 
+a module at process startup, before the entry point of the program is run.
+
+The CreateAndInjectData class contains return information for the 
+CreateAndInject free function.
+
+[h3 Injector public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `Injector` methods when an error occurs.
+
+  enum InjectFlags;
+
+Injection flags to control behaviour such as path resolution. Necessary because 
+sometimes you will want paths to be resolved completely in the context of your 
+code, and other times you will want paths to be resolved by the PE loader in 
+the context of the target.
+
+* InjectFlag_None - No injection flags.
+* InjectFlag_PathResolution - Resolve relative paths in the context of the 
+caller. Default behaviour without this flag is to defer path resolution to 
+the target.
+
+[h3 Injector public construct/copy/destruct/move]
+
+[h4 Injector constructor]
+
+  explicit Injector(MemoryMgr const& MyMemory);
+
+[variablelist
+
+[[Effects:] [Constructs an `Injector` instance that refers to the specified 
+target.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector copy constructor]
+
+  Injector(Injector const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs an `Injector` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector copy assignment operator]
+
+  Injector& operator=(Injector const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector move constructor]
+
+  Injector(Injector&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Injector` that refers to the same process as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector move assignment operator]
+
+  Injector& operator=(Injector&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same process as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector destructor]
+
+  ~Injector();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Injector public member functions]
+
+[h4 Injector member function `InjectDll`]
+
+  HMODULE InjectDll(std::wstring const& Path, 
+    InjectFlags Flags = InjectFlag_None) const;
+
+[variablelist
+
+[[Effects:] [Inject DLL loaded from `Path` using the injection flags `Flags`. 
+Injection is done by calling the Windows API 
+[@http://msdn.microsoft.com/en-us/library/ms684175.aspx LoadLibraryW] 
+in the context of the remote target.]]
+
+[[Returns:] [A handle to the injected module.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector member function `FreeDll`]
+
+  void FreeDll(HMODULE Module) const;
+
+[variablelist
+
+[[Effects:] [Frees a module by calling the Windows API 
+[@http://msdn.microsoft.com/en-us/library/ms683152.aspx FreeLibrary] in the 
+context of the remote target.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Injector member function `CallExport`]
+
+  MemoryMgr::RemoteFunctionRet CallExport(HMODULE RemoteModule, 
+    std::string const& Export) const;
+
+[variablelist
+
+[[Effects:] [Calls the export `Export` in module `RemoteModule` using the 
+default calling convention .]]
+
+[[Returns:] [A `RemoteFunctionRet` instance.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [This is a thin wrapper around `MemoryMgr::Call`, see the 
+`MemoryMgr` documentation for further information.]]
+
+]
+
+[h4 Injector equality operator]
+
+  bool operator==(Injector const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 Injector inequality operator]
+
+  bool operator!=(Injector const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 CreateAndInjectData public construct/copy/destruct/move]
+
+[h4 CreateAndInjectData constructor]
+
+  CreateAndInjectData(MemoryMgr const& MyMemory, HMODULE Module, 
+    DWORD_PTR ExportRet, DWORD ExportLastError);
+
+[variablelist
+
+[[Effects:] [Creates an injection data wrapper from MemoryMgr instance 
+`MyMemory`, module handle `Module`, export return value `ExportRet`, and 
+export last error code `ExportLastError`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData copy constructor]
+
+  CreateAndInjectData(CreateAndInjectData const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `CreateAndInjectData` that refers to the same target 
+as `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData copy assignment operator]
+
+  CreateAndInjectData& operator=(CreateAndInjectData const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData move constructor]
+
+  CreateAndInjectData(CreateAndInjectData&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `CreateAndInjectData` that refers to the same target 
+as `Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData move assignment operator]
+
+  CreateAndInjectData& operator=(CreateAndInjectData&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData destructor]
+
+  ~CreateAndInjectData();
+
+[variablelist
+
+[[Effects:] [Frees the remote memory block (unless already freed manually).]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 CreateAndInjectData public member functions]
+
+[h4 CreateAndInjectData member function `GetMemoryMgr`]
+
+  MemoryMgr GetMemoryMgr() const;
+
+[variablelist
+
+[[Returns:] [Memory manager object for new process.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 CreateAndInjectData member function `GetModule`]
+
+  HMODULE GetModule() const;
+
+[variablelist
+
+[[Returns:] [Handle to injected module.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 CreateAndInjectData member function `GetExportRet`]
+
+  DWORD_PTR GetExportRet() const;
+
+[variablelist
+
+[[Returns:] [Return value of export.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 CreateAndInjectData member function `GetExportLastError`]
+
+  DWORD GetExportLastError() const;
+
+[variablelist
+
+[[Returns:] [Last error code for export.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Free functions]
+
+[h4 Free function `CreateAndInject`]
+
+  CreateAndInjectData CreateAndInject(
+    std::wstring const& Path, 
+    std::wstring const& WorkDir, 
+    std::vector<std::wstring> const& Args, 
+    std::wstring const& Module, 
+    std::string const& Export, 
+    Injector::InjectFlags Flags = Injector::InjectFlag_None);
+
+[variablelist
+
+[[Effects:] [Create suspended process from binary at `Path` with optional 
+working dir `WorkDir`, optional arguments `Args`. DLL at path `Module` is then 
+injected using optional injection flags `Flags`, and optional export `Export` 
+is run. Process is then resumed.]]
+
+[[Returns:] [A `CreateAndInjectData` instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[endsect] [/ Injector]
+
 [section:dosheader DosHeader]
 
 [h3 Synopsis]
