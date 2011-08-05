@@ -2,27 +2,27 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <title>DosHeader</title>
-<link rel="stylesheet" href="../../boostbook.css" type="text/css">
+<link rel="stylesheet" href="../../../boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
-<link rel="home" href="../../index.html" title="HadesMem 1.3.0">
-<link rel="up" href="../reference.html" title="Reference">
-<link rel="prev" href="injector.html" title="Injector">
+<link rel="home" href="../../../index.html" title="HadesMem 1.3.0">
+<link rel="up" href="../pelib.html" title="PeLib">
+<link rel="prev" href="../pelib.html" title="PeLib">
 <link rel="next" href="exportdir.html" title="ExportDir">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="HadesMem" width="300" height="100" src="../../Images/Logo.png"></td></tr></table>
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="HadesMem" width="300" height="100" src="../../../Images/Logo.png"></td></tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="injector.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="exportdir.html"><img src="../../images/next.png" alt="Next"></a>
+<a accesskey="p" href="../pelib.html"><img src="../../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../pelib.html"><img src="../../../images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="exportdir.html"><img src="../../../images/next.png" alt="Next"></a>
 </div>
 <div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="hadesmem.reference.dosheader"></a><a class="link" href="dosheader.html" title="DosHeader">DosHeader</a>
-</h3></div></div></div>
-<a name="hadesmem.reference.dosheader.synopsis"></a><h4>
-<a name="hadesmem.reference.dosheader.h0"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.synopsis">Synopsis</a>
-      </h4>
+<div class="titlepage"><div><div><h4 class="title">
+<a name="hadesmem.reference.pelib.dosheader"></a><a class="link" href="dosheader.html" title="DosHeader">DosHeader</a>
+</h4></div></div></div>
+<a name="hadesmem.reference.pelib.dosheader.synopsis"></a><h4>
+<a name="hadesmem.reference.pelib.dosheader.h0"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.synopsis">Synopsis</a>
+        </h4>
 <pre class="programlisting"><span class="comment">// In header: &lt;HadesMemory/PeLib/DosHeader.hpp&gt;</span>
 
 <span class="keyword">class</span> <span class="identifier">DosHeader</span>
@@ -129,40 +129,40 @@
   <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 <span class="special">};</span>
 </pre>
-<a name="hadesmem.reference.dosheader.description"></a><h4>
-<a name="hadesmem.reference.dosheader.h1"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.description">Description</a>
-      </h4>
+<a name="hadesmem.reference.pelib.dosheader.description"></a><h4>
+<a name="hadesmem.reference.pelib.dosheader.h1"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.description">Description</a>
+        </h4>
 <p>
-        The <code class="computeroutput"><span class="identifier">DosHeader</span></code> class provides
-        functionality for working with the DOS header of a PE file.
-      </p>
+          The <code class="computeroutput"><span class="identifier">DosHeader</span></code> class provides
+          functionality for working with the DOS header of a PE file.
+        </p>
 <p>
-        See the <a href="http://msdn.microsoft.com/en-us/windows/hardware/gg463119" target="_top">PE
-        and COFF Specification</a> for more information on working with the PE
-        file format.
-      </p>
-<a name="hadesmem.reference.dosheader.dosheader_public_types"></a><h4>
-<a name="hadesmem.reference.dosheader.h2"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_public_types">DosHeader
-        public types</a>
-      </h4>
+          See the <a href="http://msdn.microsoft.com/en-us/windows/hardware/gg463119" target="_top">PE
+          and COFF Specification</a> for more information on working with the
+          PE file format.
+        </p>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_public_types"></a><h4>
+<a name="hadesmem.reference.pelib.dosheader.h2"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_public_types">DosHeader
+          public types</a>
+        </h4>
 <pre class="programlisting"><span class="keyword">class</span> <span class="identifier">Error</span> <span class="special">:</span> <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="identifier">HadesMemError</span><span class="special">;</span>
 </pre>
 <p>
-        Exception type thrown by <code class="computeroutput"><span class="identifier">DosHeader</span></code>
-        methods when an error occurs.
-      </p>
-<a name="hadesmem.reference.dosheader.dosheader_public_construct_copy_destruct_move"></a><h4>
-<a name="hadesmem.reference.dosheader.h3"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_public_construct_copy_destruct_move">DosHeader
-        public construct/copy/destruct/move</a>
-      </h4>
-<a name="hadesmem.reference.dosheader.dosheader_constructor"></a><h5>
-<a name="hadesmem.reference.dosheader.h4"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_constructor">DosHeader
-        constructor</a>
-      </h5>
+          Exception type thrown by <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+          methods when an error occurs.
+        </p>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_public_construct_copy_destruct_move"></a><h4>
+<a name="hadesmem.reference.pelib.dosheader.h3"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_public_construct_copy_destruct_move">DosHeader
+          public construct/copy/destruct/move</a>
+        </h4>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_constructor"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h4"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_constructor">DosHeader
+          constructor</a>
+        </h5>
 <pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">PeFile</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyPeFile</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
@@ -170,20 +170,20 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
-              instance that refers to the specified PE file.
-            </p></dd>
+                Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+                instance that refers to the specified PE file.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_copy_constructor"></a><h5>
-<a name="hadesmem.reference.dosheader.h5"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_copy_constructor">DosHeader
-        copy constructor</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_copy_constructor"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h5"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_copy_constructor">DosHeader
+          copy constructor</a>
+        </h5>
 <pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
@@ -191,20 +191,20 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
-              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>.
-            </p></dd>
+                Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+                that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_copy_assignment_operator"></a><h5>
-<a name="hadesmem.reference.dosheader.h6"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_copy_assignment_operator">DosHeader
-        copy assignment operator</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_copy_assignment_operator"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h6"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_copy_assignment_operator">DosHeader
+          copy assignment operator</a>
+        </h5>
 <pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
@@ -212,19 +212,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets self to refer to the same target as the other instance.
-            </p></dd>
+                Sets self to refer to the same target as the other instance.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_move_constructor"></a><h5>
-<a name="hadesmem.reference.dosheader.h7"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_move_constructor">DosHeader
-        move constructor</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_move_constructor"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h7"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_move_constructor">DosHeader
+          move constructor</a>
+        </h5>
 <pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
@@ -232,21 +232,21 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
-              that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
-              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
-            </p></dd>
+                Constructs a <code class="computeroutput"><span class="identifier">DosHeader</span></code>
+                that refers to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
+                via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_move_assignment_operator"></a><h5>
-<a name="hadesmem.reference.dosheader.h8"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_move_assignment_operator">DosHeader
-        move assignment operator</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_move_assignment_operator"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h8"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_move_assignment_operator">DosHeader
+          move assignment operator</a>
+        </h5>
 <pre class="programlisting"><span class="identifier">DosHeader</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">DosHeader</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
 </pre>
 <div class="variablelist">
@@ -254,20 +254,20 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets self to refer to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
-              via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
-            </p></dd>
+                Sets self to refer to the same target as <code class="computeroutput"><span class="identifier">Other</span></code>
+                via move semantics. Invalidates <code class="computeroutput"><span class="identifier">Other</span></code>.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_destructor"></a><h5>
-<a name="hadesmem.reference.dosheader.h9"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_destructor">DosHeader
-        destructor</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_destructor"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h9"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_destructor">DosHeader
+          destructor</a>
+        </h5>
 <pre class="programlisting"><span class="special">~</span><span class="identifier">DosHeader</span><span class="special">();</span>
 </pre>
 <div class="variablelist">
@@ -275,24 +275,24 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Destroys the instance and frees all resources.
-            </p></dd>
+                Destroys the instance and frees all resources.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              No.
-            </p></dd>
+                No.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_public_member_functions"></a><h4>
-<a name="hadesmem.reference.dosheader.h10"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_public_member_functions">DosHeader
-        public member functions</a>
-      </h4>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h11"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetBase</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_public_member_functions"></a><h4>
+<a name="hadesmem.reference.pelib.dosheader.h10"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_public_member_functions">DosHeader
+          public member functions</a>
+        </h4>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h11"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getbase__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetBase</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">PVOID</span> <span class="identifier">GetBase</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -300,19 +300,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Base address of DOS header.
-            </p></dd>
+                Base address of DOS header.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__isvalid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h12"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__isvalid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">IsValid</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__isvalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h12"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__isvalid__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">IsValid</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">IsValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -320,19 +320,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Whether the target is a valid DOS header.
-            </p></dd>
+                Whether the target is a valid DOS header.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h13"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">EnsureValid</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h13"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__ensurevalid__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">EnsureValid</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">EnsureValid</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -340,19 +340,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Throw if the target is an invalid DOS header.
-            </p></dd>
+                Throw if the target is an invalid DOS header.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h14"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMagic</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h14"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getmagic__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetMagic</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMagic</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -360,19 +360,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_magic.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_magic.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h15"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetBytesOnLastPage</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h15"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getbytesonlastpage__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetBytesOnLastPage</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetBytesOnLastPage</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -380,19 +380,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cblp.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_cblp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h16"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetPagesInFile</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h16"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getpagesinfile__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetPagesInFile</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetPagesInFile</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -400,19 +400,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cp.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_cp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h17"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetRelocations</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h17"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getrelocations__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetRelocations</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocations</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -420,19 +420,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_crlc.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_crlc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h18"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetSizeOfHeaderInParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h18"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getsizeofheaderinparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetSizeOfHeaderInParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetSizeOfHeaderInParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -440,19 +440,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cparhdr.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_cparhdr.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h19"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMinExtraParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h19"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getminextraparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetMinExtraParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMinExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -460,19 +460,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_minalloc.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_minalloc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h20"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetMaxExtraParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h20"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getmaxextraparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetMaxExtraParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetMaxExtraParagraphs</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -480,19 +480,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_maxalloc.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_maxalloc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h21"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialSS</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h21"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialss__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetInitialSS</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -500,19 +500,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_ss.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_ss.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h22"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialSP</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h22"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialsp__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetInitialSP</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialSP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -520,19 +520,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_sp.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_sp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h23"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetChecksum</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h23"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getchecksum__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetChecksum</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetChecksum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -540,19 +540,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_csum.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_csum.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h24"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialIP</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h24"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialip__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetInitialIP</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialIP</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -560,19 +560,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_ip.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_ip.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h25"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetInitialCS</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h25"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getinitialcs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetInitialCS</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetInitialCS</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -580,19 +580,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_cs.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_cs.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h26"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetRelocTableFileAddr</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h26"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreloctablefileaddr__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetRelocTableFileAddr</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetRelocTableFileAddr</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -600,19 +600,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_lfarlc.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_lfarlc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h27"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOverlayNum</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h27"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoverlaynum__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetOverlayNum</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOverlayNum</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -620,19 +620,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_ovno.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_ovno.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h28"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetReservedWords1</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h28"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords1__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetReservedWords1</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords1</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -640,19 +640,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_res.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_res.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h29"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOEMID</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h29"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoemid__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetOEMID</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMID</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -660,19 +660,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_oemid.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_oemid.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h30"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetOEMInfo</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h30"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getoeminfo__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetOEMInfo</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">WORD</span> <span class="identifier">GetOEMInfo</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -680,19 +680,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_oeminfo.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_oeminfo.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h31"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetReservedWords2</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h31"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getreservedwords2__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetReservedWords2</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="identifier">GetReservedWords2</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -700,19 +700,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_res2.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_res2.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h32"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">GetNewHeaderOffset</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h32"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__getnewheaderoffset__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">GetNewHeaderOffset</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="identifier">LONG</span> <span class="identifier">GetNewHeaderOffset</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -720,19 +720,19 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              IMAGE_DOS_HEADER.e_lfanew.
-            </p></dd>
+                IMAGE_DOS_HEADER.e_lfanew.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h33"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMagic</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h33"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setmagic__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetMagic</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMagic</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Magic</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -740,19 +740,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_magic.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_magic.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h34"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetBytesOnLastPage</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h34"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setbytesonlastpage__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetBytesOnLastPage</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetBytesOnLastPage</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">BytesOnLastPage</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -760,19 +760,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cblp.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_cblp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h35"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetPagesInFile</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h35"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setpagesinfile__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetPagesInFile</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetPagesInFile</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">PagesInFile</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -780,19 +780,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cp.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_cp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h36"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetRelocations</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h36"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setrelocations__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetRelocations</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocations</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Relocations</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -800,19 +800,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_crlc.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_crlc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h37"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetSizeOfHeaderInParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h37"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setsizeofheaderinparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetSizeOfHeaderInParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetSizeOfHeaderInParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">SizeOfHeaderInParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -820,19 +820,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cparhdr.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_cparhdr.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h38"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMinExtraParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h38"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setminextraparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetMinExtraParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMinExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MinExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -840,19 +840,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_minalloc.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_minalloc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h39"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetMaxExtraParagraphs</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h39"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setmaxextraparagraphs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetMaxExtraParagraphs</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetMaxExtraParagraphs</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">MaxExtraParagraphs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -860,19 +860,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_maxalloc.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_maxalloc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h40"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialSS</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h40"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialss__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetInitialSS</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -880,19 +880,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_ss.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_ss.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h41"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialSP</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h41"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialsp__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetInitialSP</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialSP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialSP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -900,19 +900,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_sp.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_sp.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h42"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetChecksum</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h42"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setchecksum__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetChecksum</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetChecksum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">Checksum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -920,19 +920,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_csum.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_csum.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h43"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialIP</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h43"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialip__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetInitialIP</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialIP</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialIP</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -940,19 +940,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_ip.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_ip.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h44"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetInitialCS</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h44"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setinitialcs__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetInitialCS</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetInitialCS</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">InitialCS</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -960,19 +960,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_cs.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_cs.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h45"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetRelocTableFileAddr</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h45"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreloctablefileaddr__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetRelocTableFileAddr</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetRelocTableFileAddr</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">RelocTableFileAddr</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -980,19 +980,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_lfarlc.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_lfarlc.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h46"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOverlayNum</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h46"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoverlaynum__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetOverlayNum</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOverlayNum</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OverlayNum</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1000,19 +1000,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_ovno.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_ovno.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h47"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetReservedWords1</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h47"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords1__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetReservedWords1</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords1</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1020,19 +1020,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_res.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_res.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h48"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOEMID</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h48"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoemid__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetOEMID</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMID</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMID</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1040,19 +1040,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_oemid.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_oemid.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h49"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetOEMInfo</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h49"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setoeminfo__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetOEMInfo</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetOEMInfo</span><span class="special">(</span><span class="identifier">WORD</span> <span class="identifier">OEMInfo</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1060,19 +1060,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_oeminfo.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_oeminfo.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h50"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetReservedWords2</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h50"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setreservedwords2__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetReservedWords2</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetReservedWords2</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">WORD</span><span class="special">,</span> <span class="number">10</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">ReservedWords2</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1080,19 +1080,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_res2.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_res2.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_"></a><h5>
-<a name="hadesmem.reference.dosheader.h51"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_">DosHeader
-        member function <code class="computeroutput"><span class="identifier">SetNewHeaderOffset</span></code></a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h51"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_member_function__code__phrase_role__identifier__setnewheaderoffset__phrase___code_">DosHeader
+          member function <code class="computeroutput"><span class="identifier">SetNewHeaderOffset</span></code></a>
+        </h5>
 <pre class="programlisting"><span class="keyword">void</span> <span class="identifier">SetNewHeaderOffset</span><span class="special">(</span><span class="identifier">LONG</span> <span class="identifier">Offset</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1100,19 +1100,19 @@
 <dl>
 <dt><span class="term">Effects:</span></dt>
 <dd><p>
-              Sets IMAGE_DOS_HEADER.e_lfanew.
-            </p></dd>
+                Sets IMAGE_DOS_HEADER.e_lfanew.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              Yes.
-            </p></dd>
+                Yes.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_equality_operator"></a><h5>
-<a name="hadesmem.reference.dosheader.h52"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_equality_operator">DosHeader
-        equality operator</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_equality_operator"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h52"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_equality_operator">DosHeader
+          equality operator</a>
+        </h5>
 <pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1120,20 +1120,20 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              the same target.
-            </p></dd>
+                Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+                the same target.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              No.
-            </p></dd>
+                No.
+              </p></dd>
 </dl>
 </div>
-<a name="hadesmem.reference.dosheader.dosheader_inequality_operator"></a><h5>
-<a name="hadesmem.reference.dosheader.h53"></a>
-        <a class="link" href="dosheader.html#hadesmem.reference.dosheader.dosheader_inequality_operator">DosHeader
-        inequality operator</a>
-      </h5>
+<a name="hadesmem.reference.pelib.dosheader.dosheader_inequality_operator"></a><h5>
+<a name="hadesmem.reference.pelib.dosheader.h53"></a>
+          <a class="link" href="dosheader.html#hadesmem.reference.pelib.dosheader.dosheader_inequality_operator">DosHeader
+          inequality operator</a>
+        </h5>
 <pre class="programlisting"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span><span class="identifier">DosHeader</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Rhs</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
@@ -1141,13 +1141,13 @@
 <dl>
 <dt><span class="term">Returns:</span></dt>
 <dd><p>
-              Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
-              a different target.
-            </p></dd>
+                Whether <code class="computeroutput"><span class="identifier">Rhs</span></code> represets
+                a different target.
+              </p></dd>
 <dt><span class="term">Throws:</span></dt>
 <dd><p>
-              No.
-            </p></dd>
+                No.
+              </p></dd>
 </dl>
 </div>
 </div>
@@ -1160,7 +1160,7 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="injector.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="exportdir.html"><img src="../../images/next.png" alt="Next"></a>
+<a accesskey="p" href="../pelib.html"><img src="../../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../pelib.html"><img src="../../../images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="exportdir.html"><img src="../../../images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>
