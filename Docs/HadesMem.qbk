@@ -812,7 +812,8 @@ and `A` is an optional allocator. `Data` is written as a C-style array.]]
 
 [[Effects:2:] [Create process from binary at `Path` with optional argument list  
 `Args` and optional working dir `WorkingDir`. Command line generation is 
-handled by the API.]]
+handled by the API to ensure correct quoting as per [@http://goo.gl/t4ERU 
+this] article.]]
 
 [[Returns:] [Memory manager instance for new process.]]
 
