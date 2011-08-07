@@ -101,15 +101,11 @@ namespace HadesMem
 
     // Read memory (string types)
     template <typename T>
-    T ReadString(PVOID Address, typename std::enable_if<std::is_same<T, std::
-      basic_string<typename T::value_type>>::value, T>::type* Dummy = 0) 
-      const;
+    T ReadString(PVOID Address) const;
 
     // Read memory (vector types)
     template <typename T>
-    T ReadList(PVOID Address, std::size_t Size, typename std::enable_if<std::
-      is_same<T, std::vector<typename T::value_type>>::value, T>::type* 
-      Dummy = 0) const;
+    T ReadList(PVOID Address, std::size_t Size) const;
       
     // Write memory (POD types)
     template <typename T>
@@ -117,15 +113,11 @@ namespace HadesMem
 
     // Write memory (string types)
     template <typename T>
-    void WriteString(PVOID Address, T const& Data, typename std::enable_if<
-      std::is_same<T, std::basic_string<typename T::value_type>>::value, T>::
-      type* Dummy = 0) const;
+    void WriteString(PVOID Address, T const& Data) const;
 
     // Write memory (vector types)
     template <typename T>
-    void WriteList(PVOID Address, T const& Data, typename std::enable_if<std::
-      is_same<T, std::vector<typename T::value_type>>::value, T>::type* 
-      Dummy = 0) const;
+    void WriteList(PVOID Address, T const& Data) const;
 
     // Whether an address is currently readable
     bool CanRead(LPCVOID Address) const;
@@ -236,12 +228,16 @@ namespace HadesMem
 
   // Read memory (string types)
   template <typename T>
-  T MemoryMgr::ReadString(PVOID Address, typename std::enable_if<std::is_same<
-    T, std::basic_string<typename T::value_type>>::value, T>::type* /*Dummy*/) 
-    const
+  T MemoryMgr::ReadString(PVOID Address) const
   {
-    // Character type
     typedef typename T::value_type CharT;
+    typedef typename T::traits_type TraitsT;
+    typedef typename T::allocator_type AllocT;
+    
+    // Ensure type is a string
+    static_assert(std::is_same<T, std::basic_string<CharT, TraitsT, 
+      AllocT>>::value, "MemoryMgr::ReadString: T must be of type "
+      "std::basic_string.");
 
     // Ensure chracter type is POD
     static_assert(std::is_pod<CharT>::value, "MemoryMgr::ReadString: "
@@ -264,20 +260,22 @@ namespace HadesMem
 
   // Read memory (vector types)
   template <typename T>
-  T MemoryMgr::ReadList(PVOID Address, std::size_t Size, typename 
-    std::enable_if<std::is_same<T, std::vector<typename T::value_type>>::
-    value, T>::type* /*Dummy*/) const
+  T MemoryMgr::ReadList(PVOID Address, std::size_t Size) const
   {
-    // Value type
-    typedef typename T::value_type ValT;
+    typedef typename T::value_type ValueT;
+    typedef typename T::allocator_type AllocT;
     
+    // Ensure type is a string
+    static_assert(std::is_same<T, std::vector<ValueT, AllocT>>::value, 
+      "MemoryMgr::ReadList: T must be of type std::vector.");
+
     // Ensure value type is POD
-    static_assert(std::is_pod<ValT>::value, "MemoryMgr::ReadList: Value type "
-      "of vector must be POD.");
+    static_assert(std::is_pod<ValueT>::value, "MemoryMgr::ReadList: Value "
+      "type of vector must be POD.");
     
     // Read data
     T Data(Size);
-    this->ReadImpl(Address, Data.data(), sizeof(ValT) * Size);
+    this->ReadImpl(Address, Data.data(), sizeof(ValueT) * Size);
     return Data;
   }
 
@@ -294,12 +292,16 @@ namespace HadesMem
 
   // Write memory (string types)
   template <typename T>
-  void MemoryMgr::WriteString(PVOID Address, T const& Data, 
-    typename std::enable_if<std::is_same<T, std::basic_string<typename T::
-    value_type>>::value, T>::type* /*Dummy*/) const
+  void MemoryMgr::WriteString(PVOID Address, T const& Data) const
   {
-    // Character type
     typedef typename T::value_type CharT;
+    typedef typename T::traits_type TraitsT;
+    typedef typename T::allocator_type AllocT;
+    
+    // Ensure type is a string
+    static_assert(std::is_same<T, std::basic_string<CharT, TraitsT, 
+      AllocT>>::value, "MemoryMgr::WriteString: T must be of type "
+      "std::basic_string.");
 
     // Ensure chracter type is POD
     static_assert(std::is_pod<CharT>::value, "MemoryMgr::WriteString: "
@@ -312,19 +314,21 @@ namespace HadesMem
 
   // Write memory (vector types)
   template <typename T>
-  void MemoryMgr::WriteList(PVOID Address, T const& Data, typename std::
-    enable_if<std::is_same<T, std::vector<typename T::value_type>>::value, 
-    T>::type* /*Dummy*/) const
+  void MemoryMgr::WriteList(PVOID Address, T const& Data) const
   {
-    // Value type
-    typedef typename T::value_type ValT;
+    typedef typename T::value_type ValueT;
+    typedef typename T::allocator_type AllocT;
     
+    // Ensure type is a string
+    static_assert(std::is_same<T, std::vector<ValueT, AllocT>>::value, 
+      "MemoryMgr::WriteList: T must be of type std::vector.");
+
     // Ensure value type is POD
-    static_assert(std::is_pod<ValT>::value, "MemoryMgr::WriteList: Value type "
-      "of vector must be POD.");
+    static_assert(std::is_pod<ValueT>::value, "MemoryMgr::WriteList: Value "
+      "type of vector must be POD.");
     
     // Write memory
-    std::size_t const RawSize = Data.size() * sizeof(ValT);
+    std::size_t const RawSize = Data.size() * sizeof(ValueT);
     WriteImpl(Address, Data.data(), RawSize);
   }
 }

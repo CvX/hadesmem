@@ -75,6 +75,12 @@
 <li class="listitem">
           Fixed Boost build scripts.
         </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">ReadString</span></code>, <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">ReadList</span></code>,
+          <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">WriteString</span></code>, and <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">WriteList</span></code>
+          now support custom allocators and traits classes (where appliciable) for
+          the containers passed as template arguments.
+        </li>
 </ul></div>
 <p>
       <span class="bold"><strong>Changes</strong></span>
@@ -85,6 +91,15 @@
         </li>
 <li class="listitem">
           Improved documentation.
+        </li>
+<li class="listitem">
+          Updated Boost.
+        </li>
+<li class="listitem">
+          Removed unnecessary template metaprogramming from <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">ReadString</span></code>,
+          <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">ReadList</span></code>, <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">WriteString</span></code>,
+          and <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">WriteList</span></code>. Now using static assertions
+          instead.
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_2_0"></a><h4>

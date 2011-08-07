@@ -154,11 +154,18 @@ for production use. Currently undocumented.
 
 * Added `Module` (and `Injector`) to '''Memory.hpp'''.
 * Fixed Boost build scripts.
+* `MemoryMgr::ReadString`, `MemoryMgr::ReadList`, `MemoryMgr::WriteString`, 
+and `MemoryMgr::WriteList` now support custom allocators and traits classes 
+(where appliciable) for the containers passed as template arguments.
 
 [*Changes]
 
 * Improved `Module` tests.
 * Improved documentation.
+* Updated Boost.
+* Removed unnecessary template metaprogramming from `MemoryMgr::ReadString`, 
+`MemoryMgr::ReadList`, `MemoryMgr::WriteString`, and `MemoryMgr::WriteList`. 
+Now using static assertions instead.
 
 [h3 v1.2.0]
 
@@ -309,19 +316,19 @@ or the requirements list of your project.
     T Read(PVOID Address) const;
 
     template <typename T>
-    T ReadString(PVOID Address, unspecified = 0) const;
+    T ReadString(PVOID Address) const;
 
     template <typename T>
-    T ReadList(PVOID Address, std::size_t Size, unspecified = 0) const;
+    T ReadList(PVOID Address, std::size_t Size) const;
 
     template <typename T>
     void Write(PVOID Address, T const& Data) const;
 
     template <typename T>
-    void WriteString(PVOID Address, T const& Data, unspecified = 0) const;
+    void WriteString(PVOID Address, T const& Data) const;
 
     template <typename T>
-    void WriteList(PVOID Address, T const& Data, unspecified = 0) const;
+    void WriteList(PVOID Address, T const& Data) const;
 
     bool CanRead(LPCVOID Address) const;
 
@@ -534,7 +541,7 @@ arguments are unsupported.]]
 [h4 MemoryMgr member function `ReadString`]
 
   template <typename T>
-  T ReadString(PVOID Address, unspecified = 0) const;
+  T ReadString(PVOID Address) const;
 
 [variablelist
 
@@ -543,15 +550,16 @@ individual characters until a null is encountered.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [`T` must be of type `std::basic_string<CharT>`, where `CharT` is a 
-POD character type. String is read as if it is a C-style character array.]]
+[[Notes:] [`T` must be of type `std::basic_string<CharT, U, V>`, where `CharT` 
+is a POD character type, `U` is an optional character traits class, and `V` is 
+an optional allocator. String is read as if it is a C-style character array.]]
 
 ]
 
 [h4 MemoryMgr member function `ReadList`]
 
   template <typename T>
-  T ReadList(PVOID Address, std::size_t Size, unspecified = 0) const;
+  T ReadList(PVOID Address, std::size_t Size) const;
 
 [variablelist
 
@@ -560,8 +568,8 @@ POD character type. String is read as if it is a C-style character array.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [`T` must be of type `std::vector<U>`, where `U` is a POD type. 
-List is read as if it is a C-style array.]]
+[[Notes:] [`T` must be of type `std::vector<U, A>`, where `U` is a POD type, 
+and `A` is an optional allocator. List is read as if it is a C-style array.]]
 
 ]
 
@@ -583,7 +591,7 @@ List is read as if it is a C-style array.]]
 [h4 MemoryMgr member function `WriteString`]
 
   template <typename T>
-  void WriteString(PVOID Address, T const& Data, unspecified = 0) const;
+  void WriteString(PVOID Address, T const& Data) const;
 
 [variablelist
 
@@ -591,15 +599,16 @@ List is read as if it is a C-style array.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [`T` must be of type `std::basic_string<CharT>`, where `CharT` is a 
-POD character type. `Data` is written as a C-style character array.]]
+[[Notes:] [`T` must be of type `std::basic_string<CharT, U, V>`, where `CharT` 
+is a POD character type, `U` is an optional character traits class, and `V` is 
+an optional allocator. `Data` is written as a C-style character array.]]
 
 ]
 
 [h4 MemoryMgr member function `WriteList`]
 
   template <typename T>
-  void WriteList(PVOID Address, T const& Data, unspecified = 0) const;
+  void WriteList(PVOID Address, T const& Data) const;
 
 [variablelist
 
@@ -607,8 +616,8 @@ POD character type. `Data` is written as a C-style character array.]]
 
 [[Throws:] [Yes.]]
 
-[[Notes:] [`T` must be of type `std::vector<U>`, where `U` is a POD type. 
-`Data` is written as a C-style array.]]
+[[Notes:] [`T` must be of type `std::vector<U, A>`, where `U` is a POD type, 
+and `A` is an optional allocator. `Data` is written as a C-style array.]]
 
 ]
 

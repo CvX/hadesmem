@@ -69,19 +69,19 @@
   <span class="identifier">T</span> <span class="identifier">Read</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-  <span class="identifier">T</span> <span class="identifier">ReadString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">T</span> <span class="identifier">ReadString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-  <span class="identifier">T</span> <span class="identifier">ReadList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">Size</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">T</span> <span class="identifier">ReadList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">Size</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
   <span class="keyword">void</span> <span class="identifier">Write</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-  <span class="keyword">void</span> <span class="identifier">WriteString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">WriteString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-  <span class="keyword">void</span> <span class="identifier">WriteList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="identifier">WriteList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
   <span class="keyword">bool</span> <span class="identifier">CanRead</span><span class="special">(</span><span class="identifier">LPCVOID</span> <span class="identifier">Address</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 
@@ -401,7 +401,7 @@
           member function <code class="computeroutput"><span class="identifier">ReadString</span></code></a>
         </h5>
 <pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-<span class="identifier">T</span> <span class="identifier">ReadString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="identifier">T</span> <span class="identifier">ReadString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -419,9 +419,13 @@
 <dt><span class="term">Notes:</span></dt>
 <dd><p>
                 <code class="computeroutput"><span class="identifier">T</span></code> must be of type
-                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span></code>,
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">,</span>
+                <span class="identifier">U</span><span class="special">,</span>
+                <span class="identifier">V</span><span class="special">&gt;</span></code>,
                 where <code class="computeroutput"><span class="identifier">CharT</span></code> is a
-                POD character type. String is read as if it is a C-style character
+                POD character type, <code class="computeroutput"><span class="identifier">U</span></code>
+                is an optional character traits class, and <code class="computeroutput"><span class="identifier">V</span></code>
+                is an optional allocator. String is read as if it is a C-style character
                 array.
               </p></dd>
 </dl>
@@ -432,7 +436,7 @@
           member function <code class="computeroutput"><span class="identifier">ReadList</span></code></a>
         </h5>
 <pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-<span class="identifier">T</span> <span class="identifier">ReadList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">Size</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="identifier">T</span> <span class="identifier">ReadList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">Size</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -452,9 +456,10 @@
 <dt><span class="term">Notes:</span></dt>
 <dd><p>
                 <code class="computeroutput"><span class="identifier">T</span></code> must be of type
-                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span></code>,
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">,</span> <span class="identifier">A</span><span class="special">&gt;</span></code>,
                 where <code class="computeroutput"><span class="identifier">U</span></code> is a POD
-                type. List is read as if it is a C-style array.
+                type, and <code class="computeroutput"><span class="identifier">A</span></code> is an
+                optional allocator. List is read as if it is a C-style array.
               </p></dd>
 </dl>
 </div>
@@ -489,7 +494,7 @@
           member function <code class="computeroutput"><span class="identifier">WriteString</span></code></a>
         </h5>
 <pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-<span class="keyword">void</span> <span class="identifier">WriteString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="keyword">void</span> <span class="identifier">WriteString</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -505,9 +510,13 @@
 <dt><span class="term">Notes:</span></dt>
 <dd><p>
                 <code class="computeroutput"><span class="identifier">T</span></code> must be of type
-                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span></code>,
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">,</span>
+                <span class="identifier">U</span><span class="special">,</span>
+                <span class="identifier">V</span><span class="special">&gt;</span></code>,
                 where <code class="computeroutput"><span class="identifier">CharT</span></code> is a
-                POD character type. <code class="computeroutput"><span class="identifier">Data</span></code>
+                POD character type, <code class="computeroutput"><span class="identifier">U</span></code>
+                is an optional character traits class, and <code class="computeroutput"><span class="identifier">V</span></code>
+                is an optional allocator. <code class="computeroutput"><span class="identifier">Data</span></code>
                 is written as a C-style character array.
               </p></dd>
 </dl>
@@ -518,7 +527,7 @@
           member function <code class="computeroutput"><span class="identifier">WriteList</span></code></a>
         </h5>
 <pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
-<span class="keyword">void</span> <span class="identifier">WriteList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">unspecified</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="keyword">void</span> <span class="identifier">WriteList</span><span class="special">(</span><span class="identifier">PVOID</span> <span class="identifier">Address</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
 </pre>
 <div class="variablelist">
 <p class="title"><b></b></p>
@@ -534,10 +543,11 @@
 <dt><span class="term">Notes:</span></dt>
 <dd><p>
                 <code class="computeroutput"><span class="identifier">T</span></code> must be of type
-                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span></code>,
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">,</span> <span class="identifier">A</span><span class="special">&gt;</span></code>,
                 where <code class="computeroutput"><span class="identifier">U</span></code> is a POD
-                type. <code class="computeroutput"><span class="identifier">Data</span></code> is written
-                as a C-style array.
+                type, and <code class="computeroutput"><span class="identifier">A</span></code> is an
+                optional allocator. <code class="computeroutput"><span class="identifier">Data</span></code>
+                is written as a C-style array.
               </p></dd>
 </dl>
 </div>
