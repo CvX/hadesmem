@@ -6010,6 +6010,988 @@ semantics. Invalidates `Other`.]]
 
 [endsect] [/ PeFile]
 
+[section:section Section]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/Section.hpp>
+  
+  class Section
+  {
+  public:
+    class Error : public virtual HadesMemError;
+    
+    Section(PeFile const& MyPeFile, WORD Number);
+    
+    Section(Section const& Other);
+    
+    Section& operator=(Section const& Other);
+    
+    Section(Section&& Other);
+    
+    Section& operator=(Section&& Other);
+    
+    ~Section();
+    
+    PVOID GetBase() const;
+    
+    WORD GetNumber() const;
+    
+    std::string GetName() const;
+    
+    DWORD GetVirtualAddress() const;
+    
+    DWORD GetVirtualSize() const;
+    
+    DWORD GetSizeOfRawData() const;
+    
+    DWORD GetPointerToRawData() const;
+    
+    DWORD GetPointerToRelocations() const;
+    
+    DWORD GetPointerToLinenumbers() const;
+    
+    WORD GetNumberOfRelocations() const;
+    
+    WORD GetNumberOfLinenumbers() const;
+    
+    DWORD GetCharacteristics() const;
+    
+    void SetName(std::string const& Name) const;
+    
+    void SetVirtualAddress(DWORD VirtualAddress) const;
+
+    void SetVirtualSize(DWORD VirtualSize) const;
+
+    void SetSizeOfRawData(DWORD SizeOfRawData) const;
+
+    void SetPointerToRawData(DWORD PointerToRawData) const;
+
+    void SetPointerToRelocations(DWORD PointerToRelocations) const;
+
+    void SetPointerToLinenumbers(DWORD PointerToLinenumbers) const;
+
+    void SetNumberOfRelocations(WORD NumberOfRelocations) const;
+
+    void SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const;
+
+    void SetCharacteristics(DWORD Characteristics) const;
+    
+    bool operator==(Section const& Rhs) const;
+    
+    bool operator!=(Section const& Rhs) const;
+  };
+  
+  class SectionList
+  {
+  public:
+    class Error : public virtual HadesMemError;
+    
+    typedef unspecified iterator;
+    typedef unspecified const_iterator;
+    
+    explicit SectionList(PeFile const& MyPeFile);
+    
+    SectionList(SectionList&& Other);
+    
+    SectionList& operator=(SectionList&& Other);
+    
+    iterator begin();
+    
+    iterator end();
+    
+    const_iterator begin() const;
+     
+    const_iterator end() const;
+    
+    const_iterator cbegin() const;
+     
+    const_iterator cend() const;
+  };
+
+[h3 Description]
+
+The `Section` class provides functionality for working with the sections of a 
+PE file.
+
+See the [@http://msdn.microsoft.com/en-us/windows/hardware/gg463119 PE and 
+COFF Specification] for more information on working with the PE file format.
+
+The `SectionList` class provides STL-compatible iterators for section  
+enumeration.
+
+[h3 Section public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `Section` methods when an error occurs.
+
+[h3 Section public construct/copy/destruct/move]
+
+[h4 Section constructor]
+
+  Section(PeFile const& MyPeFile, WORD Number);
+
+[variablelist
+
+[[Effects:] [Constructs a `Section` instance that refers to section number 
+`Number` in the PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section copy constructor]
+
+  Section(Section const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Section` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section copy assignment operator]
+
+  Section& operator=(Section const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section move constructor]
+
+  Section(Section&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Section` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section move assignment operator]
+
+  Section& operator=(Section&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section destructor]
+
+  ~Section();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Section public member functions]
+
+[h4 Section member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of section header.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetNumber`]
+
+  WORD GetNumber() const;
+
+[variablelist
+
+[[Returns:] [Section number.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetName`]
+
+  std::string GetName() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.Name.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetVirtualAddress`]
+
+  DWORD GetVirtualAddress() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.VirtualAddress.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetVirtualSize`]
+
+  DWORD GetVirtualSize() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.Misc.VirtualSize.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetSizeOfRawData`]
+
+  DWORD GetSizeOfRawData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.SizeOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetPointerToRawData`]
+
+  DWORD GetPointerToRawData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.PointerToRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetPointerToRelocations`]
+
+  DWORD GetPointerToRelocations() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.PointerToRelocations.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetPointerToLinenumbers`]
+
+  DWORD GetPointerToLinenumbers() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.PointerToLinenumbers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetNumberOfRelocations`]
+
+  WORD GetNumberOfRelocations() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.NumberOfRelocations.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetNumberOfLinenumbers`]
+
+  WORD GetNumberOfLinenumbers() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.NumberOfLinenumbers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `GetCharacteristics`]
+
+  DWORD GetCharacteristics() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_SECTION_HEADER.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetName`]
+
+  void SetName(std::string const& Name) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.Name.]]
+
+[[Notes:] [Maximum string length is 8-characters.]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetVirtualAddress`]
+
+  void SetVirtualAddress(DWORD VirtualAddress) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.VirtualAddress.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetVirtualSize`]
+
+  void SetVirtualSize(DWORD VirtualSize) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.Misc.VirtualSize.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetSizeOfRawData`]
+
+  void SetSizeOfRawData(DWORD SizeOfRawData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.SizeOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetPointerToRawData`]
+
+  void SetPointerToRawData(DWORD PointerToRawData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.PointerToRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetPointerToRelocations`]
+
+  void SetPointerToRelocations(DWORD PointerToRelocations) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.PointerToRelocations.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetPointerToLinenumbers`]
+
+  void SetPointerToLinenumbers(DWORD PointerToLinenumbers) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.PointerToLinenumbers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetNumberOfRelocations`]
+
+  void SetNumberOfRelocations(WORD NumberOfRelocations) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.NumberOfRelocations.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetNumberOfLinenumbers`]
+
+  void SetNumberOfLinenumbers(WORD NumberOfLinenumbers) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.NumberOfLinenumbers.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section member function `SetCharacteristics`]
+
+  void SetCharacteristics(DWORD Characteristics) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_SECTION_HEADER.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Section equality operator]
+
+  bool operator==(Section const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same section.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 Section inequality operator]
+
+  bool operator!=(Section const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different section.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 SectionList public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `SectionList` methods when an error occurs.
+
+  typedef unspecified iterator;
+  typedef unspecified const_iterator;
+  
+Iterator type for section list. Models the 
+[@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
+Implementation type unspecified.
+
+[h3 SectionList public construct/copy/destruct/move]
+
+[h4 SectionList constructor]
+
+  explicit SectionList(PeFile const& MyPeFile);
+
+[variablelist
+
+[[Effects:] [Constructs a `SectionList` instance targetting the PE file 
+specified by `MyPeFile`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList move constructor]
+
+  SectionList(SectionList&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `SectionList` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList move assignment operator]
+
+  SectionList& operator=(SectionList&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList destructor]
+
+  ~SectionList();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 SectionList public member functions]
+
+[h4 SectionList member function `begin`]
+
+  iterator begin();
+  const_iterator begin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for start of section 
+list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList member function `end`]
+
+  iterator end();
+  const_iterator end() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for off-the-end of 
+section list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList member function `cbegin`]
+
+  const_iterator cbegin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for start of section list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 SectionList member function `cend`]
+
+  const_iterator cend() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for off-the-end of section list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[endsect] [/ Section]
+
+[section:tlsdir TlsDir]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/Section.hpp>
+  
+  class TlsDir
+  {
+  public:
+    class Error : public virtual HadesMemError;
+
+    explicit TlsDir(PeFile const& MyPeFile);
+      
+    TlsDir(TlsDir const& Other);
+    
+    TlsDir& operator=(TlsDir const& Other);
+    
+    TlsDir(TlsDir&& Other);
+    
+    TlsDir& operator=(TlsDir&& Other);
+    
+    ~TlsDir();
+
+    PVOID GetBase() const;
+
+    bool IsValid() const;
+
+    void EnsureValid() const;
+
+    DWORD_PTR GetStartAddressOfRawData() const;
+
+    DWORD_PTR GetEndAddressOfRawData() const;
+
+    DWORD_PTR GetAddressOfIndex() const;
+
+    DWORD_PTR GetAddressOfCallBacks() const;
+
+    DWORD GetSizeOfZeroFill() const;
+
+    DWORD GetCharacteristics() const;
+
+    void SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const;
+
+    void SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const;
+
+    void SetAddressOfIndex(DWORD_PTR AddressOfIndex) const;
+
+    void SetAddressOfCallBacks(DWORD_PTR AddressOfCallbacks) const;
+
+    void SetSizeOfZeroFill(DWORD SizeOfZeroFill) const;
+
+    void SetCharacteristics(DWORD Characteristics) const;
+
+    std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
+      
+    // Todo: SetCallbacks function
+    
+    bool operator==(TlsDir const& Rhs) const;
+    
+    bool operator!=(TlsDir const& Rhs) const;
+  };
+
+[h3 Description]
+
+The `TlsDir` class provides functionality for working with the TLS dir of a 
+PE file.
+
+See the [@http://msdn.microsoft.com/en-us/windows/hardware/gg463119 PE and 
+COFF Specification] for more information on working with the PE file format.
+
+[h3 TlsDir public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `TlsDir` methods when an error occurs.
+
+[h3 TlsDir public construct/copy/destruct/move]
+
+[h4 TlsDir constructor]
+
+  TlsDir(PeFile const& MyPeFile);
+
+[variablelist
+
+[[Effects:] [Constructs a `TlsDir` instance that refers to the specified PE 
+file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir copy constructor]
+
+  TlsDir(TlsDir const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `TlsDir` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir copy assignment operator]
+
+  TlsDir& operator=(TlsDir const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir move constructor]
+
+  TlsDir(Section&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `TlsDir` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir move assignment operator]
+
+  TlsDir& operator=(TlsDir&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir destructor]
+
+  ~TlsDir();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 TlsDir public member functions]
+
+[h4 TlsDir member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of TLS dir.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `IsValid`]
+
+  bool IsValid() const;
+
+[variablelist
+
+[[Returns:] [Whether the target is a valid TLS dir.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `EnsureValid`]
+
+  void EnsureValid() const;
+
+[variablelist
+
+[[Effects:] [Throw if the target is an invalid TLS dir.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetStartAddressOfRawData`]
+
+  DWORD_PTR GetStartAddressOfRawData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.StartAddressOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetEndAddressOfRawData`]
+
+  DWORD_PTR GetEndAddressOfRawData() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.EndAddressOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetAddressOfIndex`]
+
+  DWORD_PTR GetAddressOfIndex() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.AddressOfIndex(.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetAddressOfCallBacks`]
+
+  DWORD_PTR GetAddressOfCallBacks() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.AddressOfCallBacks.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetSizeOfZeroFill`]
+
+  DWORD GetSizeOfZeroFill() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.SizeOfZeroFill.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetCharacteristics`]
+
+  DWORD GetCharacteristics() const;
+
+[variablelist
+
+[[Returns:] [IMAGE_TLS_DIRECTORY.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `GetCallbacks`]
+
+  std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
+
+[variablelist
+
+[[Returns:] [Callback list from IMAGE_TLS_DIRECTORY.AddressOfCallbacks.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetStartAddressOfRawData`]
+
+  void SetStartAddressOfRawData(DWORD_PTR StartAddressOfRawData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.StartAddressOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetEndAddressOfRawData`]
+
+  void SetEndAddressOfRawData(DWORD_PTR EndAddressOfRawData) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.EndAddressOfRawData.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetStartAddressOfRawData`]
+
+  void SetAddressOfIndex(DWORD_PTR AddressOfIndex) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.AddressOfIndex.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetAddressOfCallBacks`]
+
+  void SetAddressOfCallBacks(DWORD_PTR AddressOfCallbacks) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.AddressOfCallbacks.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetSizeOfZeroFill`]
+
+  void SetSizeOfZeroFill(DWORD SizeOfZeroFill) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.SizeOfZeroFill.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir member function `SetCharacteristics`]
+
+  void SetCharacteristics(DWORD Characteristics) const;
+
+[variablelist
+
+[[Effects:] [Sets IMAGE_TLS_DIRECTORY.Characteristics.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 TlsDir equality operator]
+
+  bool operator==(TlsDir const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same TLS dir.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 TlsDir inequality operator]
+
+  bool operator!=(TlsDir const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different TLS dir.]]
+
+[[Throws:] [No.]]
+
+]
+
+[endsect] [/ TlsDir]
+
 [endsect] [/ PeLib]
 
 [section:experimental Experimental]

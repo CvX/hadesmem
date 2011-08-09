@@ -67,6 +67,9 @@ namespace HadesMem
     // Get address of callbacks
     DWORD_PTR GetAddressOfCallBacks() const;
 
+    // Get list of TLS callbacks
+    std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
+
     // Get size of zero fill
     DWORD GetSizeOfZeroFill() const;
 
@@ -84,17 +87,14 @@ namespace HadesMem
 
     // Set address of callbacks
     void SetAddressOfCallBacks(DWORD_PTR AddressOfCallbacks) const;
+      
+    // Todo: SetCallbacks function
 
     // Set size of zero fill
     void SetSizeOfZeroFill(DWORD SizeOfZeroFill) const;
 
     // Set characteristics
     void SetCharacteristics(DWORD Characteristics) const;
-
-    // Get list of TLS callbacks
-    std::vector<PIMAGE_TLS_CALLBACK> GetCallbacks() const;
-      
-    // Todo: SetCallbacks function
     
     // Equality operator
     bool operator==(TlsDir const& Rhs) const;

@@ -164,22 +164,22 @@ namespace HadesMem
     // Move assignment operator
     SectionList& operator=(SectionList&& Other);
     
-    // Get start of import dir list
+    // Get start of section list
     iterator begin();
     
-    // Get end of import dir list
+    // Get end of section list
     iterator end();
     
-    // Get start of import dir list
+    // Get start of section list
     const_iterator begin() const;
      
-    // Get end of import dir list
+    // Get end of section list
     const_iterator end() const;
     
-    // Get start of import dir list
+    // Get start of section list
     const_iterator cbegin() const;
      
-    // Get end of import dir list
+    // Get end of section list
     const_iterator cend() const;
     
   protected:

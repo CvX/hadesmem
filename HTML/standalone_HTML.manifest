@@ -14,5 +14,7 @@ hadesmem/reference/pelib/exportdir.html
 hadesmem/reference/pelib/importdir.html
 hadesmem/reference/pelib/ntheaders.html
 hadesmem/reference/pelib/pefile.html
+hadesmem/reference/pelib/section.html
+hadesmem/reference/pelib/tlsdir.html
 hadesmem/reference/experimental.html
 hadesmem/acknowledge.html
