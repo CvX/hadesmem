@@ -159,7 +159,7 @@ for production use. Currently undocumented.
 
 [*Bug Fixes]
 
-* Added `Module` (and `Injector`) to '''Memory.hpp'''.
+* Added missing headers to '''Memory.hpp'''.
 * Fixed Boost build scripts.
 * `MemoryMgr::ReadString`, `MemoryMgr::ReadList`, `MemoryMgr::WriteString`, 
 and `MemoryMgr::WriteList` now support custom allocators and traits classes 
