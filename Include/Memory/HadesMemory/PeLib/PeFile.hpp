@@ -25,6 +25,7 @@ namespace HadesMem
     class Error : public virtual HadesMemError 
     { };
 
+    // PE file types
     enum FileType
     {
       FileType_Image, 

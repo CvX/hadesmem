@@ -5790,6 +5790,226 @@ semantics. Invalidates `Other`.]]
 
 [endsect] [/ NtHeaders]
 
+[section:pefile PeFile]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/PeLib/PeFile.hpp>
+
+  class PeFile
+  {
+  public:
+    class Error : public virtual HadesMemError;
+
+    enum FileType
+    {
+      FileType_Image, 
+      FileType_Data
+    };
+
+    PeFile(MemoryMgr const& MyMemory, PVOID Address, 
+      FileType Type = FileType_Image);
+      
+    PeFile(PeFile const& Other);
+    
+    PeFile& operator=(PeFile const& Other);
+    
+    PeFile(PeFile&& Other);
+    
+    PeFile& operator=(PeFile&& Other);
+    
+    ~PeFile();
+
+    MemoryMgr GetMemoryMgr() const;
+
+    PVOID GetBase() const;
+
+    PVOID RvaToVa(DWORD Rva) const;
+
+    FileType GetType() const;
+    
+    bool operator==(PeFile const& Rhs) const;
+    
+    bool operator!=(PeFile const& Rhs) const;
+  };
+
+[h3 Description]
+
+The PeFile class provides the most basic PE file manipulation functionality, 
+and is the basis on which all other PeLib components in HadesMem are built.
+
+[h3 PeFile public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `PeFile` methods when an error occurs.
+
+  enum FileType;
+
+PE file 'type', specifying how the PE file is mapped in memory. Affects RVA to 
+VA conversions.
+
+* FileType_Image - PE file is mapped as an image (e.g. by 
+[@http://msdn.microsoft.com/en-us/library/ms684175.aspx LoadLibrary]).
+* FileType_Data - PE file is mapped as data (e.g. in it's original on-disk 
+representation).
+
+[h3 PeFile public construct/copy/destruct/move]
+
+[h4 PeFile constructor]
+
+  PeFile(MemoryMgr const& MyMemory, PVOID Address, 
+      FileType Type = FileType_Image);
+
+[variablelist
+
+[[Effects:] [Constructs a `PeFile` instance that refers to the specified 
+target.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile copy constructor]
+
+  PeFile(PeFile const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `PeFile` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile copy assignment operator]
+
+  PeFile& operator=(PeFile const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile move constructor]
+
+  PeFile(PeFile&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `PeFile` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile move assignment operator]
+
+  PeFile& operator=(PeFile&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile destructor]
+
+  ~PeFile();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 PeFile public member functions]
+
+[h4 PeFile member function `GetMemoryMgr`]
+
+  MemoryMgr GetMemoryMgr() const;
+
+[variablelist
+
+[[Returns:] [MemoryMgr instance associated with the object.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile member function `RvaToVa`]
+
+  PVOID RvaToVa(DWORD Rva) const;
+
+[variablelist
+
+[[Returns:] [Virtual address corresponding to the relative virtual address 
+`Rva`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile member function `GetType`]
+
+  FileType GetType() const;
+
+[variablelist
+
+[[Returns:] ['Type' of PE file.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PeFile equality operator]
+
+  bool operator==(PeFile const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 PeFile inequality operator]
+
+  bool operator!=(PeFile const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different target.]]
+
+[[Throws:] [No.]]
+
+]
+
+[endsect] [/ PeFile]
+
 [endsect] [/ PeLib]
 
 [section:experimental Experimental]
