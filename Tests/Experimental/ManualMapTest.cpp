@@ -35,18 +35,6 @@ BOOST_AUTO_TEST_CASE(ConstructorsTest)
 
 BOOST_AUTO_TEST_CASE(MappingTest)
 {
-  // Disable DEP for process
-  HMODULE K32Mod = GetModuleHandle(L"kernel32.dll");
-  FARPROC pSetProcessDEPPolicyTmp = GetProcAddress(K32Mod, 
-    "SetProcessDEPPolicy");
-  typedef BOOL (WINAPI* tSetProcessDEPPolicy)(DWORD dwFlags);
-  auto pSetProcessDEPPolicy = reinterpret_cast<tSetProcessDEPPolicy>(
-    reinterpret_cast<DWORD_PTR>(pSetProcessDEPPolicyTmp));
-  if (pSetProcessDEPPolicy)
-  {
-    BOOST_REQUIRE(pSetProcessDEPPolicy(0) != 0);
-  }
-  
   // Create memory manager for self
   HadesMem::MemoryMgr const MyMemory(GetCurrentProcessId());
   

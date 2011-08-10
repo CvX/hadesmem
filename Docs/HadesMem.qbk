@@ -1,6 +1,6 @@
 [article HadesMem
   [quickbook 1.5]
-  [version 1.3.0]
+  [version 1.4.0]
   [copyright 2011 Joshua Boyce]
   [authors [Boyce, Joshua]]
   [license Distributed under the Boost Software License, Version 1.0. (See 
@@ -139,6 +139,14 @@ DEALINGS IN THE SOFTWARE.
 [endsect] [/ License]
 
 [section:changes Changes]
+
+[h3 v1.4.0]
+
+[*New Features]
+
+[*Bug Fixes]
+
+[*Changes]
 
 [h3 v1.3.0]
 
