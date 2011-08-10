@@ -15,6 +15,7 @@
 #include <boost/timer.hpp>
 #include <boost/format.hpp>
 #include <boost/version.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
 // Windows
@@ -159,10 +160,10 @@ int wmain(int argc, wchar_t* argv[])
     // Create manual mapper
     HadesMem::ManualMap const MyManualMapper(MyMemory);
     
-    // Inject DLL
-    PVOID ModRemote = MyManualMapper.InjectDll(ModulePath, Export);
+    // Manually map DLL
+    PVOID ModRemote = MyManualMapper.InjectDll(ModulePath.native(), Export);
     
-    std::wcout << "Module successfully injected. Base = " << ModRemote << 
+    std::wcout << "Module successfully mapped. Base = " << ModRemote << 
       ".\n";
   }
   catch (std::exception const& e)

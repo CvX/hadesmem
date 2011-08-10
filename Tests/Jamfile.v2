@@ -24,6 +24,7 @@ test-suite Memory
     [ run MemoryMgrTest.cpp ]
     [ run ModuleTest.cpp ]
     [ run InjectorTest.cpp ]
+    [ run Experimental/ManualMapTest.cpp : : : <toolset>msvc:<linkflags>/NXCOMPAT:NO ]
     [ run PeLib/DosHeaderTest.cpp ]
     [ run PeLib/ExportDirTest.cpp ]
     [ run PeLib/ImportDirTest.cpp ]

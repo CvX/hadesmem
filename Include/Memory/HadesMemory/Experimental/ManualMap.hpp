@@ -14,10 +14,9 @@
 #include <HadesMemory/Detail/Config.hpp>
 
 // C++ Standard Library
+#include <map>
 #include <string>
-
-// Boost
-#include <boost/filesystem.hpp>
+#include <utility>
 
 // Windows API
 #include <Windows.h>
@@ -34,17 +33,39 @@ namespace HadesMem
 
     // Constructor
     explicit ManualMap(MemoryMgr const& MyMemory);
+      
+    // Copy constructor
+    ManualMap(ManualMap const& Other);
+    
+    // Copy assignment operator
+    ManualMap& operator=(ManualMap const& Other);
+    
+    // Move constructor
+    ManualMap(ManualMap&& Other);
+    
+    // Move assignment operator
+    ManualMap& operator=(ManualMap&& Other);
+    
+    // Destructor
+    ~ManualMap();
     
     // Manual mapping flags
     enum InjectFlags
     {
-      InjectFlag_None
+      InjectFlag_None, 
+      InjectFlag_PathResolution
     };
 
     // Manually map DLL
-    PVOID InjectDll(boost::filesystem::path const& Path, 
-      std::string const& Export, 
+    HMODULE InjectDll(std::wstring const& Path, 
+      std::string const& Export = "", 
       InjectFlags Flags = InjectFlag_None) const;
+    
+    // Equality operator
+    bool operator==(ManualMap const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(ManualMap const& Rhs) const;
 
   private:
     // Map sections
@@ -58,5 +79,8 @@ namespace HadesMem
 
     // MemoryMgr instance
     MemoryMgr m_Memory;
+    
+    // Map of mapped DLLs and their bases
+    mutable std::map<std::wstring, HMODULE> m_MappedMods;
   };
 }
