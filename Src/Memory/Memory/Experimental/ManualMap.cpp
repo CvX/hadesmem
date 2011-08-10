@@ -676,6 +676,8 @@ namespace HadesMem
       // FIXME: This is wrong! In the case of forwarded exports this will 
       // cause GetProcAddress to return a pointer in a different module which 
       // does not map correctly to the remote process.
+      // Note: Exports can be binary searched as they are lexiographically 
+      // ordered.
       Detail::EnsureFreeLibrary DepModLocal = LoadLibraryEx(
         ModuleNameW.c_str(), nullptr, DONT_RESOLVE_DLL_REFERENCES);
       if (!DepModLocal)
