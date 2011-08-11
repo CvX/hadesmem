@@ -146,7 +146,13 @@ DEALINGS IN THE SOFTWARE.
 
 [*Bug Fixes]
 
+* Fixed handling of forwarded exports in `ManualMap`.
+* Fixed case-sensitivity of module caching/detection in `ManualMap`.
+
 [*Changes]
+
+* All dependencies are now statically linked.
+* Minor cleanup to `ManualMap`.
 
 [h3 v1.3.0]
 

@@ -107,166 +107,13 @@ namespace HadesMem
         ErrorFunction("ManualMap::Map") << 
         ErrorString("Shims enabled for local process."));
     }
-    
-    // String to hold 'real' path to module
-    boost::filesystem::path PathReal(Path);
       
     // Check if path resolution was requested
     bool PathResolution = ((Flags & InjectFlag_PathResolution) == 
       InjectFlag_PathResolution);
-
-    // Handle path resolution
-    if (PathResolution)
-    {
-      // Check whether we need to convert the path from a relative to 
-      // an absolute
-      if (PathReal.is_relative())
-      {
-        // Convert relative path to absolute path
-        PathReal = boost::filesystem::absolute(PathReal, 
-          Detail::GetSelfDirPath());
-      }
-      
-      // Ensure target file exists
-      // Note: Only performing this check when path resolution is enabled, 
-      // because otherwise we would need to perform the check in the context 
-      // of the remote process, which is not possible to do without 
-      // introducing race conditions and other potential problems. So we just 
-      // let LoadLibraryW do the check for us.
-      if (!boost::filesystem::exists(PathReal))
-      {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not find module file."));
-      }
-    }
     
-#if 0
-    // If path resolution is disabled, use LoadLibrary to perform the 
-    // resolution so the DLL search order is correct.
-    if (!PathResolution)
-    {
-      Detail::EnsureFreeLibrary ModLocal = LoadLibraryEx(PathReal.c_str(), 
-        nullptr, DONT_RESOLVE_DLL_REFERENCES);
-      if (!ModLocal)
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not load module locally.") << 
-          ErrorCodeWinLast(LastError));
-      }
-      Module ModLocalInfo(m_Memory, ModLocal);
-      PathReal = ModLocalInfo.GetPath();
-    }
-#endif
-
-    // If path resolution is disabled, replicate the Windows DLL search order 
-    // to try and find the target.
-    // FIXME: Not a complte implementation of the Windows DLL search order 
-    // algorithm. The following conditions need to be supported:
-    // 1. If a DLL with the same module name is already loaded in memory, the 
-    // system checks only for redirection and a manifest before resolving to 
-    // the loaded DLL, no matter which directory it is in. The system does not 
-    // search for the DLL.
-    // 2. If the DLL is on the list of known DLLs for the version of Windows 
-    // on which the application is running, the system uses its copy of the 
-    // known DLL (and the known DLL's dependent DLLs, if any) instead of 
-    // searching for the DLL. For a list of known DLLs on the current system, 
-    // see the following registry key: HKEY_LOCAL_MACHINE\SYSTEM\
-    // CurrentControlSet\Control\Session Manager\KnownDLLs.
-    // 3. If a DLL has dependencies, the system searches for the dependent 
-    // DLLs as if they were loaded with just their module names. This is true 
-    // even if the first DLL was loaded by specifying a full path.
-    // FIXME: Furthermore, this implementation does not search the 16-bit 
-    // system directory, nor does it search the current working directory (as 
-    // that is only meaningful in the context of the remote process), lastly, 
-    // it does not search in %PATH%.
-    if (!PathResolution)
-    {
-      // Get app load dir
-      boost::filesystem::path AppLoadDir = m_Memory.GetProcessPath();
-      AppLoadDir = AppLoadDir.parent_path();
-      
-      // Get system dir
-      boost::filesystem::path SystemDir;
-      wchar_t Temp;
-      UINT SysDirLen = GetSystemDirectory(&Temp, 1);
-      if (!SysDirLen)
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not get length of system dir.") << 
-          ErrorCodeWinLast(LastError));
-      }
-      std::vector<wchar_t> SysDirTemp(SysDirLen);
-      if (!GetSystemDirectory(SysDirTemp.data(), SysDirLen))
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not get system dir.") << 
-          ErrorCodeWinLast(LastError));
-      }
-      SystemDir = SysDirTemp.data();
-      
-      // Get windows directory
-      boost::filesystem::path WindowsDir;
-      UINT WinDirLen = GetSystemDirectory(&Temp, 1);
-      if (!WinDirLen)
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not get length of windows dir.") << 
-          ErrorCodeWinLast(LastError));
-      }
-      std::vector<wchar_t> WinDirTemp(WinDirLen);
-      if (!GetSystemDirectory(WinDirTemp.data(), WinDirLen))
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not get windows dir.") << 
-          ErrorCodeWinLast(LastError));
-      }
-      WindowsDir = WinDirTemp.data();
-      
-      // Create search list
-      std::vector<boost::filesystem::path> SearchDirList;
-      SearchDirList.push_back(AppLoadDir);
-      SearchDirList.push_back(SystemDir);
-      SearchDirList.push_back(WindowsDir);
-      
-      // Search for target
-      boost::filesystem::path ResolvedPath;
-      for (auto i = SearchDirList.cbegin(); i != SearchDirList.cend(); ++i)
-      {
-        boost::filesystem::path const& Current = *i;
-        boost::filesystem::path ResolvedPathTemp = boost::filesystem::absolute(
-          PathReal, Current);
-        if (boost::filesystem::exists(ResolvedPathTemp))
-        {
-          ResolvedPath = ResolvedPathTemp;
-          break;
-        }
-      }
-      
-      // Ensure target was found
-      if (ResolvedPath.empty())
-      {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::Map") << 
-          ErrorString("Could not find module file."));
-      }
-      
-      // Set path
-      PathReal = ResolvedPath;
-    }
-
-    // Convert path to preferred format
-    PathReal.make_preferred();
+    // Resolve path
+    boost::filesystem::path PathReal(ResolvePath(Path, PathResolution));
     
     // Open file for reading
     boost::filesystem::basic_ifstream<char> ModuleFile(PathReal, 
@@ -332,7 +179,7 @@ namespace HadesMem
     // Add to list
     // FIXME: This is such a nasty hack. Handle cyclic dependenceis in a 
     // better way.
-    m_MappedMods[Path] = reinterpret_cast<HMODULE>(RemoteBase);
+    m_MappedMods[boost::to_lower_copy(Path)] = reinterpret_cast<HMODULE>(RemoteBase);
 
     // Get all TLS callbacks
     std::vector<PIMAGE_TLS_CALLBACK> TlsCallbacks;
@@ -631,7 +478,7 @@ namespace HadesMem
       if (!MyModule)
       {
         // Check whether dependent module is already manually mapped
-        auto const MappedModIter = m_MappedMods.find(ModuleNameW);
+        auto const MappedModIter = m_MappedMods.find(ModuleNameLowerW);
         if (MappedModIter != m_MappedMods.end())
         {
           std::cout << "Found existing mapped instance of dependent DLL." << 
@@ -647,23 +494,11 @@ namespace HadesMem
             std::cout << "Attempting without path resolution." << std::endl;
             CurModBase = InjectDll(ModuleNameW);
           }
-          catch (boost::exception const& e)
+          catch (std::exception const& /*e*/)
           {
-            if (std::string const* x = boost::get_error_info<ErrorString>(e))
-            {
-              if (*x == "Could not open image file." || 
-                *x == "Could not find module file.")
-              {
-                std::cout << "Failure." << std::endl;
-                std::cout << "Attempting with path resolution." << std::endl;
-                CurModBase = InjectDll(ModuleNameW, "", 
-                  InjectFlag_PathResolution);
-              }
-              else
-              {
-                throw;
-              }
-            }          
+            std::cout << "Failed to map dependent DLL." << std::endl;
+            std::cout << "Attempting with path resolution." << std::endl;
+            CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
           }
         }
       }
@@ -672,23 +507,12 @@ namespace HadesMem
         CurModBase = MyModule->GetHandle();
       }
       
-      // Load dependent module locally for export enumeration
-      // FIXME: This is wrong! In the case of forwarded exports this will 
-      // cause GetProcAddress to return a pointer in a different module which 
-      // does not map correctly to the remote process.
-      // Note: Exports can be binary searched as they are lexiographically 
-      // ordered.
-      Detail::EnsureFreeLibrary DepModLocal = LoadLibraryEx(
-        ModuleNameW.c_str(), nullptr, DONT_RESOLVE_DLL_REFERENCES);
-      if (!DepModLocal)
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::FixImports") << 
-          ErrorString("Could not load dependent module locally.") << 
-          ErrorCodeWinLast(LastError));
-      }
-
+      // Create PE file for dep mod
+      PeFile DepPeFile(m_Memory, CurModBase);
+      
+      // Export list for dep mod
+      ExportList Exports(DepPeFile);
+      
       // Loop over import thunks for current module
       ImportThunkList ImportThunks(MyPeFile, MyImportDir.GetFirstThunk());
       for (auto j = ImportThunks.begin(); j != ImportThunks.end(); ++j)
@@ -696,48 +520,36 @@ namespace HadesMem
         // Get import thunk
         ImportThunk& ImpThunk = *j;
 
-        // Get function address in remote process
-        FARPROC FuncAddr = 0;
+        // Debug output
         if (ImpThunk.ByOrdinal())
         {
-          // Get name of function
+          // Debug output
           std::cout << "Function Ordinal: " << ImpThunk.GetOrdinal() << "." 
             << std::endl;
-
-          // Get export address locally then convert to remote address
-          Module CurModule(m_Memory, DepModLocal);
-          FuncAddr = CurModule.FindProcedure(ImpThunk.GetOrdinal());
-          
-          // Convert address if found
-          if (FuncAddr)
-          {
-            LONG_PTR const FuncDelta = reinterpret_cast<DWORD_PTR>(FuncAddr) - 
-              reinterpret_cast<DWORD_PTR>(static_cast<HMODULE>(DepModLocal));
-        
-            FuncAddr = reinterpret_cast<FARPROC>(reinterpret_cast<DWORD_PTR>(
-              CurModBase) + FuncDelta);
-          }
         }
         else
         {
-          // Get name of function
-          std::string const ImpName(ImpThunk.GetName());
-          std::cout << "Function Name: " << ImpName << "." << std::endl;
-
-          // Get export address locally then convert to remote address
-          Module CurModule(m_Memory, DepModLocal);
-          FuncAddr = CurModule.FindProcedure(ImpThunk.GetName());
-
-          // Convert address if found
-          if (FuncAddr)
-          {
-            LONG_PTR const FuncDelta = reinterpret_cast<DWORD_PTR>(FuncAddr) - 
-              reinterpret_cast<DWORD_PTR>(static_cast<HMODULE>(DepModLocal));
-        
-            FuncAddr = reinterpret_cast<FARPROC>(reinterpret_cast<DWORD_PTR>(
-              CurModBase) + FuncDelta);
-          }
+          // Debug output
+          std::cout << "Function Name: " << ImpThunk.GetName() << "." << std::endl;
         }
+        
+        // Find export
+        auto ExpIter = std::find_if(Exports.cbegin(), Exports.cend(), 
+          [&] (Export const& E) -> bool
+          {
+            return ImpThunk.ByOrdinal() ? 
+              (!E.ByName() && E.GetOrdinal() == ImpThunk.GetOrdinal()) : 
+              (E.ByName() && E.GetName() == ImpThunk.GetName());
+          });
+        if (ExpIter == Exports.cend())
+        {
+          BOOST_THROW_EXCEPTION(Error() << 
+            ErrorFunction("ManualMap::FixImports") << 
+            ErrorString("Could not find export."));
+        }
+
+        // Resolve export
+        FARPROC FuncAddr = ResolveExport(*ExpIter);
 
         // Ensure function was found
         if (!FuncAddr)
@@ -835,6 +647,244 @@ namespace HadesMem
 
       // Advance to next reloc info block
       pRelocDir = reinterpret_cast<PIMAGE_BASE_RELOCATION>(pRelocData); 
+    }
+  }
+    
+  // Perform path resolution
+  std::wstring ManualMap::ResolvePath(std::wstring const& Path, bool PathResolution) const
+  {
+    // Convert path string to filesystem path
+    boost::filesystem::path PathReal(Path);
+    
+    // Handle path resolution
+    if (PathResolution)
+    {
+      // Check whether we need to convert the path from a relative to 
+      // an absolute
+      if (PathReal.is_relative())
+      {
+        // Convert relative path to absolute path
+        PathReal = boost::filesystem::absolute(PathReal, 
+          Detail::GetSelfDirPath());
+      }
+      
+      // Ensure target file exists
+      // Note: Only performing this check when path resolution is enabled, 
+      // because otherwise we would need to perform the check in the context 
+      // of the remote process, which is not possible to do without 
+      // introducing race conditions and other potential problems. So we just 
+      // let LoadLibraryW do the check for us.
+      if (!boost::filesystem::exists(PathReal))
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not find module file."));
+      }
+    }
+
+    // If path resolution is disabled, replicate the Windows DLL search order 
+    // to try and find the target.
+    // FIXME: Not a complte implementation of the Windows DLL search order 
+    // algorithm. The following conditions need to be supported:
+    // 1. If a DLL with the same module name is already loaded in memory, the 
+    // system checks only for redirection and a manifest before resolving to 
+    // the loaded DLL, no matter which directory it is in. The system does not 
+    // search for the DLL.
+    // 2. If the DLL is on the list of known DLLs for the version of Windows 
+    // on which the application is running, the system uses its copy of the 
+    // known DLL (and the known DLL's dependent DLLs, if any) instead of 
+    // searching for the DLL. For a list of known DLLs on the current system, 
+    // see the following registry key: HKEY_LOCAL_MACHINE\SYSTEM
+    // \CurrentControlSet\Control\Session Manager\KnownDLLs.
+    // 3. If a DLL has dependencies, the system searches for the dependent 
+    // DLLs as if they were loaded with just their module names. This is true 
+    // even if the first DLL was loaded by specifying a full path.
+    // FIXME: Furthermore, this implementation does not search the 16-bit 
+    // system directory, nor does it search the current working directory (as 
+    // that is only meaningful in the context of the remote process), lastly, 
+    // it does not search in %PATH%.
+    if (!PathResolution)
+    {
+      // Get app load dir
+      boost::filesystem::path AppLoadDir = m_Memory.GetProcessPath();
+      AppLoadDir = AppLoadDir.parent_path();
+      
+      // Get system dir
+      boost::filesystem::path SystemDir;
+      wchar_t Temp;
+      UINT SysDirLen = GetSystemDirectory(&Temp, 1);
+      if (!SysDirLen)
+      {
+        DWORD const LastError = GetLastError();
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not get length of system dir.") << 
+          ErrorCodeWinLast(LastError));
+      }
+      std::vector<wchar_t> SysDirTemp(SysDirLen);
+      if (!GetSystemDirectory(SysDirTemp.data(), SysDirLen))
+      {
+        DWORD const LastError = GetLastError();
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not get system dir.") << 
+          ErrorCodeWinLast(LastError));
+      }
+      SystemDir = SysDirTemp.data();
+      
+      // Get windows directory
+      boost::filesystem::path WindowsDir;
+      UINT WinDirLen = GetSystemDirectory(&Temp, 1);
+      if (!WinDirLen)
+      {
+        DWORD const LastError = GetLastError();
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not get length of windows dir.") << 
+          ErrorCodeWinLast(LastError));
+      }
+      std::vector<wchar_t> WinDirTemp(WinDirLen);
+      if (!GetSystemDirectory(WinDirTemp.data(), WinDirLen))
+      {
+        DWORD const LastError = GetLastError();
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not get windows dir.") << 
+          ErrorCodeWinLast(LastError));
+      }
+      WindowsDir = WinDirTemp.data();
+      
+      // Create search list
+      std::vector<boost::filesystem::path> SearchDirList;
+      SearchDirList.push_back(AppLoadDir);
+      SearchDirList.push_back(SystemDir);
+      SearchDirList.push_back(WindowsDir);
+      
+      // Search for target
+      boost::filesystem::path ResolvedPath;
+      for (auto i = SearchDirList.cbegin(); i != SearchDirList.cend(); ++i)
+      {
+        boost::filesystem::path const& Current = *i;
+        boost::filesystem::path ResolvedPathTemp = boost::filesystem::absolute(
+          PathReal, Current);
+        if (boost::filesystem::exists(ResolvedPathTemp))
+        {
+          ResolvedPath = ResolvedPathTemp;
+          break;
+        }
+      }
+      
+      // Ensure target was found
+      if (ResolvedPath.empty())
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolvePath") << 
+          ErrorString("Could not find module file."));
+      }
+      
+      // Set path
+      PathReal = ResolvedPath;
+    }
+
+    // Convert path to preferred format
+    PathReal.make_preferred();
+    
+    // Return resolved path
+    return PathReal.native();
+  }
+  
+  // Resolve export
+  FARPROC ManualMap::ResolveExport(Export const& E) const
+  {
+    // Handle forwarded exports
+    if (E.Forwarded())
+    {
+      // Debug output
+      std::cout << "Forwarded export detected. Forwarder: " << 
+        E.GetForwarder() << "." << std::endl;
+      
+      // Get forwarder module name (lower-case)
+      std::string const ForwarderModuleLower = boost::to_lower_copy(
+        E.GetForwarderModule());
+      
+      // Look for forwarder module in module list
+      ModuleList ModulesNew(m_Memory);
+      auto const ForwardedModIter1 = std::find_if(
+        ModulesNew.cbegin(), ModulesNew.cend(), 
+        [&] (Module const& M)
+        {
+          return boost::lexical_cast<std::string>(M.GetName()) == ForwarderModuleLower;
+        });
+      
+      // Look for forwarder module in cache
+      auto const ForwardedModIter2 = m_MappedMods.find(
+        boost::lexical_cast<std::wstring>(ForwarderModuleLower));
+          
+      // Ensure forwarder module was found
+      if (ForwardedModIter1 == ModulesNew.cend() && 
+        ForwardedModIter2 == m_MappedMods.end())
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolveExport") << 
+          ErrorString("Found unknown forwarder module."));
+      }
+      
+      // Base address of forwarder module
+      HMODULE NewTarget = nullptr;
+      if (ForwardedModIter1 != ModulesNew.cend())
+      {
+        NewTarget = ForwardedModIter1->GetHandle();
+      }
+      else
+      {
+        NewTarget = ForwardedModIter2->second;
+      }
+      
+      // Get forwarder function and ordinal
+      std::string const ForwarderFunction = E.GetForwarderFunction();
+      bool ForwardedByOrdinal = (ForwarderFunction[0] == '#');
+      WORD ForwarderOrdinal = 0;
+      if (ForwardedByOrdinal)
+      {
+        try
+        {
+          ForwarderOrdinal = boost::lexical_cast<WORD>(ForwarderFunction.substr(1));
+        }
+        catch (std::exception const& /*e*/)
+        {
+          BOOST_THROW_EXCEPTION(Error() << 
+            ErrorFunction("ManualMap::ResolveExport") << 
+            ErrorString("Invalid forwarder ordinal detected."));
+        }
+      }
+      
+      // Find target export
+      PeFile NewTargetPe(m_Memory, NewTarget);
+      ExportList NewTargetExports(NewTargetPe);
+      auto ExpIter = std::find_if(NewTargetExports.cbegin(), NewTargetExports.cend(), 
+        [&] (Export const& Ex)
+        {
+          return ForwardedByOrdinal ? 
+            (!Ex.ByName() && Ex.GetOrdinal() == ForwarderOrdinal) : 
+            (Ex.ByName() && Ex.GetName() == E.GetForwarderFunction());
+        });
+      
+      // Ensure target was found
+      if (ExpIter == NewTargetExports.cend())
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::ResolveExport") << 
+          ErrorString("Could not find forwarded export."));
+      }
+      
+      // Handle chained forwarded exports
+      return ResolveExport(*ExpIter);
+    }
+    // Handle regular (non-forwarded) exports
+    else
+    {
+      // Return VA of export
+      return reinterpret_cast<FARPROC>(reinterpret_cast<DWORD_PTR>(E.GetVa()));
     }
   }
   

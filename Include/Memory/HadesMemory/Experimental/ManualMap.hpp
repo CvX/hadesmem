@@ -12,6 +12,7 @@
 #include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 #include <HadesMemory/Detail/Config.hpp>
+#include <HadesMemory/PeLib/ExportDir.hpp>
 
 // C++ Standard Library
 #include <map>
@@ -76,6 +77,13 @@ namespace HadesMem
 
     // Fix relocations
     void FixRelocations(PeFile& MyPeFile, PVOID RemoteAddr) const;
+    
+    // Perform path resolution
+    std::wstring ResolvePath(std::wstring const& Path, 
+      bool PathResolution) const;
+      
+    // Resolve export
+    FARPROC ResolveExport(Export const& E) const;
 
     // MemoryMgr instance
     MemoryMgr m_Memory;
