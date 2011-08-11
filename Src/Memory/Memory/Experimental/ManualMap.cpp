@@ -433,8 +433,8 @@ namespace HadesMem
       ImportDir& MyImportDir = *i;
 
       // Check for forwarded imports
-      // Fixme: Handle forwarded imports
-      if (MyImportDir.GetTimeDateStamp())
+      // FIXME: Handle forwarded imports
+      if (MyImportDir.GetForwarderChain())
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::FixImports") << 
@@ -458,7 +458,7 @@ namespace HadesMem
         if (boost::to_lower_copy(Current.GetName()) == ModuleNameLowerW || 
           boost::to_lower_copy(Current.GetPath()) == ModuleNameLowerW)
         {
-          // Fixme: Correctly implement the DLL search order and compare by 
+          // FIXME: Correctly implement the DLL search order and compare by 
           // absolute path rather than by name.
           // http://msdn.microsoft.com/en-us/library/ms682586.aspx
           if (MyModule)
