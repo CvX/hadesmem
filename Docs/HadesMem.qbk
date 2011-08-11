@@ -152,6 +152,8 @@ DEALINGS IN THE SOFTWARE.
 stopped. Import bindings are now ignored and reprocessed manually.
 * Fixed import processing to use the OriginalFirstThunk list for parsing, 
 and the FirstThunk list for binding. Fixes x64 import processing.
+* Fixed Export::GetForwarderFunction. Was incorrectly including the delimiter 
+in the string.
 
 [*Changes]
 

@@ -452,7 +452,7 @@ namespace HadesMem
       if (SplitPos != std::string::npos)
       {
         m_ForwarderSplit = std::make_pair(m_Forwarder.substr(0, SplitPos), 
-          m_Forwarder.substr(SplitPos));
+          m_Forwarder.substr(SplitPos + 1));
       }
       else
       {

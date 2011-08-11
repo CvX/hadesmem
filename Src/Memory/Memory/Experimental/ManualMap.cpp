@@ -795,8 +795,17 @@ namespace HadesMem
         E.GetForwarder() << "." << std::endl;
       
       // Get forwarder module name (lower-case)
-      std::string const ForwarderModuleLower = boost::to_lower_copy(
+      std::string ForwarderModuleLower = boost::to_lower_copy(
         E.GetForwarderModule());
+      // FIXME: This is a nasty hack. Perform GetModuleHandle style path 
+      // checking.
+      if (ForwarderModuleLower.find('.') == std::string::npos)
+      {
+        ForwarderModuleLower += ".dll";
+      }
+      
+      // Detect NTDLL as special case
+      bool IsNtdll = ForwarderModuleLower == "ntdll.dll";
       
       // Look for forwarder module in cache
       // FIXME: Support both path resolution cases
@@ -806,7 +815,7 @@ namespace HadesMem
         ResolvedModulePath));
           
       // Ensure forwarder module was found
-      if (ForwardedModIter == m_MappedMods.end())
+      if (ForwardedModIter == m_MappedMods.end() && !IsNtdll)
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::ResolveExport") << 
@@ -814,7 +823,16 @@ namespace HadesMem
       }
       
       // Base address of forwarder module
-      HMODULE NewTarget = ForwardedModIter->second;
+      HMODULE NewTarget = nullptr;
+      if (IsNtdll)
+      {
+        Module NtdllMod(m_Memory, L"ntdll.dll");
+        NewTarget = NtdllMod.GetHandle();
+      }
+      else
+      {
+        NewTarget = ForwardedModIter->second;
+      }
       
       // Get forwarder function and ordinal
       std::string const ForwarderFunction = E.GetForwarderFunction();
@@ -842,7 +860,7 @@ namespace HadesMem
         {
           return ForwardedByOrdinal ? 
             (!Ex.ByName() && Ex.GetOrdinal() == ForwarderOrdinal) : 
-            (Ex.ByName() && Ex.GetName() == E.GetForwarderFunction());
+            (Ex.ByName() && Ex.GetName() == ForwarderFunction);
         });
       
       // Ensure target was found
