@@ -148,6 +148,10 @@ DEALINGS IN THE SOFTWARE.
 
 * Fixed handling of forwarded exports in `ManualMap`.
 * Fixed case-sensitivity of module caching/detection in `ManualMap`.
+* Fixes case where image contained bound imports and `ManualMap` 
+stopped. Import bindings are now ignored and reprocessed manually.
+* Fixed import processing to use the OriginalFirstThunk list for parsing, 
+and the FirstThunk list for binding. Fixes x64 import processing.
 
 [*Changes]
 

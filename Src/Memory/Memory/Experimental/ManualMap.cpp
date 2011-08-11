@@ -432,15 +432,6 @@ namespace HadesMem
       // Get import dir
       ImportDir& MyImportDir = *i;
 
-      // Check for bound imports
-      // FIXME: Handle bound imports
-      if (MyImportDir.GetTimeDateStamp())
-      {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::FixImports") << 
-          ErrorString("Image has unhandled bound imports."));
-      }
-
       // Get module name
       std::string const ModuleName(MyImportDir.GetName());
       std::wstring const ModuleNameW(boost::lexical_cast<std::wstring>(
@@ -514,8 +505,9 @@ namespace HadesMem
       ExportList Exports(DepPeFile);
       
       // Loop over import thunks for current module
-      ImportThunkList ImportThunks(MyPeFile, MyImportDir.GetFirstThunk());
-      for (auto j = ImportThunks.begin(); j != ImportThunks.end(); ++j)
+      ImportThunkList ImportOrigThunks(MyPeFile, MyImportDir.GetCharacteristics());
+      ImportThunkList ImportFirstThunks(MyPeFile, MyImportDir.GetFirstThunk());
+      for (auto j = ImportOrigThunks.begin(); j != ImportOrigThunks.end(); ++j)
       {
         // Get import thunk
         ImportThunk& ImpThunk = *j;
@@ -560,7 +552,9 @@ namespace HadesMem
         }
 
         // Set function address
-        ImpThunk.SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
+        auto ImpThunkFT = ImportFirstThunks.begin();
+        std::advance(ImpThunkFT, std::distance(ImportOrigThunks.begin(), j));
+        ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
       }
     } 
   }
