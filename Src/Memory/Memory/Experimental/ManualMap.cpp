@@ -432,13 +432,13 @@ namespace HadesMem
       // Get import dir
       ImportDir& MyImportDir = *i;
 
-      // Check for forwarded imports
-      // FIXME: Handle forwarded imports
-      if (MyImportDir.GetForwarderChain())
+      // Check for bound imports
+      // FIXME: Handle bound imports
+      if (MyImportDir.GetTimeDateStamp())
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::FixImports") << 
-          ErrorString("Image has unhandled forwarded imports."));
+          ErrorString("Image has unhandled bound imports."));
       }
 
       // Get module name
