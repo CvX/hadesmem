@@ -164,22 +164,26 @@ namespace HadesMem
     MemoryMgr MyMemoryLocal(GetCurrentProcessId());
 
     // Ensure file is a valid PE file
-    std::wcout << Path << " - Performing PE file format validation." << std::endl;
+    std::wcout << Path << " - Performing PE file format validation." 
+      << std::endl;
     PeFile MyPeFile(MyMemoryLocal, pBase, PeFile::FileType_Data);
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
 
     // Allocate memory for image
-    std::wcout << Path << " - Allocating remote memory for image." << std::endl;
+    std::wcout << Path << " - Allocating remote memory for image." 
+      << std::endl;
     PVOID const RemoteBase = m_Memory.Alloc(MyNtHeaders.GetSizeOfImage());
-    std::wcout << Path << " - Image base address: " << RemoteBase << "." << std::endl;
-    std::wcout << Path << " - Image size: " << std::hex << MyNtHeaders.GetSizeOfImage() 
-      << std::dec << "." << std::endl;
+    std::wcout << Path << " - Image base address: " << RemoteBase << "." 
+      << std::endl;
+    std::wcout << Path << " - Image size: " << std::hex << 
+      MyNtHeaders.GetSizeOfImage() << std::dec << "." << std::endl;
         
     // Add to list
-    // FIXME: This is such a nasty hack. Handle cyclic dependenceis in a 
+    // FIXME: This is such a nasty hack. Handle cyclic dependencies in a 
     // better way.
-    m_MappedMods[boost::to_lower_copy(Path)] = reinterpret_cast<HMODULE>(RemoteBase);
+    m_MappedMods[boost::to_lower_copy(PathReal.native())] = 
+      reinterpret_cast<HMODULE>(RemoteBase);
 
     // Get all TLS callbacks
     std::vector<PIMAGE_TLS_CALLBACK> TlsCallbacks;
@@ -209,13 +213,14 @@ namespace HadesMem
     // Write NT headers to process
     PBYTE const NtHeadersStart = reinterpret_cast<PBYTE>(MyNtHeaders.
       GetBase());
-    PBYTE const NtHeadersEnd = static_cast<PBYTE>(Section(MyPeFile, 0).GetBase());
+    PBYTE const NtHeadersEnd = static_cast<PBYTE>(
+      Section(MyPeFile, 0).GetBase());
     std::vector<BYTE> const PeHeaderBuf(NtHeadersStart, NtHeadersEnd);
     PBYTE const TargetAddr = static_cast<PBYTE>(RemoteBase) + MyDosHeader.
       GetNewHeaderOffset();
     std::wcout << Path << " - Writing NT header." << std::endl;
-    std::wcout << Path << " - NT Header: " << static_cast<PVOID>(TargetAddr) << 
-      std::endl;
+    std::wcout << Path << " - NT Header: " << 
+      static_cast<PVOID>(TargetAddr) << std::endl;
     m_Memory.WriteList(TargetAddr, PeHeaderBuf);
 
     // Write sections to process
@@ -225,7 +230,8 @@ namespace HadesMem
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
-      std::wcout << Path << " - TLS Callback: " << pCallback << "." << std::endl;
+      std::wcout << Path << " - TLS Callback: " << pCallback << "." 
+        << std::endl;
       std::vector<PVOID> TlsCallArgs;
       TlsCallArgs.push_back(0);
       TlsCallArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
@@ -234,8 +240,8 @@ namespace HadesMem
         m_Memory.Call(reinterpret_cast<PBYTE>(RemoteBase) + 
         reinterpret_cast<DWORD_PTR>(pCallback), 
         MemoryMgr::CallConv_Default, TlsCallArgs);
-      std::wcout << Path << " - TLS Callback Returned: " << TlsRet.GetReturnValue() 
-        << "." << std::endl;
+      std::wcout << Path << " - TLS Callback Returned: " << 
+        TlsRet.GetReturnValue() << "." << std::endl;
     });
 
     // Calculate module entry point
@@ -248,7 +254,8 @@ namespace HadesMem
     }
     
     // Print entry point address
-    std::wcout << Path << " - Entry Point: " << EntryPoint << "." << std::endl;
+    std::wcout << Path << " - Entry Point: " << EntryPoint << "." 
+      << std::endl;
 
     // Call entry point
     if (EntryPoint)
@@ -259,8 +266,8 @@ namespace HadesMem
       EpArgs.push_back(RemoteBase);
       MemoryMgr::RemoteFunctionRet const EpRet = m_Memory.Call(EntryPoint, 
         MemoryMgr::CallConv_Default, EpArgs);
-      std::wcout << Path << " - Entry Point Returned: " << EpRet.GetReturnValue() 
-        << "." << std::endl;
+      std::wcout << Path << " - Entry Point Returned: " << 
+        EpRet.GetReturnValue() << "." << std::endl;
     }
 
     // Load module as data so we can read the EAT locally
@@ -304,7 +311,8 @@ namespace HadesMem
     }
     
     // Print export address
-    std::wcout << Path << " - Export Address: " << ExportAddr << "." << std::endl;
+    std::wcout << Path << " - Export Address: " << ExportAddr << "." 
+      << std::endl;
 
     // Call remote export (if specified)
     if (ExportAddr)
@@ -313,10 +321,10 @@ namespace HadesMem
       ExpArgs.push_back(RemoteBase);
       MemoryMgr::RemoteFunctionRet const ExpRet = m_Memory.Call(ExportAddr, 
         MemoryMgr::CallConv_Default, ExpArgs);
-      std::wcout << Path << " - Export Returned: " << ExpRet.GetReturnValue() << "." 
-        << std::endl;
+      std::wcout << Path << " - Export Returned: " << ExpRet.GetReturnValue() 
+        << "." << std::endl;
     }
-
+    
     // Return pointer to module in remote process
     return reinterpret_cast<HMODULE>(RemoteBase);
   }
@@ -440,42 +448,35 @@ namespace HadesMem
         ModuleNameW));
       std::cout << "Module Name: " << ModuleName << "." << std::endl;
       
-      // Check whether dependent module is already loaded
-      boost::optional<Module> MyModule;
-      ModuleList Modules(m_Memory);
-      for (auto j = Modules.begin(); j != Modules.end(); ++j)
-      {
-        Module& Current = *j;
-        if (boost::to_lower_copy(Current.GetName()) == ModuleNameLowerW || 
-          boost::to_lower_copy(Current.GetPath()) == ModuleNameLowerW)
-        {
-          // FIXME: Correctly implement the DLL search order and compare by 
-          // absolute path rather than by name.
-          // http://msdn.microsoft.com/en-us/library/ms682586.aspx
-          if (MyModule)
-          {
-            std::cout << "WARNING! Found two modules with the same name. You "
-              "may experience unexpected behaviour." << std::endl;
-          }
-          
-          MyModule = *j;
-        }
-      }
-      
       // Current module base
       HMODULE CurModBase = nullptr;
-
-      // If dependent module is not yet loaded then inject it
-      if (!MyModule)
+      
+      // Check whether dependent module is already manually mapped
+      // FIXME: Support both path resolution cases
+      std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
+        false);
+      auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
+        ResolvedModulePath));
+      if (MappedModIter != m_MappedMods.end())
       {
-        // Check whether dependent module is already manually mapped
-        auto const MappedModIter = m_MappedMods.find(ModuleNameLowerW);
-        if (MappedModIter != m_MappedMods.end())
+        std::cout << "Found existing mapped instance of dependent DLL." << 
+          std::endl;
+        CurModBase = MappedModIter->second;
+      }
+      else
+      {
+        // Handle NTDLL.dll as a special case. It doesn't not work if you 
+        // don't call LdrInitializeThunk to bootstrap it, but if you do that 
+        // on a manually mapped copy it causes the process to fail as it tries 
+        // to initialize everything twice and causes conflicts.
+        // For now, just use the copy that resides in the remote target. It's 
+        // guaranteed to be there anyway...
+        if (ModuleNameLowerW == L"ntdll.dll")
         {
-          std::cout << "Found existing mapped instance of dependent DLL." << 
-            std::endl;
-          CurModBase = MappedModIter->second;
+          Module NtdllMod(m_Memory, L"ntdll.dll");
+          CurModBase = NtdllMod.GetHandle();
         }
+        // Manually map all other dependencies.
         else
         {
           // Inject dependent DLL
@@ -492,10 +493,6 @@ namespace HadesMem
             CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
           }
         }
-      }
-      else
-      {
-        CurModBase = MyModule->GetHandle();
       }
       
       // Create PE file for dep mod
@@ -801,22 +798,15 @@ namespace HadesMem
       std::string const ForwarderModuleLower = boost::to_lower_copy(
         E.GetForwarderModule());
       
-      // Look for forwarder module in module list
-      ModuleList ModulesNew(m_Memory);
-      auto const ForwardedModIter1 = std::find_if(
-        ModulesNew.cbegin(), ModulesNew.cend(), 
-        [&] (Module const& M)
-        {
-          return boost::lexical_cast<std::string>(M.GetName()) == ForwarderModuleLower;
-        });
-      
       // Look for forwarder module in cache
-      auto const ForwardedModIter2 = m_MappedMods.find(
-        boost::lexical_cast<std::wstring>(ForwarderModuleLower));
+      // FIXME: Support both path resolution cases
+      std::wstring const ResolvedModulePath = ResolvePath(
+        boost::lexical_cast<std::wstring>(ForwarderModuleLower), false);
+      auto const ForwardedModIter = m_MappedMods.find(boost::to_lower_copy(
+        ResolvedModulePath));
           
       // Ensure forwarder module was found
-      if (ForwardedModIter1 == ModulesNew.cend() && 
-        ForwardedModIter2 == m_MappedMods.end())
+      if (ForwardedModIter == m_MappedMods.end())
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::ResolveExport") << 
@@ -824,15 +814,7 @@ namespace HadesMem
       }
       
       // Base address of forwarder module
-      HMODULE NewTarget = nullptr;
-      if (ForwardedModIter1 != ModulesNew.cend())
-      {
-        NewTarget = ForwardedModIter1->GetHandle();
-      }
-      else
-      {
-        NewTarget = ForwardedModIter2->second;
-      }
+      HMODULE NewTarget = ForwardedModIter->second;
       
       // Get forwarder function and ordinal
       std::string const ForwarderFunction = E.GetForwarderFunction();

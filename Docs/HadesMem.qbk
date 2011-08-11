@@ -156,7 +156,9 @@ and the FirstThunk list for binding. Fixes x64 import processing.
 [*Changes]
 
 * All dependencies are now statically linked.
-* Minor cleanup to `ManualMap`.
+* `ManualMap` now manually maps all dependencies regardless of whether they 
+already exist in the process or not. The only exception to this is NTDLL, which 
+cannot be mapped twice due to conflicts when calling LdrInitializeThunk.
 
 [h3 v1.3.0]
 
