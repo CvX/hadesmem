@@ -73,7 +73,8 @@ namespace HadesMem
     void MapSections(PeFile& MyPeFile, PVOID RemoteAddr) const;
 
     // Fix imports
-    void FixImports(PeFile& MyPeFile) const;
+    void FixImports(PeFile& MyPeFile, 
+      std::map<std::wstring, HMODULE> const& MappedMods) const;
 
     // Fix relocations
     void FixRelocations(PeFile& MyPeFile, PVOID RemoteAddr) const;
@@ -83,12 +84,10 @@ namespace HadesMem
       bool PathResolution) const;
       
     // Resolve export
-    FARPROC ResolveExport(Export const& E) const;
+    FARPROC ResolveExport(Export const& E, 
+      std::map<std::wstring, HMODULE> const& MappedMods) const;
 
     // MemoryMgr instance
     MemoryMgr m_Memory;
-    
-    // Map of mapped DLLs and their bases
-    mutable std::map<std::wstring, HMODULE> m_MappedMods;
   };
 }

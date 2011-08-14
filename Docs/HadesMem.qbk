@@ -152,8 +152,8 @@ DEALINGS IN THE SOFTWARE.
 stopped. Import bindings are now ignored and reprocessed manually.
 * Fixed import processing to use the OriginalFirstThunk list for parsing, 
 and the FirstThunk list for binding. Fixes x64 import processing.
-* Fixed Export::GetForwarderFunction. Was incorrectly including the delimiter 
-in the string.
+* Fixed `Export::GetForwarderFunction`. Was incorrectly including the 
+delimiter in the string.
 
 [*Changes]
 
@@ -161,6 +161,7 @@ in the string.
 * `ManualMap` now manually maps all dependencies regardless of whether they 
 already exist in the process or not. The only exception to this is NTDLL, which 
 cannot be mapped twice due to conflicts when calling LdrInitializeThunk.
+* Make `ManualMap` test target a more difficult module.
 
 [h3 v1.3.0]
 

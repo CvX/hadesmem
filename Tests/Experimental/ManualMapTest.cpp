@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(MappingTest)
   // Create manual mapper
   HadesMem::ManualMap const MyManualMap(MyMemory);
   
-  // Manually map kernel32.dll
-  MyManualMap.InjectDll(L"kernel32.dll");
+  // Manually map mscoree.dll
+  MyManualMap.InjectDll(L"mscoree.dll");
   
   // Todo: Test path resolution
   // Todo: Test export calling

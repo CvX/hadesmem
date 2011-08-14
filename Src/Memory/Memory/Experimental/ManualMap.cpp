@@ -28,63 +28,35 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-namespace 
-{
-  std::array<ULONG, 16> const SectionCharacteristicsToProtect = 
-  {{
-    PAGE_NOACCESS,          /* 0 = NONE */
-    PAGE_NOACCESS,          /* 1 = SHARED */
-    PAGE_EXECUTE,           /* 2 = EXECUTABLE */
-    PAGE_EXECUTE,           /* 3 = EXECUTABLE, SHARED */
-    PAGE_READONLY,          /* 4 = READABLE */
-    PAGE_READONLY,          /* 5 = READABLE, SHARED */
-    PAGE_EXECUTE_READ,      /* 6 = READABLE, EXECUTABLE */
-    PAGE_EXECUTE_READ,      /* 7 = READABLE, EXECUTABLE, SHARED */
-    PAGE_READWRITE,         /* 8 = WRITABLE */
-    PAGE_READWRITE,         /* 9 = WRITABLE, SHARED */
-    PAGE_EXECUTE_READWRITE, /* 10 = WRITABLE, EXECUTABLE */
-    PAGE_EXECUTE_READWRITE, /* 11 = WRITABLE, EXECUTABLE, SHARED */
-    PAGE_READWRITE,         /* 12 = WRITABLE, READABLE */
-    PAGE_READWRITE,         /* 13 = WRITABLE, READABLE, SHARED */
-    PAGE_EXECUTE_READWRITE, /* 14 = WRITABLE, READABLE, EXECUTABLE */
-    PAGE_EXECUTE_READWRITE, /* 15 = WRITABLE, READABLE, EXECUTABLE, SHARED */
-  }};
-}
-
 namespace HadesMem
 {
   // Constructor
   ManualMap::ManualMap(MemoryMgr const& MyMemory) 
-    : m_Memory(MyMemory), 
-    m_MappedMods()
+    : m_Memory(MyMemory)
   { }
       
   // Copy constructor
   ManualMap::ManualMap(ManualMap const& Other)
-    : m_Memory(Other.m_Memory), 
-    m_MappedMods(Other.m_MappedMods)
+    : m_Memory(Other.m_Memory)
   { }
   
   // Copy assignment operator
   ManualMap& ManualMap::operator=(ManualMap const& Other)
   {
     this->m_Memory = Other.m_Memory;
-    this->m_MappedMods = Other.m_MappedMods;
     
     return *this;
   }
   
   // Move constructor
   ManualMap::ManualMap(ManualMap&& Other)
-    : m_Memory(std::move(Other.m_Memory)), 
-    m_MappedMods(std::move(Other.m_MappedMods))
+    : m_Memory(std::move(Other.m_Memory))
   { }
   
   // Move assignment operator
   ManualMap& ManualMap::operator=(ManualMap&& Other)
   {
     this->m_Memory = std::move(Other.m_Memory);
-    this->m_MappedMods = std::move(Other.m_MappedMods);
     
     return *this;
   }
@@ -180,9 +152,8 @@ namespace HadesMem
       MyNtHeaders.GetSizeOfImage() << std::dec << "." << std::endl;
         
     // Add to list
-    // FIXME: This is such a nasty hack. Handle cyclic dependencies in a 
-    // better way.
-    m_MappedMods[boost::to_lower_copy(PathReal.native())] = 
+    std::map<std::wstring, HMODULE> MappedMods;
+    MappedMods[boost::to_lower_copy(PathReal.native())] = 
       reinterpret_cast<HMODULE>(RemoteBase);
 
     // Get all TLS callbacks
@@ -199,7 +170,7 @@ namespace HadesMem
     }
 
     // Process import table
-    FixImports(MyPeFile);
+    FixImports(MyPeFile, MappedMods);
 
     // Process relocations
     FixRelocations(MyPeFile, RemoteBase);
@@ -373,6 +344,27 @@ namespace HadesMem
 
       // Get section characteristics
       DWORD SecCharacteristics = Current.GetCharacteristics();
+      
+      // Section characteristic table
+      std::array<ULONG, 16> const SectionCharacteristicsToProtect = 
+      {{
+        PAGE_NOACCESS,          // 0 = NONE
+        PAGE_NOACCESS,          // 1 = SHARED
+        PAGE_EXECUTE,           // 2 = EXECUTABLE
+        PAGE_EXECUTE,           // 3 = EXECUTABLE, SHARED
+        PAGE_READONLY,          // 4 = READABLE
+        PAGE_READONLY,          // 5 = READABLE, SHARED
+        PAGE_EXECUTE_READ,      // 6 = READABLE, EXECUTABLE
+        PAGE_EXECUTE_READ,      // 7 = READABLE, EXECUTABLE, SHARED
+        PAGE_READWRITE,         // 8 = WRITABLE
+        PAGE_READWRITE,         // 9 = WRITABLE, SHARED
+        PAGE_EXECUTE_READWRITE, // 10 = WRITABLE, EXECUTABLE
+        PAGE_EXECUTE_READWRITE, // 11 = WRITABLE, EXECUTABLE, SHARED
+        PAGE_READWRITE,         // 12 = WRITABLE, READABLE
+        PAGE_READWRITE,         // 13 = WRITABLE, READABLE, SHARED
+        PAGE_EXECUTE_READWRITE, // 14 = WRITABLE, READABLE, EXECUTABLE
+        PAGE_EXECUTE_READWRITE, // 15 = WRITABLE, READABLE, EXECUTABLE, SHARED
+      }};
 
       // Handle case where no explicit protection is provided. Infer 
       // protection flags from section type.
@@ -414,7 +406,8 @@ namespace HadesMem
   }
 
   // Fix imports
-  void ManualMap::FixImports(PeFile& MyPeFile) const
+  void ManualMap::FixImports(PeFile& MyPeFile, 
+    std::map<std::wstring, HMODULE> const& MappedMods) const
   {
     // Get NT headers
     NtHeaders const MyNtHeaders(MyPeFile);
@@ -455,9 +448,9 @@ namespace HadesMem
       // FIXME: Support both path resolution cases
       std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
         false);
-      auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
+      auto const MappedModIter = MappedMods.find(boost::to_lower_copy(
         ResolvedModulePath));
-      if (MappedModIter != m_MappedMods.end())
+      if (MappedModIter != MappedMods.end())
       {
         std::cout << "Found existing mapped instance of dependent DLL." << 
           std::endl;
@@ -538,7 +531,7 @@ namespace HadesMem
         }
 
         // Resolve export
-        FARPROC FuncAddr = ResolveExport(*ExpIter);
+        FARPROC FuncAddr = ResolveExport(*ExpIter, MappedMods);
 
         // Ensure function was found
         if (!FuncAddr)
@@ -785,7 +778,8 @@ namespace HadesMem
   }
   
   // Resolve export
-  FARPROC ManualMap::ResolveExport(Export const& E) const
+  FARPROC ManualMap::ResolveExport(Export const& E, 
+    std::map<std::wstring, HMODULE> const& MappedMods) const
   {
     // Handle forwarded exports
     if (E.Forwarded())
@@ -811,11 +805,11 @@ namespace HadesMem
       // FIXME: Support both path resolution cases
       std::wstring const ResolvedModulePath = ResolvePath(
         boost::lexical_cast<std::wstring>(ForwarderModuleLower), false);
-      auto const ForwardedModIter = m_MappedMods.find(boost::to_lower_copy(
+      auto const ForwardedModIter = MappedMods.find(boost::to_lower_copy(
         ResolvedModulePath));
           
       // Ensure forwarder module was found
-      if (ForwardedModIter == m_MappedMods.end() && !IsNtdll)
+      if (ForwardedModIter == MappedMods.end() && !IsNtdll)
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::ResolveExport") << 
@@ -872,7 +866,7 @@ namespace HadesMem
       }
       
       // Handle chained forwarded exports
-      return ResolveExport(*ExpIter);
+      return ResolveExport(*ExpIter, MappedMods);
     }
     // Handle regular (non-forwarded) exports
     else
