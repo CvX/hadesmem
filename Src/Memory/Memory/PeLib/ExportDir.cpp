@@ -362,9 +362,6 @@ namespace HadesMem
     m_ByName(false), 
     m_Forwarded(false)
   {
-    // Get NT headers
-    NtHeaders const MyNtHeaders(m_PeFile);
-
     // Get export directory
     ExportDir const MyExportDir(m_PeFile);
 
@@ -379,16 +376,9 @@ namespace HadesMem
         ErrorString("Invalid export number."));
     }
 
-    // Get pointer to function name ordinals
-    WORD* pOrdinals = static_cast<WORD*>(m_PeFile.RvaToVa(MyExportDir.
-      GetAddressOfNameOrdinals()));
-    // Get pointer to functions
-    DWORD* pFunctions = static_cast<DWORD*>(m_PeFile.RvaToVa(MyExportDir.
-      GetAddressOfFunctions()));
-    // Get pointer to function names
-    DWORD* pNames = static_cast<DWORD*>(m_PeFile.RvaToVa(MyExportDir.
-      GetAddressOfNames()));
-
+    // Get NT headers
+    NtHeaders const MyNtHeaders(m_PeFile);
+    
     // Get data directory size
     DWORD const DataDirSize = MyNtHeaders.GetDataDirectorySize(NtHeaders::
       DataDir_Export);
@@ -401,6 +391,10 @@ namespace HadesMem
     // Get end of export dir
     DWORD const ExportDirEnd = ExportDirStart + DataDirSize;
 
+    // Get pointer to functions
+    DWORD* pFunctions = static_cast<DWORD*>(m_PeFile.RvaToVa(MyExportDir.
+      GetAddressOfFunctions()));
+    
     // Find next exported entry
     for (; !m_Memory.Read<DWORD>(pFunctions + Offset) && 
       Offset <= MyExportDir.GetNumberOfFunctions(); ++Offset)
@@ -419,6 +413,14 @@ namespace HadesMem
 
     // Set ordinal
     m_Ordinal = static_cast<WORD>(Ordinal);
+
+    // Get pointer to function name ordinals
+    WORD* pOrdinals = static_cast<WORD*>(m_PeFile.RvaToVa(MyExportDir.
+      GetAddressOfNameOrdinals()));
+    
+    // Get pointer to function names
+    DWORD* pNames = static_cast<DWORD*>(m_PeFile.RvaToVa(MyExportDir.
+      GetAddressOfNames()));
 
     // Find ordinal name and set (if applicable)
     if (DWORD const NumberOfNames = MyExportDir.GetNumberOfNames())

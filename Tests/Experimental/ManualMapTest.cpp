@@ -10,7 +10,7 @@
 #include <HadesMemory/Experimental/ManualMap.hpp>
 
 // Boost
-#define BOOST_TEST_MODULE InjectorTest
+#define BOOST_TEST_MODULE ManualMapTest
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(ConstructorsTest)

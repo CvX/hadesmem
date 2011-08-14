@@ -23,6 +23,7 @@
 #include <iostream>
 
 // Boost
+#include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -70,6 +71,9 @@ namespace HadesMem
       std::string const& Export, 
       InjectFlags Flags) const
   {
+    // Debug output
+    std::wcout << Path << " - InjectDll called." << std::endl;
+    
     // Do not continue if Shim Engine is enabled for local process, 
     // otherwise it could interfere with the address resolution.
     HMODULE const ShimEngMod = GetModuleHandle(L"ShimEng.dll");
@@ -84,8 +88,15 @@ namespace HadesMem
     bool PathResolution = ((Flags & InjectFlag_PathResolution) == 
       InjectFlag_PathResolution);
     
+    // Debug output
+    std::wcout << Path << " - Path resolution flag: " << PathResolution 
+      << "." << std::endl;
+    
     // Resolve path
     boost::filesystem::path PathReal(ResolvePath(Path, PathResolution));
+    
+    // Debug output
+    std::wcout << Path << " - Reading file." << std::endl;
     
     // Open file for reading
     boost::filesystem::basic_ifstream<char> ModuleFile(PathReal, 
@@ -152,8 +163,7 @@ namespace HadesMem
       MyNtHeaders.GetSizeOfImage() << std::dec << "." << std::endl;
         
     // Add to list
-    std::map<std::wstring, HMODULE> MappedMods;
-    MappedMods[boost::to_lower_copy(PathReal.native())] = 
+    m_MappedMods[boost::to_lower_copy(PathReal.native())] = 
       reinterpret_cast<HMODULE>(RemoteBase);
 
     // Get all TLS callbacks
@@ -168,12 +178,6 @@ namespace HadesMem
         std::wcout << Path << " - TLS Callback: " << pCurrent << std::endl;
       });
     }
-
-    // Process import table
-    FixImports(MyPeFile, MappedMods);
-
-    // Process relocations
-    FixRelocations(MyPeFile, RemoteBase);
 
     // Write DOS header to process
     std::wcout << Path << " - Writing DOS header." << std::endl;
@@ -194,8 +198,16 @@ namespace HadesMem
       static_cast<PVOID>(TargetAddr) << std::endl;
     m_Memory.WriteList(TargetAddr, PeHeaderBuf);
 
+    // Process relocations
+    FixRelocations(MyPeFile, RemoteBase);
+
     // Write sections to process
     MapSections(MyPeFile, RemoteBase);
+
+    // Process import table (must be done in remote process due to cyclic 
+    // depdendencies)
+    PeFile RemotePeFile(m_Memory, RemoteBase);
+    FixImports(RemotePeFile);
 
     // Call all TLS callbacks
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
@@ -406,8 +418,7 @@ namespace HadesMem
   }
 
   // Fix imports
-  void ManualMap::FixImports(PeFile& MyPeFile, 
-    std::map<std::wstring, HMODULE> const& MappedMods) const
+  void ManualMap::FixImports(PeFile& MyPeFile) const
   {
     // Get NT headers
     NtHeaders const MyNtHeaders(MyPeFile);
@@ -448,9 +459,9 @@ namespace HadesMem
       // FIXME: Support both path resolution cases
       std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
         false);
-      auto const MappedModIter = MappedMods.find(boost::to_lower_copy(
+      auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
         ResolvedModulePath));
-      if (MappedModIter != MappedMods.end())
+      if (MappedModIter != m_MappedMods.end())
       {
         std::cout << "Found existing mapped instance of dependent DLL." << 
           std::endl;
@@ -473,15 +484,16 @@ namespace HadesMem
         else
         {
           // Inject dependent DLL
-          std::cout << "Manually mapping dependent DLL." << std::endl;
+          std::cout << "Manually mapping dependent DLL. " << ModuleName << "." << std::endl;
           try
           {
             std::cout << "Attempting without path resolution." << std::endl;
             CurModBase = InjectDll(ModuleNameW);
           }
-          catch (std::exception const& /*e*/)
+          catch (std::exception const& e)
           {
-            std::cout << "Failed to map dependent DLL." << std::endl;
+            std::cout << "Failed to map dependent DLL. " << ModuleName << "." << std::endl;
+            std::cout << boost::diagnostic_information(e) << std::endl;
             std::cout << "Attempting with path resolution." << std::endl;
             CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
           }
@@ -515,23 +527,73 @@ namespace HadesMem
           std::cout << "Function Name: " << ImpThunk.GetName() << "." << std::endl;
         }
         
-        // Find export
-        auto ExpIter = std::find_if(Exports.cbegin(), Exports.cend(), 
-          [&] (Export const& E) -> bool
-          {
-            return ImpThunk.ByOrdinal() ? 
-              (!E.ByName() && E.GetOrdinal() == ImpThunk.GetOrdinal()) : 
-              (E.ByName() && E.GetName() == ImpThunk.GetName());
-          });
-        if (ExpIter == Exports.cend())
+        // Placeholder for export when found
+        boost::optional<Export> TargetExport;
+          
+        // If import is by ordinal then do it directly
+        if (ImpThunk.ByOrdinal())
         {
-          BOOST_THROW_EXCEPTION(Error() << 
-            ErrorFunction("ManualMap::FixImports") << 
-            ErrorString("Could not find export."));
+          TargetExport = Export(DepPeFile, ImpThunk.GetOrdinal());
+        }
+        // Otherwise attempt to find export by hint
+        else
+        {
+          // Ensure export dir and import hint are valid
+          ExportDir DepExportDir(DepPeFile);
+          DWORD const ImpHint = ImpThunk.GetHint();
+          DWORD const NumberOfNames = DepExportDir.GetNumberOfNames();
+          if (DepExportDir.IsValid() && ImpHint && ImpHint < NumberOfNames)
+          {
+            try
+            {
+              // Get export name
+              DWORD* pNames = static_cast<DWORD*>(DepPeFile.RvaToVa(
+                DepExportDir.GetAddressOfNames()));              
+              DWORD const HintNameRva = m_Memory.Read<DWORD>(pNames + ImpHint);
+              std::string const HintName = m_Memory.ReadString<std::string>(
+                DepPeFile.RvaToVa(HintNameRva));
+              
+              // Check for match and set target if appropriate
+              if (HintName == ImpThunk.GetName())
+              {
+                // Debug output
+                std::cout << "Hint matched!" << std::endl;
+                  
+                // Get name ordinal array
+                WORD* pOrdinals = static_cast<WORD*>(DepPeFile.RvaToVa(
+                  DepExportDir.GetAddressOfNameOrdinals()));
+                
+                // Get ordinal
+                WORD const HintOrdinal = m_Memory.Read<WORD>(pOrdinals + 
+                  ImpHint);
+                
+                // Set export
+                TargetExport = Export(DepPeFile, HintOrdinal + 
+                  DepExportDir.GetOrdinalBase());
+                
+                // Debug sanity check
+                if (TargetExport->GetName() != HintName)
+                {
+                  std::cout << "Hint name mismatch!" << std::endl;
+                  throw std::exception();
+                }
+              }
+            }
+            catch (std::exception const& /*e*/)
+            {
+              // Lookup by hint failed. Proceed to manual lookup
+            }
+          }
+        }
+
+        // If lookup by ordinal or hint failed do a manual lookup
+        if (!TargetExport)
+        {
+          TargetExport = FindExport(DepPeFile, ImpThunk.GetName());
         }
 
         // Resolve export
-        FARPROC FuncAddr = ResolveExport(*ExpIter, MappedMods);
+        FARPROC FuncAddr = ResolveExport(*TargetExport);
 
         // Ensure function was found
         if (!FuncAddr)
@@ -778,8 +840,7 @@ namespace HadesMem
   }
   
   // Resolve export
-  FARPROC ManualMap::ResolveExport(Export const& E, 
-    std::map<std::wstring, HMODULE> const& MappedMods) const
+  FARPROC ManualMap::ResolveExport(Export const& E) const
   {
     // Handle forwarded exports
     if (E.Forwarded())
@@ -805,11 +866,11 @@ namespace HadesMem
       // FIXME: Support both path resolution cases
       std::wstring const ResolvedModulePath = ResolvePath(
         boost::lexical_cast<std::wstring>(ForwarderModuleLower), false);
-      auto const ForwardedModIter = MappedMods.find(boost::to_lower_copy(
+      auto const ForwardedModIter = m_MappedMods.find(boost::to_lower_copy(
         ResolvedModulePath));
           
       // Ensure forwarder module was found
-      if (ForwardedModIter == MappedMods.end() && !IsNtdll)
+      if (ForwardedModIter == m_MappedMods.end() && !IsNtdll)
       {
         BOOST_THROW_EXCEPTION(Error() << 
           ErrorFunction("ManualMap::ResolveExport") << 
@@ -846,27 +907,18 @@ namespace HadesMem
         }
       }
       
-      // Find target export
+      // If export is forwarded by ordinal then do it directly
       PeFile NewTargetPe(m_Memory, NewTarget);
-      ExportList NewTargetExports(NewTargetPe);
-      auto ExpIter = std::find_if(NewTargetExports.cbegin(), NewTargetExports.cend(), 
-        [&] (Export const& Ex)
-        {
-          return ForwardedByOrdinal ? 
-            (!Ex.ByName() && Ex.GetOrdinal() == ForwarderOrdinal) : 
-            (Ex.ByName() && Ex.GetName() == ForwarderFunction);
-        });
-      
-      // Ensure target was found
-      if (ExpIter == NewTargetExports.cend())
+      if (ForwardedByOrdinal)
       {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::ResolveExport") << 
-          ErrorString("Could not find forwarded export."));
+        std::cout << "Resolving forwarded export by ordinal." << std::endl;
+        return ResolveExport(Export(NewTargetPe, ForwarderOrdinal));
       }
-      
-      // Handle chained forwarded exports
-      return ResolveExport(*ExpIter, MappedMods);
+      else
+      {
+        std::cout << "Resolving forwarded export by name." << std::endl;
+        return ResolveExport(FindExport(NewTargetPe, ForwarderFunction));
+      }
     }
     // Handle regular (non-forwarded) exports
     else
@@ -874,6 +926,105 @@ namespace HadesMem
       // Return VA of export
       return reinterpret_cast<FARPROC>(reinterpret_cast<DWORD_PTR>(E.GetVa()));
     }
+  }
+  
+  // Find export by name
+  Export ManualMap::FindExport(PeFile const& MyPeFile, 
+    std::string const& Name) const
+  {
+    // Debug output
+    std::cout << "FindExport - " << Name << "." << std::endl;
+    
+    // Get export dir
+    ExportDir MyExportDir(MyPeFile);
+    if (!MyExportDir.IsValid() || !MyExportDir.GetNumberOfNames())
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::FindExport") << 
+        ErrorString("Could not find export (no export dir)."));
+    }
+    
+    // Start of search region for lower bound search (binary search)
+    DWORD* pFirst = static_cast<DWORD*>(MyPeFile.RvaToVa(
+      MyExportDir.GetAddressOfNames()));
+    
+    // End of search region for lower bound search (binary search)
+    DWORD* pLast = static_cast<DWORD*>(MyPeFile.RvaToVa(
+      MyExportDir.GetAddressOfNames()));
+    
+    // Number of entries in export name array
+    DWORD Count = MyExportDir.GetNumberOfNames();
+    
+    // Search step
+    DWORD Step = 0;
+    
+    // Perform binary search of export dir for target
+    while (Count > 0)
+    {
+      // Calculate current bounds
+      pLast = pFirst;
+      Step = Count / 2;
+      pLast += Step;
+      
+      // Get current entry name
+      DWORD const NameRva = m_Memory.Read<DWORD>(pLast);
+      std::string const CurName = m_Memory.ReadString<std::string>(
+        MyPeFile.RvaToVa(NameRva));
+      
+      // Perform lexical lower bound check on entry
+      if (CurName < Name)
+      {
+        pFirst = ++pLast;
+        Count -= Step + 1;
+      }
+      else
+      {
+        Count = Step;
+      }
+    }
+    
+    // Get result of binary search
+    DWORD const NameRva = m_Memory.Read<DWORD>(pFirst);
+    std::string const CurName = m_Memory.ReadString<std::string>(
+      MyPeFile.RvaToVa(NameRva));
+    
+    // If a match was found set the target
+    if (CurName == Name)
+    {
+      // Get name array
+      WORD* pNames = static_cast<WORD*>(MyPeFile.RvaToVa(
+        MyExportDir.GetAddressOfNames()));
+      
+      // Get name ordinal array
+      WORD* pOrdinals = static_cast<WORD*>(MyPeFile.RvaToVa(
+        MyExportDir.GetAddressOfNameOrdinals()));
+        
+      // Calculate array index
+      DWORD_PTR Index = (reinterpret_cast<DWORD_PTR>(pFirst) - 
+        reinterpret_cast<DWORD_PTR>(pNames)) / sizeof(DWORD);
+      
+      // Get ordinal
+      WORD const NameOrdinal = m_Memory.Read<WORD>(pOrdinals + Index);
+      
+      // Get matched export
+      Export Match(MyPeFile, NameOrdinal + MyExportDir.GetOrdinalBase());
+      
+      // Debug sanity check
+      if (Match.GetName() != Name)
+      {
+        BOOST_THROW_EXCEPTION(Error() << 
+          ErrorFunction("ManualMap::FindExport") << 
+          ErrorString("Name mismatch."));
+      }
+      
+      // Return match
+      return Match;
+    }
+    
+    // Ensure match was found
+    BOOST_THROW_EXCEPTION(Error() << 
+      ErrorFunction("ManualMap::FindExport") << 
+      ErrorString("Could not find export."));
   }
   
   // Equality operator
