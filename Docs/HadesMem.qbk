@@ -164,6 +164,8 @@ delimiter in the string.
 already exist in the process or not. The only exception to this is NTDLL, which 
 cannot be mapped twice due to conflicts when calling LdrInitializeThunk.
 * Make `ManualMap` test target a more difficult module.
+* Update Boost to latest trunk.
+* Update BeaEngine to latest trunk.
 
 [h3 v1.3.0]
 
