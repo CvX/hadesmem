@@ -144,6 +144,8 @@ DEALINGS IN THE SOFTWARE.
 
 [*New Features]
 
+* Added name based constructor for `Export`.
+
 [*Bug Fixes]
 
 * Fixed handling of forwarded exports in `ManualMap`.
@@ -3135,7 +3137,7 @@ unsupported.]
 
 [h3 Export public construct/copy/destruct/move]
 
-[h4 Export constructor]
+[h4 Export ordinal constructor]
 
   Export(PeFile const& MyPeFile, DWORD Ordinal);
 
@@ -3143,6 +3145,19 @@ unsupported.]
 
 [[Effects:] [Constructs an `ExportDir` instance that refers to the specified 
 PE file and ordinal.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Export name constructor]
+
+  Export(PeFile const& MyPeFile, std::string const& Name);
+
+[variablelist
+
+[[Effects:] [Constructs an `ExportDir` instance that refers to the specified 
+PE file and name.]]
 
 [[Throws:] [Yes.]]
 

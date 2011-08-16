@@ -934,97 +934,20 @@ namespace HadesMem
   {
     // Debug output
     std::cout << "FindExport - " << Name << "." << std::endl;
+      
+    // Get export
+    Export Target(MyPeFile, Name);
     
-    // Get export dir
-    ExportDir MyExportDir(MyPeFile);
-    if (!MyExportDir.IsValid() || !MyExportDir.GetNumberOfNames())
+    // Sanity check
+    if (Target.GetName() != Name)
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("ManualMap::FindExport") << 
-        ErrorString("Could not find export (no export dir)."));
+        ErrorString("Name mismatch."));
     }
     
-    // Start of search region for lower bound search (binary search)
-    DWORD* pFirst = static_cast<DWORD*>(MyPeFile.RvaToVa(
-      MyExportDir.GetAddressOfNames()));
-    
-    // End of search region for lower bound search (binary search)
-    DWORD* pLast = static_cast<DWORD*>(MyPeFile.RvaToVa(
-      MyExportDir.GetAddressOfNames()));
-    
-    // Number of entries in export name array
-    DWORD Count = MyExportDir.GetNumberOfNames();
-    
-    // Search step
-    DWORD Step = 0;
-    
-    // Perform binary search of export dir for target
-    while (Count > 0)
-    {
-      // Calculate current bounds
-      pLast = pFirst;
-      Step = Count / 2;
-      pLast += Step;
-      
-      // Get current entry name
-      DWORD const NameRva = m_Memory.Read<DWORD>(pLast);
-      std::string const CurName = m_Memory.ReadString<std::string>(
-        MyPeFile.RvaToVa(NameRva));
-      
-      // Perform lexical lower bound check on entry
-      if (CurName < Name)
-      {
-        pFirst = ++pLast;
-        Count -= Step + 1;
-      }
-      else
-      {
-        Count = Step;
-      }
-    }
-    
-    // Get result of binary search
-    DWORD const NameRva = m_Memory.Read<DWORD>(pFirst);
-    std::string const CurName = m_Memory.ReadString<std::string>(
-      MyPeFile.RvaToVa(NameRva));
-    
-    // If a match was found set the target
-    if (CurName == Name)
-    {
-      // Get name array
-      WORD* pNames = static_cast<WORD*>(MyPeFile.RvaToVa(
-        MyExportDir.GetAddressOfNames()));
-      
-      // Get name ordinal array
-      WORD* pOrdinals = static_cast<WORD*>(MyPeFile.RvaToVa(
-        MyExportDir.GetAddressOfNameOrdinals()));
-        
-      // Calculate array index
-      DWORD_PTR Index = (reinterpret_cast<DWORD_PTR>(pFirst) - 
-        reinterpret_cast<DWORD_PTR>(pNames)) / sizeof(DWORD);
-      
-      // Get ordinal
-      WORD const NameOrdinal = m_Memory.Read<WORD>(pOrdinals + Index);
-      
-      // Get matched export
-      Export Match(MyPeFile, NameOrdinal + MyExportDir.GetOrdinalBase());
-      
-      // Debug sanity check
-      if (Match.GetName() != Name)
-      {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::FindExport") << 
-          ErrorString("Name mismatch."));
-      }
-      
-      // Return match
-      return Match;
-    }
-    
-    // Ensure match was found
-    BOOST_THROW_EXCEPTION(Error() << 
-      ErrorFunction("ManualMap::FindExport") << 
-      ErrorString("Could not find export."));
+    // Return found export
+    return Target;
   }
   
   // Equality operator

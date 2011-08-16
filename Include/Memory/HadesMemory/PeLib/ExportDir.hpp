@@ -151,6 +151,9 @@ namespace HadesMem
   public:
     // Constructor
     Export(PeFile const& MyPeFile, DWORD Ordinal);
+    
+    // Constructor
+    Export(PeFile const& MyPeFile, std::string const& Name);
       
     // Copy constructor
     Export(Export const& Other);
