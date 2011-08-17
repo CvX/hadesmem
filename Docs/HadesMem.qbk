@@ -1652,8 +1652,8 @@ context of the remote target.]]
 
 [variablelist
 
-[[Effects:] [Calls the export `Export` in module `RemoteModule` using the 
-default calling convention .]]
+[[Effects:] [Calls the export `Export` in module `RemoteModule`, assuming 
+function prototype '''DWORD_PTR __stdcall Foo(HMODULE)'''.]]
 
 [[Returns:] [A `RemoteFunctionRet` instance.]]
 

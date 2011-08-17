@@ -26,12 +26,56 @@
 <p>
       <span class="bold"><strong>New Features</strong></span>
     </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+          Added name based constructor for <code class="computeroutput"><span class="identifier">Export</span></code>.
+        </li></ul></div>
 <p>
       <span class="bold"><strong>Bug Fixes</strong></span>
     </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          Fixed handling of forwarded exports in <code class="computeroutput"><span class="identifier">ManualMap</span></code>.
+        </li>
+<li class="listitem">
+          Fixed case-sensitivity of module caching/detection in <code class="computeroutput"><span class="identifier">ManualMap</span></code>.
+        </li>
+<li class="listitem">
+          Fixes case where image contained bound imports and <code class="computeroutput"><span class="identifier">ManualMap</span></code>
+          stopped. Import bindings are now ignored and reprocessed manually.
+        </li>
+<li class="listitem">
+          Fixed import processing to use the OriginalFirstThunk list for parsing,
+          and the FirstThunk list for binding. Fixes x64 import processing.
+        </li>
+<li class="listitem">
+          Fixed <code class="computeroutput"><span class="identifier">Export</span><span class="special">::</span><span class="identifier">GetForwarderFunction</span></code>. Was incorrectly
+          including the delimiter in the string.
+        </li>
+</ul></div>
 <p>
       <span class="bold"><strong>Changes</strong></span>
     </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          All dependencies are now statically linked.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now manually
+          maps all dependencies regardless of whether they already exist in the process
+          or not. The only exception to this is NTDLL, which cannot be mapped twice
+          due to conflicts when calling LdrInitializeThunk.
+        </li>
+<li class="listitem">
+          Make <code class="computeroutput"><span class="identifier">ManualMap</span></code> test target
+          a more difficult module.
+        </li>
+<li class="listitem">
+          Update Boost to latest trunk.
+        </li>
+<li class="listitem">
+          Update BeaEngine to latest trunk.
+        </li>
+</ul></div>
 <a name="hadesmem.changes.v1_3_0"></a><h4>
 <a name="hadesmem.changes.h1"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_3_0">v1.3.0</a>
