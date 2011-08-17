@@ -5,7 +5,6 @@
 // This file is part of HadesMem.
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
-// Hades
 #include <HadesMemory/PeLib/DosHeader.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
@@ -18,7 +17,6 @@ namespace HadesMem
     m_Memory(m_PeFile.GetMemoryMgr()), 
     m_pBase(static_cast<PBYTE>(m_PeFile.GetBase()))
   {
-    // Ensure magic is valid
     EnsureValid();
   }
       

@@ -7,7 +7,6 @@
 
 #pragma once
 
-// Hades (PeLib)
 #include <HadesMemory/PeLib/PeFile.hpp>
 #include <HadesMemory/PeLib/TlsDir.hpp>
 #include <HadesMemory/PeLib/Section.hpp>

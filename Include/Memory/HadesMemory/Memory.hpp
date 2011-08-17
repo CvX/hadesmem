@@ -7,10 +7,9 @@
 
 #pragma once
 
-// Hades (External)
 #include <HadesMemory/Module.hpp>
+#include <HadesMemory/Region.hpp>
 #include <HadesMemory/Injector.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 
-// Hades (PeLib)
 #include <HadesMemory/PeLib/PeLib.hpp>

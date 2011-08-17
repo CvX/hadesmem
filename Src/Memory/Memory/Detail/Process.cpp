@@ -5,12 +5,10 @@
 // This file is part of HadesMem.
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
-// Hades
 #include <HadesMemory/Detail/Process.hpp>
 #include <HadesMemory/Detail/StringBuffer.hpp>
 #include <HadesMemory/Detail/EnsureCleanup.hpp>
 
-// Windows API
 #include <Windows.h>
 #include <psapi.h>
 
@@ -22,7 +20,6 @@ namespace HadesMem
     class Process::Impl
     {
     public:
-      // Allow Process access to internals
       friend class Process;
       
       // Constructor
@@ -31,7 +28,6 @@ namespace HadesMem
         m_ID(ProcID), 
         m_IsWoW64(false)
       {
-        // Open process
         if (GetCurrentProcessId() == m_ID)
         {
           m_Handle.reset(new EnsureCloseHandle(GetCurrentProcess()));
@@ -42,7 +38,6 @@ namespace HadesMem
           Open(m_ID);
         }
         
-        // Set WoW64 member
         SetWoW64();
       }
       
@@ -69,7 +64,7 @@ namespace HadesMem
       // Get process path
       std::wstring GetPath() const
       {
-        // Note: The QueryFullProcessImageName API is more efficient and 
+        // The QueryFullProcessImageName API is more efficient and 
         // reliable but is only available on Vista+.
         DWORD const PathSize = 32767;
         std::wstring Path;
@@ -96,7 +91,6 @@ namespace HadesMem
       // Get WoW64 status of process and set member var
       void SetWoW64()
       {
-        // Get WoW64 status of self
         BOOL IsWoW64Me = FALSE;
         if (!IsWow64Process(GetCurrentProcess(), &IsWoW64Me))
         {
@@ -106,8 +100,7 @@ namespace HadesMem
             ErrorString("Could not detect WoW64 status of current process.") << 
             ErrorCodeWinLast(LastError));
         }
-  
-        // Get WoW64 status of target process
+        
         BOOL IsWoW64 = FALSE;
         if (!IsWow64Process(*m_Handle, &IsWoW64))
         {
@@ -118,9 +111,8 @@ namespace HadesMem
             ErrorCodeWinLast(LastError));
         }
         
-        // Set WoW64 status
         m_IsWoW64 = (IsWoW64 != FALSE);
-  
+        
         // Disable x86 -> x64 process manipulation
         if (IsWoW64Me && !IsWoW64)
         {
@@ -134,7 +126,6 @@ namespace HadesMem
       // Open process given process id
       void Open(DWORD ProcID)
       {
-        // Open process
         m_Handle.reset(new EnsureCloseHandle(
           OpenProcess(PROCESS_CREATE_THREAD | 
           PROCESS_QUERY_INFORMATION | 
@@ -154,7 +145,7 @@ namespace HadesMem
       }
       
       // Process handle
-      // Note: Using shared pointer because handle does not need to be unique, 
+      // Using shared pointer because handle does not need to be unique, 
       // and copying it may throw, so sharing it makes exception safe code 
       // far easier to write.
       std::shared_ptr<EnsureCloseHandle> m_Handle;
@@ -201,7 +192,7 @@ namespace HadesMem
     }
     
     // Destructor
-    // Note: An empty destructor is required so the compiler can see Impl's 
+    // An empty destructor is required so the compiler can see Impl's 
     // destructor.
     Process::~Process()
     { }
@@ -241,5 +232,5 @@ namespace HadesMem
     {
       return !(*this == Rhs);
     }
-  } // namespace Detail
-} // namespace HadesMem
+  }
+}

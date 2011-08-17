@@ -7,7 +7,6 @@
 
 #pragma once
 
-// Windows API
 #include <Windows.h>
 #include <Objbase.h>
 
@@ -96,15 +95,13 @@ namespace HadesMem
       {
         if (IsValid())
         {
-          // Close the object.
           CleanupFn(m_Handle);
-  
-          // We no longer represent a valid object.
           m_Handle = reinterpret_cast<HandleT>(Invalid);
         }
       }
       
     protected:
+      // Disable copying
       EnsureCleanup(EnsureCleanup const&);
       EnsureCleanup& operator=(EnsureCleanup const&);
   

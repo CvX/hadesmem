@@ -5,7 +5,6 @@
 // This file is part of HadesMem.
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
-// Hades
 #include <HadesMemory/PeLib/NtHeaders.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
@@ -19,12 +18,10 @@ namespace HadesMem
     m_Memory(m_PeFile.GetMemoryMgr()), 
     m_pBase(nullptr)
   {
-    // Get base
     DosHeader MyDosHeader(m_PeFile);
     m_pBase = static_cast<PBYTE>(m_PeFile.GetBase()) + 
       MyDosHeader.GetNewHeaderOffset();
     
-    // Ensure signature is valid
     EnsureValid();
   }
       
@@ -74,7 +71,6 @@ namespace HadesMem
   // Get base of NT headers
   PVOID NtHeaders::GetBase() const
   {
-    // Return base address
     return m_pBase;
   }
 

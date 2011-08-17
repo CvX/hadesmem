@@ -7,12 +7,10 @@
 
 #pragma once
 
-// Hades
 #include <HadesMemory/Detail/Fwd.hpp>
 #include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 
-// Windows
 #include <Windows.h>
 
 namespace HadesMem

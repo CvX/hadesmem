@@ -43,23 +43,27 @@
 
 namespace HadesMem
 {
+  // Constructor
   MemoryMgr::RemoteFunctionRet::RemoteFunctionRet(DWORD_PTR ReturnValue, 
     DWORD64 ReturnValue64, DWORD LastError) 
     : m_ReturnValue(ReturnValue), 
     m_ReturnValue64(ReturnValue64), 
     m_LastError(LastError)
   { }
-      
+  
+  // Get return value
   DWORD_PTR MemoryMgr::RemoteFunctionRet::GetReturnValue() const
   {
     return m_ReturnValue;
   }
   
+  // Get 64-bit return value
   DWORD64 MemoryMgr::RemoteFunctionRet::GetReturnValue64() const
   {
     return m_ReturnValue64;
   }
   
+  // Get thread last error
   DWORD MemoryMgr::RemoteFunctionRet::GetLastError() const
   {
     return m_LastError;
@@ -104,25 +108,15 @@ namespace HadesMem
   MemoryMgr::RemoteFunctionRet MemoryMgr::Call(LPCVOID Address, 
     CallConv MyCallConv, std::vector<PVOID> const& Args) const 
   {
-    // Get number of arguments
     std::size_t const NumArgs = Args.size();
 
-    // Create Assembler.
     AsmJit::Assembler MyJitFunc;
 
-    // Allocate memory for return value
     AllocAndFree const ReturnValueRemote(*this, sizeof(DWORD_PTR));
-
-    // Allocate memory for 64-bit return value
     AllocAndFree const ReturnValue64Remote(*this, sizeof(DWORD64));
-
-    // Allocate memory for thread's last-error code
     AllocAndFree const LastErrorRemote(*this, sizeof(DWORD));
 
-    // Get Kernel32.dll
     Module Kernel32Mod(*this, L"kernel32.dll");
-    // Get address of kernel32.dll!GetLastError and 
-    // kernel32.dll!SetLastError
     DWORD_PTR const pGetLastError = reinterpret_cast<DWORD_PTR>(
       Kernel32Mod.FindProcedure("GetLastError"));
     DWORD_PTR const pSetLastError = reinterpret_cast<DWORD_PTR>(
@@ -311,27 +305,20 @@ namespace HadesMem
 #else 
 #error "[HadesMem] Unsupported architecture."
 #endif
-
-    // Get stub size
+    
     DWORD_PTR const StubSize = MyJitFunc.getCodeSize();
-
-    // Allocate memory for stub buffer
+    
     AllocAndFree const StubMemRemote(*this, StubSize);
     PBYTE const pRemoteStub = static_cast<PBYTE>(StubMemRemote.GetBase());
     DWORD_PTR const pRemoteStubTemp = reinterpret_cast<DWORD_PTR>(
       pRemoteStub);
-
-    // Create buffer to hold relocated code plus the return value address
+    
     std::vector<BYTE> CodeReal(StubSize);
-
-    // Generate code
     MyJitFunc.relocCode(CodeReal.data(), reinterpret_cast<DWORD_PTR>(
       pRemoteStub));
-
-    // Write stub buffer to process
+    
     WriteList(pRemoteStub, CodeReal);
-
-    // Call stub via creating a remote thread in the target.
+    
     Detail::EnsureCloseHandle const MyThread(CreateRemoteThread(m_Process.
       GetHandle(), nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(
       pRemoteStubTemp), nullptr, 0, nullptr));
@@ -343,8 +330,7 @@ namespace HadesMem
         ErrorString("Could not create remote thread.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Wait for the remote thread to terminate
+    
     if (WaitForSingleObject(MyThread, INFINITE) != WAIT_OBJECT_0)
     {
       DWORD const LastError = GetLastError();
@@ -353,8 +339,7 @@ namespace HadesMem
         ErrorString("Could not wait for remote thread.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Forward return value from remote thread
+    
     DWORD_PTR const RetVal = Read<DWORD_PTR>(ReturnValueRemote.GetBase());
     DWORD64 const RetVal64 = Read<DWORD64>(ReturnValue64Remote.GetBase());
     DWORD const ErrorCode = Read<DWORD>(LastErrorRemote.GetBase());
@@ -364,7 +349,6 @@ namespace HadesMem
   // Whether an address is currently readable
   bool MemoryMgr::CanRead(LPCVOID Address) const
   {
-    // Query page protections
     MEMORY_BASIC_INFORMATION MyMbi;
     ZeroMemory(&MyMbi, sizeof(MyMbi));
     if (VirtualQueryEx(m_Process.GetHandle(), Address, &MyMbi, 
@@ -376,8 +360,7 @@ namespace HadesMem
         ErrorString("Could not read process memory protection.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Whether memory is currently readable
+    
     return 
       (MyMbi.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ || 
       (MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
@@ -390,7 +373,6 @@ namespace HadesMem
   // Whether an address is currently writable
   bool MemoryMgr::CanWrite(LPCVOID Address) const
   {
-    // Query page protections
     MEMORY_BASIC_INFORMATION MyMbi;
     ZeroMemory(&MyMbi, sizeof(MyMbi));
     if (VirtualQueryEx(m_Process.GetHandle(), Address, &MyMbi, 
@@ -402,8 +384,7 @@ namespace HadesMem
         ErrorString("Could not read process memory protection.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Whether memory is currently writable
+    
     return 
       (MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
       (MyMbi.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY || 
@@ -414,7 +395,6 @@ namespace HadesMem
   // Whether an address is currently executable
   bool MemoryMgr::CanExecute(LPCVOID Address) const
   {
-    // Query page protections
     MEMORY_BASIC_INFORMATION MyMbi;
     ZeroMemory(&MyMbi, sizeof(MyMbi));
     if (VirtualQueryEx(m_Process.GetHandle(), Address, &MyMbi, 
@@ -426,8 +406,7 @@ namespace HadesMem
         ErrorString("Could not read process memory protection.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Whether memory is currently executable
+    
     return 
       (MyMbi.Protect & PAGE_EXECUTE) == PAGE_EXECUTE || 
       (MyMbi.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ || 
@@ -438,7 +417,6 @@ namespace HadesMem
   // Whether an address is contained within a guard page
   bool MemoryMgr::IsGuard(LPCVOID Address) const
   {
-    // Query page protections
     MEMORY_BASIC_INFORMATION MyMbi;
     ZeroMemory(&MyMbi, sizeof(MyMbi));
     if (VirtualQueryEx(m_Process.GetHandle(), Address, &MyMbi, 
@@ -450,15 +428,13 @@ namespace HadesMem
         ErrorString("Could not read process memory protection.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Whether address is in a guard page
+    
     return (MyMbi.Protect & PAGE_GUARD) == PAGE_GUARD;
   }
   
   // Protect a memory region
   DWORD MemoryMgr::ProtectRegion(LPVOID Address, DWORD Protect) const
   {
-    // Set protection and return previous
     Region Target(*this, Address);
     return Target.SetProtect(Protect);
   }
@@ -545,7 +521,6 @@ namespace HadesMem
   // Read memory
   void MemoryMgr::ReadImpl(PVOID Address, PVOID Out, std::size_t OutSize) const 
   {
-    // Treat attempt to read from a guard page as an error
     if (IsGuard(Address))
     {
       BOOST_THROW_EXCEPTION(Error() << 
@@ -553,17 +528,14 @@ namespace HadesMem
         ErrorString("Attempt to read from guard page."));
     }
     
-    // Whether we can read the given address
     bool const CanReadMem = CanRead(Address);
 
-    // Set page protection for reading
     DWORD OldProtect = 0;
     if (!CanReadMem)
     {
       OldProtect = ProtectRegion(Address, PAGE_EXECUTE_READWRITE);
     }
-
-    // Read data
+    
     SIZE_T BytesRead = 0;
     if (!ReadProcessMemory(m_Process.GetHandle(), Address, Out, 
       OutSize, &BytesRead) || BytesRead != OutSize)
@@ -572,7 +544,6 @@ namespace HadesMem
       {
         try
         {
-          // Restore original page protections
           ProtectRegion(Address, OldProtect);
         }
         catch (std::exception const& /*e*/)
@@ -585,8 +556,7 @@ namespace HadesMem
         ErrorString("Could not read process memory.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Restore original page protections
+    
     if (!CanReadMem)
     {
       ProtectRegion(Address, OldProtect);
@@ -596,25 +566,21 @@ namespace HadesMem
   // Write memory
   void MemoryMgr::WriteImpl(PVOID Address, LPCVOID In, std::size_t InSize) const
   {
-    // Treat attempt to write to a guard page as an error
     if (IsGuard(Address))
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("MemoryMgr::Write") << 
         ErrorString("Attempt to write to guard page."));
     }
-
-    // Whether we can write to the given address
+    
     bool const CanWriteMem = CanWrite(Address);
-
-    // Set page protections for writing
+    
     DWORD OldProtect = 0;
     if (!CanWriteMem)
     {
       OldProtect = ProtectRegion(Address, PAGE_EXECUTE_READWRITE);
     }
-
-    // Write data
+    
     SIZE_T BytesWritten = 0;
     if (!WriteProcessMemory(m_Process.GetHandle(), Address, In, 
       InSize, &BytesWritten) || BytesWritten != InSize)
@@ -623,7 +589,6 @@ namespace HadesMem
       {
         try
         {
-          // Restore original page protections
           ProtectRegion(Address, OldProtect);
         }
         catch (std::exception const& /*e*/)
@@ -636,8 +601,7 @@ namespace HadesMem
         ErrorString("Could not write process memory.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Restore original page protections
+    
     if (!CanWriteMem)
     {
       ProtectRegion(Address, OldProtect);
@@ -649,7 +613,6 @@ namespace HadesMem
     std::wstring const& CommandLine, 
     std::wstring const& WorkingDir)
   {
-    // Initialize COM
     if (!CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | 
       COINIT_DISABLE_OLE1DDE))
     {
@@ -660,10 +623,8 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    // Ensure COM is cleaned up
     Detail::EnsureCoUninitialize MyComCleanup;
     
-    // Start process
     SHELLEXECUTEINFO ExecInfo;
     ZeroMemory(&ExecInfo, sizeof(ExecInfo));
     ExecInfo.cbSize = sizeof(ExecInfo);
@@ -685,10 +646,8 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    // Ensure handle is closed
     Detail::EnsureCloseHandle const MyProc(ExecInfo.hProcess);
     
-    // Return process object
     return MemoryMgr(GetProcessId(MyProc));
   }
     
@@ -697,7 +656,6 @@ namespace HadesMem
     std::vector<std::wstring> const& Args, 
     std::wstring const& WorkingDir)
   {
-    // Construct command line.
     std::wstring CommandLine;
     Detail::ArgvQuote(Path, CommandLine, false);
     std::for_each(Args.begin(), Args.end(), 
@@ -706,15 +664,13 @@ namespace HadesMem
         CommandLine += L' ';
         Detail::ArgvQuote(Arg, CommandLine, false);
       });
-      
-    // Create process
+    
     return CreateProcess(Path, CommandLine, WorkingDir);
   }
 
   // Gets the SeDebugPrivilege
   void GetSeDebugPrivilege()
   {
-    // Open current process token with adjust rights
     HANDLE TempToken = 0;
     BOOL const RetVal = OpenProcessToken(GetCurrentProcess(), 
       TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &TempToken);
@@ -728,8 +684,7 @@ namespace HadesMem
     }
     Detail::EnsureCloseHandle const Token(TempToken);
 
-    // Get the LUID for SE_DEBUG_NAME 
-    LUID Luid = { 0, 0 }; // Locally unique identifier
+    LUID Luid = { 0, 0 };
     if (!LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &Luid)) 
     {
       DWORD const LastError = GetLastError();
@@ -748,15 +703,11 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
 
-    // Process privileges
     TOKEN_PRIVILEGES Privileges;
     ZeroMemory(&Privileges, sizeof(Privileges));
-    // Set the privileges we need
     Privileges.PrivilegeCount = 1;
     Privileges.Privileges[0].Luid = Luid;
     Privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-
-    // Apply the adjusted privileges
     if (!AdjustTokenPrivileges(Token, FALSE, &Privileges, 
       sizeof(Privileges), nullptr, nullptr)) 
     {
@@ -767,7 +718,6 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    // Ensure privileges were adjusted
     if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
     {
       DWORD const LastError = GetLastError();
@@ -778,12 +728,14 @@ namespace HadesMem
     }
   }
   
+  // Constructor
   AllocAndFree::AllocAndFree(MemoryMgr const& MyMemoryMgr, SIZE_T Size)
     : m_Memory(MyMemoryMgr), 
     m_Size(Size), 
     m_Address(MyMemoryMgr.Alloc(Size)) 
   { }
   
+  // Move constructor
   AllocAndFree::AllocAndFree(AllocAndFree&& Other)
     : m_Memory(std::move(Other.m_Memory)), 
     m_Size(Other.m_Size), 
@@ -793,6 +745,7 @@ namespace HadesMem
     Other.m_Address = nullptr;
   }
   
+  // Move assignment operator
   AllocAndFree& AllocAndFree::operator=(AllocAndFree&& Other)
   {
     Free();
@@ -808,6 +761,7 @@ namespace HadesMem
     return *this;
   }
   
+  // Destructor
   AllocAndFree::~AllocAndFree()
   {
     try
@@ -824,6 +778,7 @@ namespace HadesMem
     }
   }
   
+  // Free memory
   void AllocAndFree::Free() const
   {
     if (m_Address)
@@ -833,11 +788,13 @@ namespace HadesMem
     }
   }
   
+  // Get base address of memory region
   PVOID AllocAndFree::GetBase() const
   {
     return m_Address;
   }
   
+  // Get size of memory region
   SIZE_T AllocAndFree::GetSize() const
   {
     return m_Size;

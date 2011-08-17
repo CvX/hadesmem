@@ -5,7 +5,6 @@
 // This file is part of HadesMem.
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
-// Hades
 #include <HadesMemory/Experimental/ManualMap.hpp>
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
@@ -14,7 +13,6 @@
 #include <HadesMemory/Detail/WinAux.hpp>
 #include <HadesMemory/Detail/EnsureCleanup.hpp>
 
-// C++ Standard Library
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,7 +20,6 @@
 #include <iterator>
 #include <iostream>
 
-// Boost
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -71,7 +68,6 @@ namespace HadesMem
       std::string const& Export, 
       InjectFlags Flags) const
   {
-    // Debug output
     std::wcout << Path << " - InjectDll called." << std::endl;
     
     // Do not continue if Shim Engine is enabled for local process, 
@@ -84,21 +80,16 @@ namespace HadesMem
         ErrorString("Shims enabled for local process."));
     }
       
-    // Check if path resolution was requested
     bool PathResolution = ((Flags & InjectFlag_PathResolution) == 
       InjectFlag_PathResolution);
     
-    // Debug output
     std::wcout << Path << " - Path resolution flag: " << PathResolution 
       << "." << std::endl;
     
-    // Resolve path
     boost::filesystem::path PathReal(ResolvePath(Path, PathResolution));
     
-    // Debug output
     std::wcout << Path << " - Reading file." << std::endl;
     
-    // Open file for reading
     boost::filesystem::basic_ifstream<char> ModuleFile(PathReal, 
       std::ios::binary | std::ios::ate);
     if (!ModuleFile)
@@ -107,8 +98,7 @@ namespace HadesMem
         ErrorFunction("ManualMap::Map") << 
         ErrorString("Could not open image file."));
     }
-
-    // Get file size
+    
     std::streamsize const FileSize = ModuleFile.tellg();
 
     // Allocate memory to hold file data
@@ -126,34 +116,29 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     Detail::EnsureReleaseRegion const EnsureFreeLocalMod(pBase);
-
-    // Seek to beginning of file
+    
     if (!ModuleFile.seekg(0, std::ios::beg))
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("ManualMap::Map") << 
         ErrorString("Could not seek to beginning of file."));
     }
-
-    // Read file into memory
+    
     if (!ModuleFile.read(pBase, FileSize))
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("ManualMap::Map") << 
         ErrorString("Could not read file into memory."));
     }
-
-    // Create memory manager for local proc
+    
     MemoryMgr MyMemoryLocal(GetCurrentProcessId());
-
-    // Ensure file is a valid PE file
+    
     std::wcout << Path << " - Performing PE file format validation." 
       << std::endl;
     PeFile MyPeFile(MyMemoryLocal, pBase, PeFile::FileType_Data);
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
-
-    // Allocate memory for image
+    
     std::wcout << Path << " - Allocating remote memory for image." 
       << std::endl;
     PVOID const RemoteBase = m_Memory.Alloc(MyNtHeaders.GetSizeOfImage());
@@ -161,12 +146,10 @@ namespace HadesMem
       << std::endl;
     std::wcout << Path << " - Image size: " << std::hex << 
       MyNtHeaders.GetSizeOfImage() << std::dec << "." << std::endl;
-        
-    // Add to list
+    
     m_MappedMods[boost::to_lower_copy(PathReal.native())] = 
       reinterpret_cast<HMODULE>(RemoteBase);
-
-    // Get all TLS callbacks
+    
     std::vector<PIMAGE_TLS_CALLBACK> TlsCallbacks;
     TlsDir const MyTlsDir(MyPeFile);
     if (MyTlsDir.IsValid())
@@ -178,14 +161,12 @@ namespace HadesMem
         std::wcout << Path << " - TLS Callback: " << pCurrent << std::endl;
       });
     }
-
-    // Write DOS header to process
+    
     std::wcout << Path << " - Writing DOS header." << std::endl;
     std::wcout << Path << " - DOS Header: " << RemoteBase << std::endl;
     m_Memory.Write(RemoteBase, *reinterpret_cast<PIMAGE_DOS_HEADER>(
       pBase));
-
-    // Write NT headers to process
+    
     PBYTE const NtHeadersStart = reinterpret_cast<PBYTE>(MyNtHeaders.
       GetBase());
     PBYTE const NtHeadersEnd = static_cast<PBYTE>(
@@ -197,19 +178,16 @@ namespace HadesMem
     std::wcout << Path << " - NT Header: " << 
       static_cast<PVOID>(TargetAddr) << std::endl;
     m_Memory.WriteList(TargetAddr, PeHeaderBuf);
-
-    // Process relocations
+    
     FixRelocations(MyPeFile, RemoteBase);
-
-    // Write sections to process
+    
     MapSections(MyPeFile, RemoteBase);
 
-    // Process import table (must be done in remote process due to cyclic 
-    // depdendencies)
+    // Import table must be processed in remote process due to cyclic 
+    // depdendencies.
     PeFile RemotePeFile(m_Memory, RemoteBase);
     FixImports(RemotePeFile);
-
-    // Call all TLS callbacks
+    
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
@@ -226,8 +204,7 @@ namespace HadesMem
       std::wcout << Path << " - TLS Callback Returned: " << 
         TlsRet.GetReturnValue() << "." << std::endl;
     });
-
-    // Calculate module entry point
+    
     PVOID EntryPoint = nullptr;
     DWORD AddressOfEP = MyNtHeaders.GetAddressOfEntryPoint();
     if (AddressOfEP)
@@ -236,11 +213,9 @@ namespace HadesMem
         MyNtHeaders.GetAddressOfEntryPoint();
     }
     
-    // Print entry point address
     std::wcout << Path << " - Entry Point: " << EntryPoint << "." 
       << std::endl;
-
-    // Call entry point
+    
     if (EntryPoint)
     {
       std::vector<PVOID> EpArgs;
@@ -252,8 +227,7 @@ namespace HadesMem
       std::wcout << Path << " - Entry Point Returned: " << 
         EpRet.GetReturnValue() << "." << std::endl;
     }
-
-    // Load module as data so we can read the EAT locally
+    
     Detail::EnsureFreeLibrary const LocalMod(LoadLibraryEx(
       Path.c_str(), nullptr, DONT_RESOLVE_DLL_REFERENCES));
     if (!LocalMod)
@@ -264,12 +238,10 @@ namespace HadesMem
         ErrorString("Could not load module locally.") << 
         ErrorCodeWinLast(LastError));
     }
-
-    // Find target function in module if required
+    
     PVOID ExportAddr = nullptr;
     if (!Export.empty())
     {
-      // Get export address locally
       FARPROC const LocalFunc = GetProcAddress(LocalMod, Export.c_str());
       if (!LocalFunc)
       {
@@ -279,25 +251,20 @@ namespace HadesMem
           ErrorString("Could not find target function.") << 
           ErrorCodeWinLast(LastError));
       }
-
-      // Calculate function delta
+      
       LONG_PTR const FuncDelta = reinterpret_cast<DWORD_PTR>(LocalFunc) - 
         reinterpret_cast<DWORD_PTR>(static_cast<HMODULE>(LocalMod));
-  
-      // Calculate function location in remote process
+      
       FARPROC const RemoteFunc = reinterpret_cast<FARPROC>(
         reinterpret_cast<DWORD_PTR>(RemoteBase) + FuncDelta);
       
-      // Get export address
       ExportAddr = reinterpret_cast<PVOID const>(reinterpret_cast<DWORD_PTR>(
         RemoteFunc));
     }
     
-    // Print export address
     std::wcout << Path << " - Export Address: " << ExportAddr << "." 
       << std::endl;
-
-    // Call remote export (if specified)
+    
     if (ExportAddr)
     {
       std::vector<PVOID> ExpArgs;
@@ -308,316 +275,263 @@ namespace HadesMem
         << "." << std::endl;
     }
     
-    // Return pointer to module in remote process
     return reinterpret_cast<HMODULE>(RemoteBase);
   }
 
   // Map sections
   void ManualMap::MapSections(PeFile& MyPeFile, PVOID RemoteAddr) const
   {
-    // Debug output
     std::cout << "Mapping sections." << std::endl;
-
-    // Enumerate all sections
+    
     SectionList Sections(MyPeFile);
-    for (auto i = Sections.begin(); i != Sections.end(); ++i)
-    {
-      // Get section
-      Section& Current = *i;
-
-      // Get section name
-      std::string const Name(Current.GetName());
-      std::cout << "Section Name: " << Name.c_str() << std::endl;
-
-      // Calculate target address for section in remote process
-      PVOID const TargetAddr = reinterpret_cast<PBYTE>(RemoteAddr) + 
-        Current.GetVirtualAddress();
-      std::cout << "Target Address: " << TargetAddr << std::endl;
-
-      // Calculate virtual size of section
-      DWORD const VirtualSize = Current.GetVirtualSize(); 
-      std::cout << "Virtual Size: " << std::hex << VirtualSize << std::dec 
-        << std::endl;
-
-      // Calculate start and end of section data in buffer
-      DWORD const SizeOfRawData = Current.GetSizeOfRawData();
-      PBYTE const DataStart = static_cast<PBYTE>(MyPeFile.GetBase()) + 
-        Current.GetPointerToRawData();
-      PBYTE const DataEnd = DataStart + SizeOfRawData;
-
-      // Get section data
-      std::vector<BYTE> const SectionData(DataStart, DataEnd);
-
-      // Write section data to process
-      if (!SectionData.empty())
+    std::for_each(Sections.cbegin(), Sections.cend(), 
+      [&] (Section const& S)
       {
-        m_Memory.WriteList(TargetAddr, SectionData);
-      }
-
-      // Get section characteristics
-      DWORD SecCharacteristics = Current.GetCharacteristics();
-      
-      // Section characteristic table
-      std::array<ULONG, 16> const SectionCharacteristicsToProtect = 
-      {{
-        PAGE_NOACCESS,          // 0 = NONE
-        PAGE_NOACCESS,          // 1 = SHARED
-        PAGE_EXECUTE,           // 2 = EXECUTABLE
-        PAGE_EXECUTE,           // 3 = EXECUTABLE, SHARED
-        PAGE_READONLY,          // 4 = READABLE
-        PAGE_READONLY,          // 5 = READABLE, SHARED
-        PAGE_EXECUTE_READ,      // 6 = READABLE, EXECUTABLE
-        PAGE_EXECUTE_READ,      // 7 = READABLE, EXECUTABLE, SHARED
-        PAGE_READWRITE,         // 8 = WRITABLE
-        PAGE_READWRITE,         // 9 = WRITABLE, SHARED
-        PAGE_EXECUTE_READWRITE, // 10 = WRITABLE, EXECUTABLE
-        PAGE_EXECUTE_READWRITE, // 11 = WRITABLE, EXECUTABLE, SHARED
-        PAGE_READWRITE,         // 12 = WRITABLE, READABLE
-        PAGE_READWRITE,         // 13 = WRITABLE, READABLE, SHARED
-        PAGE_EXECUTE_READWRITE, // 14 = WRITABLE, READABLE, EXECUTABLE
-        PAGE_EXECUTE_READWRITE, // 15 = WRITABLE, READABLE, EXECUTABLE, SHARED
-      }};
-
-      // Handle case where no explicit protection is provided. Infer 
-      // protection flags from section type.
-      if((SecCharacteristics & (IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ | 
-        IMAGE_SCN_MEM_WRITE)) == 0)
-      {
-        if(SecCharacteristics & IMAGE_SCN_CNT_CODE)
+        std::string const Name(S.GetName());
+        std::cout << "Section Name: " << Name.c_str() << std::endl;
+        
+        PVOID const TargetAddr = reinterpret_cast<PBYTE>(RemoteAddr) + 
+          S.GetVirtualAddress();
+        std::cout << "Target Address: " << TargetAddr << std::endl;
+        
+        DWORD const VirtualSize = S.GetVirtualSize(); 
+        std::cout << "Virtual Size: " << std::hex << VirtualSize << std::dec 
+          << std::endl;
+        
+        DWORD const SizeOfRawData = S.GetSizeOfRawData();
+        PBYTE const DataStart = static_cast<PBYTE>(MyPeFile.GetBase()) + 
+          S.GetPointerToRawData();
+        PBYTE const DataEnd = DataStart + SizeOfRawData;
+        
+        std::vector<BYTE> const SectionData(DataStart, DataEnd);
+        
+        if (!SectionData.empty())
         {
-          SecCharacteristics |= IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ;
+          m_Memory.WriteList(TargetAddr, SectionData);
         }
-
-        if(SecCharacteristics & IMAGE_SCN_CNT_INITIALIZED_DATA)
+        
+        DWORD SecCharacteristics = S.GetCharacteristics();
+        
+        std::array<ULONG, 16> const SectionCharacteristicsToProtect = 
+        {{
+          PAGE_NOACCESS, 
+          PAGE_NOACCESS, 
+          PAGE_EXECUTE, 
+          PAGE_EXECUTE, 
+          PAGE_READONLY, 
+          PAGE_READONLY, 
+          PAGE_EXECUTE_READ, 
+          PAGE_EXECUTE_READ, 
+          PAGE_READWRITE, 
+          PAGE_READWRITE, 
+          PAGE_EXECUTE_READWRITE, 
+          PAGE_EXECUTE_READWRITE, 
+          PAGE_READWRITE, 
+          PAGE_READWRITE, 
+          PAGE_EXECUTE_READWRITE, 
+          PAGE_EXECUTE_READWRITE, 
+        }};
+        
+        // Handle case where no explicit protection is provided
+        if((SecCharacteristics & (IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ | 
+          IMAGE_SCN_MEM_WRITE)) == 0)
         {
-          SecCharacteristics |= IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE;
+          if(SecCharacteristics & IMAGE_SCN_CNT_CODE)
+          {
+            SecCharacteristics |= IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ;
+          }
+  
+          if(SecCharacteristics & IMAGE_SCN_CNT_INITIALIZED_DATA)
+          {
+            SecCharacteristics |= IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE;
+          }
+  
+          if(SecCharacteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA)
+          {
+            SecCharacteristics |= IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE;
+          }
         }
-
-        if(SecCharacteristics & IMAGE_SCN_CNT_UNINITIALIZED_DATA)
+        
+        DWORD SecProtect = SectionCharacteristicsToProtect[
+          SecCharacteristics >> 28];
+        
+        DWORD OldProtect;
+        if (!VirtualProtectEx(m_Memory.GetProcessHandle(), TargetAddr, 
+          VirtualSize, SecProtect, &OldProtect))
         {
-          SecCharacteristics |= IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE;
+          DWORD const LastError = GetLastError();
+          BOOST_THROW_EXCEPTION(ManualMap::Error() << 
+            ErrorFunction("ManualMap::MapSections") << 
+            ErrorString("Could not change page protections for section.") << 
+            ErrorCodeWinLast(LastError));
         }
-      }
-
-      // Look up protection flags for section
-      DWORD SecProtect = SectionCharacteristicsToProtect[
-        SecCharacteristics >> 28];
-
-      // Set the proper page protections for this section
-      DWORD OldProtect;
-      if (!VirtualProtectEx(m_Memory.GetProcessHandle(), TargetAddr, 
-        VirtualSize, SecProtect, &OldProtect))
-      {
-        DWORD const LastError = GetLastError();
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::MapSections") << 
-          ErrorString("Could not change page protections for section.") << 
-          ErrorCodeWinLast(LastError));
-      }
-    }
+      });
   }
 
   // Fix imports
   void ManualMap::FixImports(PeFile& MyPeFile) const
   {
-    // Get NT headers
     NtHeaders const MyNtHeaders(MyPeFile);
 
-    // Get import dir
     ImportDir const CheckImpDir(MyPeFile);
     if (!CheckImpDir.IsValid())
     {
-      // Debug output
       std::cout << "Image has no imports." << std::endl;
-
-      // Nothing more to do
       return;
     }
-
-    // Debug output
+    
     std::cout << "Fixing imports." << std::endl;
-
-    // Loop through all the required modules
+    
     ImportDirList ImportDirs(MyPeFile);
-    for (auto i = ImportDirs.begin(); i != ImportDirs.end(); ++i)
-    {
-      // Get import dir
-      ImportDir& MyImportDir = *i;
-
-      // Get module name
-      std::string const ModuleName(MyImportDir.GetName());
-      std::wstring const ModuleNameW(boost::lexical_cast<std::wstring>(
-        ModuleName));
-      std::wstring const ModuleNameLowerW(boost::to_lower_copy(
-        ModuleNameW));
-      std::cout << "Module Name: " << ModuleName << "." << std::endl;
-      
-      // Current module base
-      HMODULE CurModBase = nullptr;
-      
-      // Check whether dependent module is already manually mapped
-      // FIXME: Support both path resolution cases
-      std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
-        false);
-      auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
-        ResolvedModulePath));
-      if (MappedModIter != m_MappedMods.end())
+    std::for_each(ImportDirs.begin(), ImportDirs.end(), 
+      [&] (ImportDir const& I)
       {
-        std::cout << "Found existing mapped instance of dependent DLL." << 
-          std::endl;
-        CurModBase = MappedModIter->second;
-      }
-      else
-      {
-        // Handle NTDLL.dll as a special case. It doesn't not work if you 
-        // don't call LdrInitializeThunk to bootstrap it, but if you do that 
-        // on a manually mapped copy it causes the process to fail as it tries 
-        // to initialize everything twice and causes conflicts.
-        // For now, just use the copy that resides in the remote target. It's 
-        // guaranteed to be there anyway...
-        if (ModuleNameLowerW == L"ntdll.dll")
-        {
-          Module NtdllMod(m_Memory, L"ntdll.dll");
-          CurModBase = NtdllMod.GetHandle();
-        }
-        // Manually map all other dependencies.
-        else
-        {
-          // Inject dependent DLL
-          std::cout << "Manually mapping dependent DLL. " << ModuleName << "." << std::endl;
-          try
-          {
-            std::cout << "Attempting without path resolution." << std::endl;
-            CurModBase = InjectDll(ModuleNameW);
-          }
-          catch (std::exception const& e)
-          {
-            std::cout << "Failed to map dependent DLL. " << ModuleName << "." << std::endl;
-            std::cout << boost::diagnostic_information(e) << std::endl;
-            std::cout << "Attempting with path resolution." << std::endl;
-            CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
-          }
-        }
-      }
-      
-      // Create PE file for dep mod
-      PeFile DepPeFile(m_Memory, CurModBase);
-      
-      // Export list for dep mod
-      ExportList Exports(DepPeFile);
-      
-      // Loop over import thunks for current module
-      ImportThunkList ImportOrigThunks(MyPeFile, MyImportDir.GetCharacteristics());
-      ImportThunkList ImportFirstThunks(MyPeFile, MyImportDir.GetFirstThunk());
-      for (auto j = ImportOrigThunks.begin(); j != ImportOrigThunks.end(); ++j)
-      {
-        // Get import thunk
-        ImportThunk& ImpThunk = *j;
-
-        // Debug output
-        if (ImpThunk.ByOrdinal())
-        {
-          // Debug output
-          std::cout << "Function Ordinal: " << ImpThunk.GetOrdinal() << "." 
-            << std::endl;
-        }
-        else
-        {
-          // Debug output
-          std::cout << "Function Name: " << ImpThunk.GetName() << "." << std::endl;
-        }
+        std::string const ModuleName(I.GetName());
+        std::wstring const ModuleNameW(boost::lexical_cast<std::wstring>(
+          ModuleName));
+        std::wstring const ModuleNameLowerW(boost::to_lower_copy(
+          ModuleNameW));
+        std::cout << "Module Name: " << ModuleName << "." << std::endl;
         
-        // Placeholder for export when found
-        boost::optional<Export> TargetExport;
-          
-        // If import is by ordinal then do it directly
-        if (ImpThunk.ByOrdinal())
+        HMODULE CurModBase = nullptr;
+        
+        // FIXME: Support both path resolution cases
+        std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
+          false);
+        auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
+          ResolvedModulePath));
+        if (MappedModIter != m_MappedMods.end())
         {
-          TargetExport = Export(DepPeFile, ImpThunk.GetOrdinal());
+          std::cout << "Found existing mapped instance of dependent DLL." << 
+            std::endl;
+          CurModBase = MappedModIter->second;
         }
-        // Otherwise attempt to find export by hint
         else
         {
-          // Ensure export dir and import hint are valid
-          ExportDir DepExportDir(DepPeFile);
-          DWORD const ImpHint = ImpThunk.GetHint();
-          DWORD const NumberOfNames = DepExportDir.GetNumberOfNames();
-          if (DepExportDir.IsValid() && ImpHint && ImpHint < NumberOfNames)
+          // Handle NTDLL.dll as a special case. It doesn't not work if you 
+          // don't call LdrInitializeThunk to bootstrap it, but if you do that 
+          // on a manually mapped copy it causes the process to fail as it tries 
+          // to initialize everything twice and causes conflicts.
+          // For now, just use the copy that resides in the remote target. It's 
+          // guaranteed to be there anyway...
+          if (ModuleNameLowerW == L"ntdll.dll")
           {
+            Module NtdllMod(m_Memory, L"ntdll.dll");
+            CurModBase = NtdllMod.GetHandle();
+          }
+          else
+          {
+            std::cout << "Manually mapping dependent DLL. " << ModuleName << "." << std::endl;
             try
             {
-              // Get export name
-              DWORD* pNames = static_cast<DWORD*>(DepPeFile.RvaToVa(
-                DepExportDir.GetAddressOfNames()));              
-              DWORD const HintNameRva = m_Memory.Read<DWORD>(pNames + ImpHint);
-              std::string const HintName = m_Memory.ReadString<std::string>(
-                DepPeFile.RvaToVa(HintNameRva));
-              
-              // Check for match and set target if appropriate
-              if (HintName == ImpThunk.GetName())
-              {
-                // Debug output
-                std::cout << "Hint matched!" << std::endl;
-                  
-                // Get name ordinal array
-                WORD* pOrdinals = static_cast<WORD*>(DepPeFile.RvaToVa(
-                  DepExportDir.GetAddressOfNameOrdinals()));
-                
-                // Get ordinal
-                WORD const HintOrdinal = m_Memory.Read<WORD>(pOrdinals + 
-                  ImpHint);
-                
-                // Set export
-                TargetExport = Export(DepPeFile, HintOrdinal + 
-                  DepExportDir.GetOrdinalBase());
-                
-                // Debug sanity check
-                if (TargetExport->GetName() != HintName)
-                {
-                  std::cout << "Hint name mismatch!" << std::endl;
-                  throw std::exception();
-                }
-              }
+              std::cout << "Attempting without path resolution." << std::endl;
+              CurModBase = InjectDll(ModuleNameW);
             }
-            catch (std::exception const& /*e*/)
+            catch (std::exception const& e)
             {
-              // Lookup by hint failed. Proceed to manual lookup
+              std::cout << "Failed to map dependent DLL. " << ModuleName << "." << std::endl;
+              std::cout << boost::diagnostic_information(e) << std::endl;
+              std::cout << "Attempting with path resolution." << std::endl;
+              CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
             }
           }
         }
-
-        // If lookup by ordinal or hint failed do a manual lookup
-        if (!TargetExport)
+        
+        PeFile DepPeFile(m_Memory, CurModBase);
+        
+        // Lift export list out of loop to allow for caching
+        ExportList Exports(DepPeFile);
+        
+        ImportThunkList ImportOrigThunks(MyPeFile, I.GetCharacteristics());
+        ImportThunkList ImportFirstThunks(MyPeFile, I.GetFirstThunk());
+        for (auto j = ImportOrigThunks.cbegin(); j != ImportOrigThunks.cend(); ++j)
         {
-          TargetExport = FindExport(DepPeFile, ImpThunk.GetName());
+          ImportThunk const& T = *j;
+          
+          if (T.ByOrdinal())
+          {
+            std::cout << "Function Ordinal: " << T.GetOrdinal() << "." 
+              << std::endl;
+          }
+          else
+          {
+            std::cout << "Function Name: " << T.GetName() << "." << std::endl;
+          }
+          
+          boost::optional<Export> TargetExport;
+          
+          if (T.ByOrdinal())
+          {
+            TargetExport = Export(DepPeFile, T.GetOrdinal());
+          }
+          // Attempt lookup by hint
+          else
+          {
+            ExportDir DepExportDir(DepPeFile);
+            DWORD const ImpHint = T.GetHint();
+            DWORD const NumberOfNames = DepExportDir.GetNumberOfNames();
+            if (DepExportDir.IsValid() && ImpHint && ImpHint < NumberOfNames)
+            {
+              try
+              {
+                DWORD* pNames = static_cast<DWORD*>(DepPeFile.RvaToVa(
+                  DepExportDir.GetAddressOfNames()));              
+                DWORD const HintNameRva = m_Memory.Read<DWORD>(pNames + ImpHint);
+                std::string const HintName = m_Memory.ReadString<std::string>(
+                  DepPeFile.RvaToVa(HintNameRva));
+                
+                if (HintName == T.GetName())
+                {
+                  std::cout << "Hint matched!" << std::endl;
+                    
+                  WORD* pOrdinals = static_cast<WORD*>(DepPeFile.RvaToVa(
+                    DepExportDir.GetAddressOfNameOrdinals()));
+                  
+                  WORD const HintOrdinal = m_Memory.Read<WORD>(pOrdinals + 
+                    ImpHint);
+                  
+                  TargetExport = Export(DepPeFile, HintOrdinal + 
+                    DepExportDir.GetOrdinalBase());
+                  
+                  if (TargetExport->GetName() != HintName)
+                  {
+                    std::cout << "Hint name mismatch!" << std::endl;
+                    throw std::exception();
+                  }
+                }
+              }
+              catch (std::exception const& /*e*/)
+              { }
+            }
+          }
+  
+          // If lookup by ordinal or hint failed do a manual lookup
+          if (!TargetExport)
+          {
+            TargetExport = FindExport(DepPeFile, T.GetName());
+          }
+          
+          FARPROC FuncAddr = ResolveExport(*TargetExport);
+          
+          if (!FuncAddr)
+          {
+            BOOST_THROW_EXCEPTION(ManualMap::Error() << 
+              ErrorFunction("ManualMap::FixImports") << 
+              ErrorString("Could not find current import."));
+          }
+          
+          auto ImpThunkFT = ImportFirstThunks.begin();
+          std::advance(ImpThunkFT, std::distance(ImportOrigThunks.cbegin(), j));
+          ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
         }
-
-        // Resolve export
-        FARPROC FuncAddr = ResolveExport(*TargetExport);
-
-        // Ensure function was found
-        if (!FuncAddr)
-        {
-          BOOST_THROW_EXCEPTION(Error() << 
-            ErrorFunction("ManualMap::FixImports") << 
-            ErrorString("Could not find current import."));
-        }
-
-        // Set function address
-        auto ImpThunkFT = ImportFirstThunks.begin();
-        std::advance(ImpThunkFT, std::distance(ImportOrigThunks.begin(), j));
-        ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
-      }
-    } 
+      });
   }
 
   // Fix relocations
   void ManualMap::FixRelocations(PeFile& MyPeFile, PVOID pRemoteBase) const
   {
-    // Get NT headers
     NtHeaders const MyNtHeaders(MyPeFile);
-
-    // Get import data dir size and address
+    
     DWORD const RelocDirSize = MyNtHeaders.GetDataDirectorySize(NtHeaders::
       DataDir_BaseReloc);
     PIMAGE_BASE_RELOCATION pRelocDir = 
@@ -625,48 +539,34 @@ namespace HadesMem
       GetDataDirectoryVirtualAddress(NtHeaders::DataDir_BaseReloc)));
     if (!RelocDirSize || !pRelocDir)
     {
-      // Debug output
       std::cout << "Image has no relocations." << std::endl;
-
-      // Nothing more to do
       return;
     }
-
-    // Get end of reloc dir
+    
     PVOID pRelocDirEnd = reinterpret_cast<PBYTE>(pRelocDir) + RelocDirSize;
-
-    // Debug output
+    
     std::cout << "Fixing relocations." << std::endl;
-
-    // Get image base
+    
     ULONG_PTR const ImageBase = MyNtHeaders.GetImageBase();
-
-    // Calcuate module delta
+    
     LONG_PTR const Delta = reinterpret_cast<ULONG_PTR>(pRemoteBase) - 
       ImageBase;
-
-    // Ensure we don't read into invalid data
+    
     while (pRelocDir < pRelocDirEnd && pRelocDir->SizeOfBlock > 0)
     {
-      // Get base of reloc dir
       PBYTE const RelocBase = static_cast<PBYTE>(MyPeFile.RvaToVa(
         pRelocDir->VirtualAddress));
-
-      // Get number of relocs
+      
       DWORD const NumRelocs = (pRelocDir->SizeOfBlock - sizeof(
         IMAGE_BASE_RELOCATION)) / sizeof(WORD); 
-
-      // Get pointer to reloc data
+      
       PWORD pRelocData = reinterpret_cast<PWORD>(pRelocDir + 1);
-
-      // Loop over all relocation entries
+      
       for(DWORD i = 0; i < NumRelocs; ++i, ++pRelocData) 
       {
-        // Get reloc data
         BYTE RelocType = *pRelocData >> 12;
         WORD Offset = *pRelocData & 0xFFF;
-
-        // Process reloc
+        
         switch (RelocType)
         {
         case IMAGE_REL_BASED_ABSOLUTE:
@@ -690,8 +590,7 @@ namespace HadesMem
             ErrorString("Unsuppported relocation type."));
         }
       }
-
-      // Advance to next reloc info block
+      
       pRelocDir = reinterpret_cast<PIMAGE_BASE_RELOCATION>(pRelocData); 
     }
   }
@@ -699,17 +598,12 @@ namespace HadesMem
   // Perform path resolution
   std::wstring ManualMap::ResolvePath(std::wstring const& Path, bool PathResolution) const
   {
-    // Convert path string to filesystem path
     boost::filesystem::path PathReal(Path);
     
-    // Handle path resolution
     if (PathResolution)
     {
-      // Check whether we need to convert the path from a relative to 
-      // an absolute
       if (PathReal.is_relative())
       {
-        // Convert relative path to absolute path
         PathReal = boost::filesystem::absolute(PathReal, 
           Detail::GetSelfDirPath());
       }
@@ -751,11 +645,9 @@ namespace HadesMem
     // it does not search in %PATH%.
     if (!PathResolution)
     {
-      // Get app load dir
       boost::filesystem::path AppLoadDir = m_Memory.GetProcessPath();
       AppLoadDir = AppLoadDir.parent_path();
       
-      // Get system dir
       boost::filesystem::path SystemDir;
       wchar_t Temp;
       UINT SysDirLen = GetSystemDirectory(&Temp, 1);
@@ -778,7 +670,6 @@ namespace HadesMem
       }
       SystemDir = SysDirTemp.data();
       
-      // Get windows directory
       boost::filesystem::path WindowsDir;
       UINT WinDirLen = GetSystemDirectory(&Temp, 1);
       if (!WinDirLen)
@@ -800,13 +691,11 @@ namespace HadesMem
       }
       WindowsDir = WinDirTemp.data();
       
-      // Create search list
       std::vector<boost::filesystem::path> SearchDirList;
       SearchDirList.push_back(AppLoadDir);
       SearchDirList.push_back(SystemDir);
       SearchDirList.push_back(WindowsDir);
       
-      // Search for target
       boost::filesystem::path ResolvedPath;
       for (auto i = SearchDirList.cbegin(); i != SearchDirList.cend(); ++i)
       {
@@ -820,7 +709,6 @@ namespace HadesMem
         }
       }
       
-      // Ensure target was found
       if (ResolvedPath.empty())
       {
         BOOST_THROW_EXCEPTION(Error() << 
@@ -828,28 +716,22 @@ namespace HadesMem
           ErrorString("Could not find module file."));
       }
       
-      // Set path
       PathReal = ResolvedPath;
     }
-
-    // Convert path to preferred format
+    
     PathReal.make_preferred();
     
-    // Return resolved path
     return PathReal.native();
   }
   
   // Resolve export
   FARPROC ManualMap::ResolveExport(Export const& E) const
   {
-    // Handle forwarded exports
     if (E.Forwarded())
     {
-      // Debug output
       std::cout << "Forwarded export detected. Forwarder: " << 
         E.GetForwarder() << "." << std::endl;
       
-      // Get forwarder module name (lower-case)
       std::string ForwarderModuleLower = boost::to_lower_copy(
         E.GetForwarderModule());
       // FIXME: This is a nasty hack. Perform GetModuleHandle style path 
@@ -859,17 +741,14 @@ namespace HadesMem
         ForwarderModuleLower += ".dll";
       }
       
-      // Detect NTDLL as special case
       bool IsNtdll = ForwarderModuleLower == "ntdll.dll";
       
-      // Look for forwarder module in cache
       // FIXME: Support both path resolution cases
       std::wstring const ResolvedModulePath = ResolvePath(
         boost::lexical_cast<std::wstring>(ForwarderModuleLower), false);
       auto const ForwardedModIter = m_MappedMods.find(boost::to_lower_copy(
         ResolvedModulePath));
-          
-      // Ensure forwarder module was found
+      
       if (ForwardedModIter == m_MappedMods.end() && !IsNtdll)
       {
         BOOST_THROW_EXCEPTION(Error() << 
@@ -877,7 +756,6 @@ namespace HadesMem
           ErrorString("Found unknown forwarder module."));
       }
       
-      // Base address of forwarder module
       HMODULE NewTarget = nullptr;
       if (IsNtdll)
       {
@@ -889,7 +767,6 @@ namespace HadesMem
         NewTarget = ForwardedModIter->second;
       }
       
-      // Get forwarder function and ordinal
       std::string const ForwarderFunction = E.GetForwarderFunction();
       bool ForwardedByOrdinal = (ForwarderFunction[0] == '#');
       WORD ForwarderOrdinal = 0;
@@ -907,7 +784,6 @@ namespace HadesMem
         }
       }
       
-      // If export is forwarded by ordinal then do it directly
       PeFile NewTargetPe(m_Memory, NewTarget);
       if (ForwardedByOrdinal)
       {
@@ -920,10 +796,8 @@ namespace HadesMem
         return ResolveExport(FindExport(NewTargetPe, ForwarderFunction));
       }
     }
-    // Handle regular (non-forwarded) exports
     else
     {
-      // Return VA of export
       return reinterpret_cast<FARPROC>(reinterpret_cast<DWORD_PTR>(E.GetVa()));
     }
   }
@@ -932,13 +806,10 @@ namespace HadesMem
   Export ManualMap::FindExport(PeFile const& MyPeFile, 
     std::string const& Name) const
   {
-    // Debug output
     std::cout << "FindExport - " << Name << "." << std::endl;
       
-    // Get export
     Export Target(MyPeFile, Name);
     
-    // Sanity check
     if (Target.GetName() != Name)
     {
       BOOST_THROW_EXCEPTION(Error() << 
@@ -946,7 +817,6 @@ namespace HadesMem
         ErrorString("Name mismatch."));
     }
     
-    // Return found export
     return Target;
   }
   

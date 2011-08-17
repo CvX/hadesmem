@@ -7,20 +7,16 @@
 
 #pragma once
 
-// Hades
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 
-// C++ Standard Library
 #include <string>
 #include <iterator>
 
-// Boost
 #include <boost/optional.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
-// Windows
 #include <Windows.h>
 
 namespace HadesMem
@@ -320,7 +316,7 @@ namespace HadesMem
     // Set hint
     void SetHint(WORD Hint) const;
       
-    // Todo: SetName function
+    // TODO: SetName function
     
     // Equality operator
     bool operator==(ImportThunk const& Rhs) const;

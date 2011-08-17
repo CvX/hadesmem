@@ -7,19 +7,16 @@
 
 #pragma once
 
-// Hades
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 #include <HadesMemory/Detail/Config.hpp>
 #include <HadesMemory/PeLib/ExportDir.hpp>
 
-// C++ Standard Library
 #include <map>
 #include <string>
 #include <utility>
 
-// Windows API
 #include <Windows.h>
 
 namespace HadesMem

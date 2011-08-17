@@ -17,10 +17,8 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Hades
 #include <HadesMemory/Region.hpp>
 
-// Boost
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -31,10 +29,8 @@ namespace HadesMem
     : m_Memory(MyMemory), 
     m_RegionInfo() 
   {
-    // Clear region info
     ZeroMemory(&m_RegionInfo, sizeof(m_RegionInfo));
-
-    // Query region info
+    
     if (!VirtualQueryEx(m_Memory.GetProcessHandle(), Address, 
       &m_RegionInfo, sizeof(m_RegionInfo)))
     {
@@ -119,7 +115,6 @@ namespace HadesMem
   // Set protection
   DWORD Region::SetProtect(DWORD Protect) const
   {
-    // Protect memory region
     DWORD OldProtect = 0;
     if (!VirtualProtectEx(m_Memory.GetProcessHandle(), GetBase(), 
       GetSize(), Protect, &OldProtect))
@@ -131,7 +126,6 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    // Return previous protection
     return OldProtect;
   }
     

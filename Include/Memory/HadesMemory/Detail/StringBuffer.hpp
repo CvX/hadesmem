@@ -7,7 +7,6 @@
 
 #pragma once
 
-// C++ Standard Library
 #include <string>
 #include <vector>
 
@@ -50,7 +49,6 @@ namespace HadesMem
       {
         try
         {
-          // Commit current buffer
           Commit();
         }
         catch (...)

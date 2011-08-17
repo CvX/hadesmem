@@ -19,18 +19,14 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-// Hades
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Error.hpp>
 
-// C++ Standard Library
 #include <memory>
 
-// Boost
 #include <boost/optional.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
-// Windows API
 #include <Windows.h>
 
 namespace HadesMem
@@ -39,7 +35,7 @@ namespace HadesMem
   class Region
   {
   public:
-    // MemRegion exception type
+    // Region exception type
     class Error : public virtual HadesMemError 
     { };
 
