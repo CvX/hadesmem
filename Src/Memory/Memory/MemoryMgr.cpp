@@ -6,6 +6,7 @@
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
 // Hades
+#include <HadesMemory/Region.hpp>
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Config.hpp>
@@ -457,33 +458,9 @@ namespace HadesMem
   // Protect a memory region
   DWORD MemoryMgr::ProtectRegion(LPVOID Address, DWORD Protect) const
   {
-    // Query page protections
-    MEMORY_BASIC_INFORMATION MyMbi;
-    ZeroMemory(&MyMbi, sizeof(MyMbi));
-    if (VirtualQueryEx(m_Process.GetHandle(), Address, &MyMbi, 
-      sizeof(MyMbi)) != sizeof(MyMbi))
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("MemoryMgr::ProtectRegion") << 
-        ErrorString("Could not read process memory protection.") << 
-        ErrorCodeWinLast(LastError));
-    }
-    
-    // Protect memory region
-    DWORD OldProtect = 0;
-    if (!VirtualProtectEx(m_Process.GetHandle(), MyMbi.BaseAddress, 
-      MyMbi.RegionSize, Protect, &OldProtect))
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("MemoryMgr::ProtectRegion") << 
-        ErrorString("Could not change process memory protection.") << 
-        ErrorCodeWinLast(LastError));
-    }
-    
-    // Return previous protection
-    return OldProtect;
+    // Set protection and return previous
+    Region Target(*this, Address);
+    return Target.SetProtect(Protect);
   }
 
   // Allocate memory
@@ -598,7 +575,7 @@ namespace HadesMem
           // Restore original page protections
           ProtectRegion(Address, OldProtect);
         }
-        catch (...)
+        catch (std::exception const& /*e*/)
         { }
       }
 
@@ -649,7 +626,7 @@ namespace HadesMem
           // Restore original page protections
           ProtectRegion(Address, OldProtect);
         }
-        catch (...)
+        catch (std::exception const& /*e*/)
         { }
       }
 

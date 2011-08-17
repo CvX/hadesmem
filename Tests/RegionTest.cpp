@@ -26,6 +26,9 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 
+// C++ Standard Library
+#include <iostream>
+
 BOOST_AUTO_TEST_CASE(ConstructorsTest)
 {
   // Create memory manager for self
@@ -46,7 +49,6 @@ BOOST_AUTO_TEST_CASE(ConstructorsTest)
   BOOST_CHECK(MyRegion == MovedRegion);
 }
 
-// Region component tests
 BOOST_AUTO_TEST_CASE(RegionTest)
 {
   // Create memory manager for self
@@ -60,6 +62,7 @@ BOOST_AUTO_TEST_CASE(RegionTest)
     {
       // Test Region::Region
       HadesMem::Region const Test(MyMemory, R.GetBase());
+      BOOST_CHECK(Test == R);
       
       // Test region member functions that must be non-zero on non-free blocks
       // Todo: Test Region::GetState before relying on its data
@@ -69,6 +72,12 @@ BOOST_AUTO_TEST_CASE(RegionTest)
         BOOST_CHECK(Test.GetAllocBase() != nullptr);
         BOOST_CHECK(Test.GetAllocProtect() != 0);
         BOOST_CHECK(Test.GetType() != 0);
+        if (Test.GetState() == MEM_COMMIT)
+        {
+          DWORD OldProtect = Test.GetProtect();
+          BOOST_CHECK(OldProtect == Test.SetProtect(OldProtect));
+          BOOST_CHECK(OldProtect == Test.GetProtect());
+        }
       }
       
       // Ensure Section::GetProtect runs without exception (we have no 

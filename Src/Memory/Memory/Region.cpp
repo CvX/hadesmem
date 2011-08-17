@@ -115,6 +115,25 @@ namespace HadesMem
         ErrorString("Error writing to dump file."));
     }
   }
+  
+  // Set protection
+  DWORD Region::SetProtect(DWORD Protect) const
+  {
+    // Protect memory region
+    DWORD OldProtect = 0;
+    if (!VirtualProtectEx(m_Memory.GetProcessHandle(), GetBase(), 
+      GetSize(), Protect, &OldProtect))
+    {
+      DWORD const LastError = GetLastError();
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("Region::SetProtect") << 
+        ErrorString("Could not change region memory protection.") << 
+        ErrorCodeWinLast(LastError));
+    }
+    
+    // Return previous protection
+    return OldProtect;
+  }
     
   // Equality operator
   bool Region::operator==(Region const& Rhs) const

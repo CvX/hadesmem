@@ -70,6 +70,9 @@ namespace HadesMem
     // Get type
     DWORD GetType() const;
     
+    // Set protection
+    DWORD SetProtect(DWORD Protect) const;
+    
     // Dump to file
     void Dump(std::wstring const& Path) const;
     
@@ -208,6 +211,7 @@ namespace HadesMem
       m_Address = Rhs.m_Address;
       m_Region = Rhs.m_Region;
       m_RegionSize = Rhs.m_RegionSize;
+      
       return *this;
     }
 
