@@ -48,6 +48,44 @@ namespace HadesMem
     : m_Memory(MyMemory), 
     m_RegionInfo(MyMbi)
   { }
+    
+  // Copy constructor
+  Region::Region(Region const& Other) 
+    : m_Memory(Other.m_Memory), 
+    m_RegionInfo(Other.m_RegionInfo)
+  { }
+  
+  // Copy assignment operator
+  Region& Region::operator=(Region const& Other)
+  {
+    this->m_Memory = Other.m_Memory;
+    this->m_RegionInfo = Other.m_RegionInfo;
+    
+    return *this;
+  }
+  
+  // Move constructor
+  Region::Region(Region&& Other) 
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_RegionInfo(Other.m_RegionInfo)
+  {
+    ZeroMemory(&Other.m_RegionInfo, sizeof(Other.m_RegionInfo));
+  }
+  
+  // Move assignment operator
+  Region& Region::operator=(Region&& Other)
+  {
+    this->m_Memory = std::move(Other.m_Memory);
+    
+    this->m_RegionInfo = Other.m_RegionInfo;
+    ZeroMemory(&Other.m_RegionInfo, sizeof(Other.m_RegionInfo));
+    
+    return *this;
+  }
+  
+  // Destructor
+  Region::~Region()
+  { }
 
   // Get base address
   PVOID Region::GetBase() const

@@ -44,6 +44,21 @@ namespace HadesMem
 
     // Constructor
     Region(MemoryMgr const& MyMemory, MEMORY_BASIC_INFORMATION const& MyMbi);
+    
+    // Copy constructor
+    Region(Region const& Other);
+    
+    // Copy assignment operator
+    Region& operator=(Region const& Other);
+    
+    // Move constructor
+    Region(Region&& Other);
+    
+    // Move assignment operator
+    Region& operator=(Region&& Other);
+    
+    // Destructor
+    ~Region();
 
     // Get base address
     PVOID GetBase() const;

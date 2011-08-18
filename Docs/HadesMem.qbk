@@ -144,6 +144,7 @@ DEALINGS IN THE SOFTWARE.
 
 [*New Features]
 
+* Added new `Region` APIs.
 * Added name based constructor for `Export`.
 
 [*Bug Fixes]
@@ -1844,6 +1845,436 @@ is run. Process is then resumed.]]
 ]
 
 [endsect] [/ Injector]
+
+[section:region Region]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/Region.hpp>
+  
+  class Region
+  {
+  public:
+    class Error : public virtual HadesMemError 
+    { };
+    
+    Region(MemoryMgr const& MyMemory, PVOID Address);
+    
+    Region(MemoryMgr const& MyMemory, MEMORY_BASIC_INFORMATION const& MyMbi);
+
+    PVOID GetBase() const;
+    
+    PVOID GetAllocBase() const;
+    
+    DWORD GetAllocProtect() const;
+    
+    SIZE_T GetSize() const;
+    
+    DWORD GetState() const;
+    
+    DWORD GetProtect() const;
+    
+    DWORD GetType() const;
+    
+    DWORD SetProtect(DWORD Protect) const;
+    
+    void Dump(std::wstring const& Path) const;
+    
+    bool operator==(Region const& Rhs) const;
+    
+    bool operator!=(Region const& Rhs) const;
+  };
+  
+  class RegionList
+  {
+  public:
+    class Error : public virtual HadesMemError
+    { };
+      
+    typedef unspecified iterator;
+    typedef unspecified const_iterator;
+        
+    RegionList(MemoryMgr const& MyMemory);
+    
+    RegionList(RegionList&& Other);
+    
+    RegionList& operator=(RegionList&& Other);
+    
+    iterator begin();
+    
+    iterator end();
+    
+    const_iterator begin() const;
+     
+    const_iterator end() const;
+    
+    const_iterator cbegin() const;
+     
+    const_iterator cend() const;
+  };
+
+[h3 Description]
+
+The `Region` class provides functionality for working with memory regions.
+
+The `RegionList` class provides STL-compatible iterators for region 
+enumeration.
+
+[h3 Region public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `Region` methods when an error occurs.
+
+[h3 Region public construct/copy/destruct/move]
+
+[h4 Region address constructor]
+
+  Region(MemoryMgr const& MyMemory, PVOID Address);
+
+[variablelist
+
+[[Effects:] [Constructs a `Region` instance that refers to the specified 
+region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region memory information constructor]
+
+  Region(MemoryMgr const& MyMemory, MEMORY_BASIC_INFORMATION const& MyMbi);
+
+[variablelist
+
+[[Effects:] [Constructs a `Region` instance directly (without memory queries) 
+using the fields from the memory region structure.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region copy constructor]
+
+  Region(Region const& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Region` that refers to the same target as 
+`Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region copy assignment operator]
+
+  Region& operator=(Region const& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as the other instance.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region move constructor]
+
+  Region(Region&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `Region` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region move assignment operator]
+
+  Region& operator=(Region&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region destructor]
+
+  ~Region();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 Region public member functions]
+
+[h4 Region member function `GetBase`]
+
+  PVOID GetBase() const;
+
+[variablelist
+
+[[Returns:] [Base address of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetAllocBase`]
+
+  PVOID GetAllocBase() const;
+
+[variablelist
+
+[[Returns:] [Allocation base address of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetAllocProtect`]
+
+  DWORD GetAllocProtect() const;
+
+[variablelist
+
+[[Returns:] [Allocation protection of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetSize`]
+
+  SIZE_T GetSize() const;
+
+[variablelist
+
+[[Returns:] [Size of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetState`]
+
+  DWORD GetState() const;
+
+[variablelist
+
+[[Returns:] [State of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetProtect`]
+
+  DWORD GetProtect() const;
+
+[variablelist
+
+[[Returns:] [Protection of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `GetType`]
+
+  DWORD GetType() const;
+
+[variablelist
+
+[[Returns:] [Type of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `SetProtect`]
+
+  DWORD SetProtect(DWORD Protect) const;
+
+[variablelist
+
+[[Effects:] [Sets protection of region to `Protect`.]]
+
+[[Returns:] [Previous protection of region.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region member function `Dump`]
+
+  void Dump(std::wstring const& Path) const;
+
+[variablelist
+
+[[Effects:] [Dump contents of memory region to binary file specified by 
+`Path`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Region equality operator]
+
+  bool operator==(Region const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets the same region.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h4 Region inequality operator]
+
+  bool operator!=(Region const& Rhs) const;
+
+[variablelist
+
+[[Returns:] [Whether `Rhs` represets a different region.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 RegionList public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `RegionList` methods when an error occurs.
+
+  typedef unspecified iterator;
+  typedef unspecified const_iterator;
+  
+Iterator type for region list. Models the 
+[@http://www.sgi.com/tech/stl/ForwardIterator.html ForwardIterator] concept. 
+Implementation type unspecified.
+
+[h3 RegionList public construct/copy/destruct/move]
+
+[h4 RegionList constructor]
+
+  explicit RegionList(MemoryMgr const& MyMemory);
+
+[variablelist
+
+[[Effects:] [Constructs a `RegionList` instance targetting the process 
+specified by `MyMemory`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList move constructor]
+
+  RegionList(RegionList&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `RegionList` that refers to the same region list as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList move assignment operator]
+
+  RegionList& operator=(RegionList&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same region list as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList destructor]
+
+  ~RegionList();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 RegionList public member functions]
+
+[h4 RegionList member function `begin`]
+
+  iterator begin();
+  const_iterator begin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for start of region 
+list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList member function `end`]
+
+  iterator end();
+  const_iterator end() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible iterator or const_iterator for off-the-end of 
+region list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList member function `cbegin`]
+
+  const_iterator cbegin() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for start of region list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 RegionList member function `cend`]
+
+  const_iterator cend() const;
+
+[variablelist
+
+[[Returns:] [STL-compatible const_iterator for off-the-end of region list.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[endsect] [/ Region]
 
 [endsect] [/ Core]
 
