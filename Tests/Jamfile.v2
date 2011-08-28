@@ -21,6 +21,7 @@ project
 test-suite Memory
   :
     [ run Detail/ProcessTest.cpp ]
+    [ run FindPatternTest.cpp ]
     [ run MemoryMgrTest.cpp ]
     [ run ModuleTest.cpp ]
     [ run InjectorTest.cpp ]
