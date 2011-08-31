@@ -361,13 +361,13 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    return 
-      (MyMbi.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ || 
+    return (MyMbi.State != MEM_RESERVE) && 
+      ((MyMbi.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ || 
       (MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
       (MyMbi.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY || 
       (MyMbi.Protect & PAGE_READONLY) == PAGE_READONLY || 
       (MyMbi.Protect & PAGE_READWRITE) == PAGE_READWRITE || 
-      (MyMbi.Protect & PAGE_WRITECOPY) == PAGE_WRITECOPY;
+      (MyMbi.Protect & PAGE_WRITECOPY) == PAGE_WRITECOPY);
   }
 
   // Whether an address is currently writable
@@ -385,11 +385,11 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    return 
-      (MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
+    return (MyMbi.State != MEM_RESERVE) && 
+      ((MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
       (MyMbi.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY || 
       (MyMbi.Protect & PAGE_READWRITE) == PAGE_READWRITE || 
-      (MyMbi.Protect & PAGE_WRITECOPY) == PAGE_WRITECOPY;
+      (MyMbi.Protect & PAGE_WRITECOPY) == PAGE_WRITECOPY);
   }
 
   // Whether an address is currently executable
@@ -407,11 +407,11 @@ namespace HadesMem
         ErrorCodeWinLast(LastError));
     }
     
-    return 
-      (MyMbi.Protect & PAGE_EXECUTE) == PAGE_EXECUTE || 
+    return (MyMbi.State != MEM_RESERVE) && 
+      ((MyMbi.Protect & PAGE_EXECUTE) == PAGE_EXECUTE || 
       (MyMbi.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ || 
       (MyMbi.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE || 
-      (MyMbi.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY;
+      (MyMbi.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY);
   }
 
   // Whether an address is contained within a guard page

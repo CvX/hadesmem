@@ -26,6 +26,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+// FIXME: Full cleanup and refactor of this module
+
 namespace HadesMem
 {
   // Constructor
@@ -64,6 +66,7 @@ namespace HadesMem
   { }
 
   // Manually map DLL
+  // FIXME: Support LoadLibrary/FreeLibrary style refcounting.
   HMODULE ManualMap::InjectDll(std::wstring const& Path, 
       std::string const& Export, 
       InjectFlags Flags) const
@@ -216,6 +219,11 @@ namespace HadesMem
     std::wcout << Path << " - Entry Point: " << EntryPoint << "." 
       << std::endl;
     
+    // FIXME: Unload module if DllMain returns FALSE.
+    // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
+    // static).
+    // FIXME: Register an atexit handler to call DllMain again with 
+    // DLL_PROCESS_DETACH on process termination.
     if (EntryPoint)
     {
       std::vector<PVOID> EpArgs;
@@ -369,6 +377,10 @@ namespace HadesMem
   }
 
   // Fix imports
+  // FIXME: Support delay loaded imports
+  // FIXME: Build hash tables for quick lookup
+  // FIXME: Properly support API Set Schema DLLs
+  // http://short.raptorfactor.com/apisetschema
   void ManualMap::FixImports(PeFile& MyPeFile) const
   {
     NtHeaders const MyNtHeaders(MyPeFile);
@@ -624,7 +636,7 @@ namespace HadesMem
 
     // If path resolution is disabled, replicate the Windows DLL search order 
     // to try and find the target.
-    // FIXME: Not a complte implementation of the Windows DLL search order 
+    // FIXME: Not a complete implementation of the Windows DLL search order 
     // algorithm. The following conditions need to be supported:
     // 1. If a DLL with the same module name is already loaded in memory, the 
     // system checks only for redirection and a manifest before resolving to 
@@ -643,6 +655,8 @@ namespace HadesMem
     // system directory, nor does it search the current working directory (as 
     // that is only meaningful in the context of the remote process), lastly, 
     // it does not search in %PATH%.
+    // Note: Should we search in the client library directory rather than the 
+    // target process directory?
     if (!PathResolution)
     {
       boost::filesystem::path AppLoadDir = m_Memory.GetProcessPath();
