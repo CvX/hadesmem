@@ -271,7 +271,7 @@ version bump). New components will be added incrementally once stabilized.
 [section:building Building]
 
 HadesMem uses the [@http://www.boost.org/boost-build2/ Boost.Build] build 
-system. If you have not already, it is recommend you familiarize yourself 
+system. If you have not already, it is recommended you familiarize yourself 
 with this framework.
 
 Supported Compilers:
