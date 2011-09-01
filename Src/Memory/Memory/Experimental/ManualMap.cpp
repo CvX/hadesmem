@@ -32,31 +32,48 @@ namespace HadesMem
 {
   // Constructor
   ManualMap::ManualMap(MemoryMgr const& MyMemory) 
-    : m_Memory(MyMemory)
-  { }
+    : m_Memory(MyMemory), 
+    m_MappedMods(), 
+    m_ApiSchemaDefaults(), 
+    m_ApiSchemaExceptions()
+  {
+    InitializeApiSchema();
+  }
       
   // Copy constructor
   ManualMap::ManualMap(ManualMap const& Other)
-    : m_Memory(Other.m_Memory)
+    : m_Memory(Other.m_Memory), 
+    m_MappedMods(Other.m_MappedMods), 
+    m_ApiSchemaDefaults(Other.m_ApiSchemaDefaults), 
+    m_ApiSchemaExceptions(Other.m_ApiSchemaExceptions)
   { }
   
   // Copy assignment operator
   ManualMap& ManualMap::operator=(ManualMap const& Other)
-  {
+  {
     this->m_Memory = Other.m_Memory;
+    this->m_MappedMods = Other.m_MappedMods;
+    this->m_ApiSchemaDefaults = Other.m_ApiSchemaDefaults;
+    this->m_ApiSchemaExceptions = Other.m_ApiSchemaExceptions;
     
     return *this;
   }
   
   // Move constructor
   ManualMap::ManualMap(ManualMap&& Other)
-    : m_Memory(std::move(Other.m_Memory))
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_MappedMods(std::move(Other.m_MappedMods)), 
+    m_ApiSchemaDefaults(std::move(Other.m_ApiSchemaDefaults)), 
+    m_ApiSchemaExceptions(std::move(Other.m_ApiSchemaExceptions))
   { }
   
   // Move assignment operator
   ManualMap& ManualMap::operator=(ManualMap&& Other)
   {
     this->m_Memory = std::move(Other.m_Memory);
+    this->m_MappedMods = std::move(Other.m_MappedMods);
+    this->m_ApiSchemaDefaults = std::move(Other.m_ApiSchemaDefaults);
+    this->m_ApiSchemaExceptions = std::move(Other.m_ApiSchemaExceptions);
     
     return *this;
   }
@@ -69,7 +86,8 @@ namespace HadesMem
   // FIXME: Support LoadLibrary/FreeLibrary style refcounting.
   HMODULE ManualMap::InjectDll(std::wstring const& Path, 
       std::string const& Export, 
-      InjectFlags Flags) const
+      InjectFlags Flags, 
+      std::wstring const& Parent) const
   {
     std::wcout << Path << " - InjectDll called." << std::endl;
     
@@ -89,9 +107,76 @@ namespace HadesMem
     std::wcout << Path << " - Path resolution flag: " << PathResolution 
       << "." << std::endl;
     
-    boost::filesystem::path PathReal(ResolvePath(Path, PathResolution));
+    boost::filesystem::path PathTemp(ResolvePath(Path, PathResolution));
+    std::wstring const FileNameLower(boost::to_lower_copy(
+      PathTemp.filename().native()));
+    std::wcout << Path << " - Looking in API Schema list for: " << 
+      FileNameLower << std::endl;
+    boost::filesystem::path ParentPath(Parent);
+    std::wstring const ParentFileNameLower(boost::to_lower_copy(
+      ParentPath.filename().native()));
+    std::wcout << Path << " - Parent file name is: " << 
+      ParentFileNameLower << std::endl;
     
-    std::wcout << Path << " - Reading file." << std::endl;
+    // Check if module is in the API Schema list
+    boost::filesystem::path PathReal;
+    auto SchemaIter = m_ApiSchemaDefaults.find(FileNameLower);
+    if (SchemaIter != m_ApiSchemaDefaults.cend())
+    {
+      auto SchemaExceptIter = m_ApiSchemaExceptions.find(FileNameLower);
+      if (SchemaExceptIter != m_ApiSchemaExceptions.cend())
+      {
+        auto FoundIter = std::find_if(SchemaExceptIter->second.cbegin(), 
+          SchemaExceptIter->second.cend(), 
+          [&] (ApiSchemaExceptionPair const& Exception)
+          {
+            return boost::filesystem::equivalent(
+              ResolvePath(Exception.first, false), 
+              ParentPath);
+          });
+        if (FoundIter != SchemaExceptIter->second.cend())
+        {
+          std::cout << "Detected API schema exception." << std::endl;
+          PathReal = ResolvePath(FoundIter->second, false);
+        }
+      }
+      
+      if (PathReal.empty())
+      {
+        std::cout << "Detected API schema default." << std::endl;
+        PathReal = ResolvePath(SchemaIter->second, false);
+      }
+    }
+    
+    if (PathReal.empty())
+    {
+      PathReal = PathTemp;
+    }
+    
+    auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
+      PathReal.native()));
+    if (MappedModIter != m_MappedMods.end())
+    {
+      std::cout << "InjectDll called on previously mapped or redirected "
+        "module." << std::endl;
+      return MappedModIter->second;
+    }
+    
+    std::wcout << "Original Path: " << Path << std::endl;
+    std::wcout << "Real Path: " << PathReal << std::endl;
+      
+    // Handle NTDLL.dll as a special case.
+    // FIXME: Don't assume NTDLL at any location on disk is the 'real' NTDLL
+    std::wstring const ResolvedFileName = boost::to_lower_copy(
+      boost::filesystem::path(PathReal).filename().native());
+    if (ResolvedFileName == L"ntdll.dll")
+    {
+      std::wcout << "Detected NTDLL as special case." << std::endl;
+      Module NtdllMod(m_Memory, L"ntdll.dll");
+      return NtdllMod.GetHandle();
+    }
+    
+    std::wcout << PathReal << " - Reading file." << std::endl;
     
     boost::filesystem::basic_ifstream<char> ModuleFile(PathReal, 
       std::ios::binary | std::ios::ate);
@@ -136,18 +221,18 @@ namespace HadesMem
     
     MemoryMgr MyMemoryLocal(GetCurrentProcessId());
     
-    std::wcout << Path << " - Performing PE file format validation." 
+    std::wcout << PathReal << " - Performing PE file format validation." 
       << std::endl;
     PeFile MyPeFile(MyMemoryLocal, pBase, PeFile::FileType_Data);
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
     
-    std::wcout << Path << " - Allocating remote memory for image." 
+    std::wcout << PathReal << " - Allocating remote memory for image." 
       << std::endl;
     PVOID const RemoteBase = m_Memory.Alloc(MyNtHeaders.GetSizeOfImage());
-    std::wcout << Path << " - Image base address: " << RemoteBase << "." 
+    std::wcout << PathReal << " - Image base address: " << RemoteBase << "." 
       << std::endl;
-    std::wcout << Path << " - Image size: " << std::hex << 
+    std::wcout << PathReal << " - Image size: " << std::hex << 
       MyNtHeaders.GetSizeOfImage() << std::dec << "." << std::endl;
     
     m_MappedMods[boost::to_lower_copy(PathReal.native())] = 
@@ -161,12 +246,12 @@ namespace HadesMem
       std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
         [&] (PIMAGE_TLS_CALLBACK pCurrent)
       {
-        std::wcout << Path << " - TLS Callback: " << pCurrent << std::endl;
+        std::wcout << PathReal << " - TLS Callback: " << pCurrent << std::endl;
       });
     }
     
-    std::wcout << Path << " - Writing DOS header." << std::endl;
-    std::wcout << Path << " - DOS Header: " << RemoteBase << std::endl;
+    std::wcout << PathReal << " - Writing DOS header." << std::endl;
+    std::wcout << PathReal << " - DOS Header: " << RemoteBase << std::endl;
     m_Memory.Write(RemoteBase, *reinterpret_cast<PIMAGE_DOS_HEADER>(
       pBase));
     
@@ -177,8 +262,8 @@ namespace HadesMem
     std::vector<BYTE> const PeHeaderBuf(NtHeadersStart, NtHeadersEnd);
     PBYTE const TargetAddr = static_cast<PBYTE>(RemoteBase) + MyDosHeader.
       GetNewHeaderOffset();
-    std::wcout << Path << " - Writing NT header." << std::endl;
-    std::wcout << Path << " - NT Header: " << 
+    std::wcout << PathReal << " - Writing NT header." << std::endl;
+    std::wcout << PathReal << " - NT Header: " << 
       static_cast<PVOID>(TargetAddr) << std::endl;
     m_Memory.WriteList(TargetAddr, PeHeaderBuf);
     
@@ -189,12 +274,12 @@ namespace HadesMem
     // Import table must be processed in remote process due to cyclic 
     // depdendencies.
     PeFile RemotePeFile(m_Memory, RemoteBase);
-    FixImports(RemotePeFile);
+    FixImports(RemotePeFile, PathReal.native());
     
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
-      std::wcout << Path << " - TLS Callback: " << pCallback << "." 
+      std::wcout << PathReal << " - TLS Callback: " << pCallback << "." 
         << std::endl;
       std::vector<PVOID> TlsCallArgs;
       TlsCallArgs.push_back(0);
@@ -204,7 +289,7 @@ namespace HadesMem
         m_Memory.Call(reinterpret_cast<PBYTE>(RemoteBase) + 
         reinterpret_cast<DWORD_PTR>(pCallback), 
         MemoryMgr::CallConv_Default, TlsCallArgs);
-      std::wcout << Path << " - TLS Callback Returned: " << 
+      std::wcout << PathReal << " - TLS Callback Returned: " << 
         TlsRet.GetReturnValue() << "." << std::endl;
     });
     
@@ -216,7 +301,7 @@ namespace HadesMem
         MyNtHeaders.GetAddressOfEntryPoint();
     }
     
-    std::wcout << Path << " - Entry Point: " << EntryPoint << "." 
+    std::wcout << PathReal << " - Entry Point: " << EntryPoint << "." 
       << std::endl;
     
     // FIXME: Unload module if DllMain returns FALSE.
@@ -232,12 +317,12 @@ namespace HadesMem
       EpArgs.push_back(RemoteBase);
       MemoryMgr::RemoteFunctionRet const EpRet = m_Memory.Call(EntryPoint, 
         MemoryMgr::CallConv_Default, EpArgs);
-      std::wcout << Path << " - Entry Point Returned: " << 
+      std::wcout << PathReal << " - Entry Point Returned: " << 
         EpRet.GetReturnValue() << "." << std::endl;
     }
     
     Detail::EnsureFreeLibrary const LocalMod(LoadLibraryEx(
-      Path.c_str(), nullptr, DONT_RESOLVE_DLL_REFERENCES));
+      PathReal.c_str(), nullptr, DONT_RESOLVE_DLL_REFERENCES));
     if (!LocalMod)
     {
       DWORD const LastError = GetLastError();
@@ -270,7 +355,7 @@ namespace HadesMem
         RemoteFunc));
     }
     
-    std::wcout << Path << " - Export Address: " << ExportAddr << "." 
+    std::wcout << PathReal << " - Export Address: " << ExportAddr << "." 
       << std::endl;
     
     if (ExportAddr)
@@ -279,8 +364,8 @@ namespace HadesMem
       ExpArgs.push_back(RemoteBase);
       MemoryMgr::RemoteFunctionRet const ExpRet = m_Memory.Call(ExportAddr, 
         MemoryMgr::CallConv_Default, ExpArgs);
-      std::wcout << Path << " - Export Returned: " << ExpRet.GetReturnValue() 
-        << "." << std::endl;
+      std::wcout << PathReal << " - Export Returned: " << 
+        ExpRet.GetReturnValue() << "." << std::endl;
     }
     
     return reinterpret_cast<HMODULE>(RemoteBase);
@@ -379,9 +464,8 @@ namespace HadesMem
   // Fix imports
   // FIXME: Support delay loaded imports
   // FIXME: Build hash tables for quick lookup
-  // FIXME: Properly support API Set Schema DLLs
-  // http://short.raptorfactor.com/apisetschema
-  void ManualMap::FixImports(PeFile& MyPeFile) const
+  void ManualMap::FixImports(PeFile& MyPeFile, 
+    std::wstring const& ParentPath) const
   {
     NtHeaders const MyNtHeaders(MyPeFile);
 
@@ -405,13 +489,19 @@ namespace HadesMem
           ModuleNameW));
         std::cout << "Module Name: " << ModuleName << "." << std::endl;
         
+        std::wstring ModulePathReal;
+        
         HMODULE CurModBase = nullptr;
         
+        if (ModulePathReal.empty())
+        {
+//          std::cout << "No API schema redirection." << std::endl;
+          ModulePathReal = ResolvePath(ModuleNameLowerW, false);
+        }
+        
         // FIXME: Support both path resolution cases
-        std::wstring const ResolvedModulePath = ResolvePath(ModuleNameLowerW, 
-          false);
         auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
-          ResolvedModulePath));
+          ModulePathReal));
         if (MappedModIter != m_MappedMods.end())
         {
           std::cout << "Found existing mapped instance of dependent DLL." << 
@@ -426,25 +516,30 @@ namespace HadesMem
           // to initialize everything twice and causes conflicts.
           // For now, just use the copy that resides in the remote target. It's 
           // guaranteed to be there anyway...
-          if (ModuleNameLowerW == L"ntdll.dll")
+          // FIXME: Don't assume NTDLL at any location on disk is the 'real' NTDLL
+          std::wstring const ResolvedFileName = boost::to_lower_copy(
+            boost::filesystem::path(ModulePathReal).filename().native());
+          if (ResolvedFileName == L"ntdll.dll")
           {
+            std::wcout << "Detected NTDLL as special case." << std::endl;
             Module NtdllMod(m_Memory, L"ntdll.dll");
             CurModBase = NtdllMod.GetHandle();
           }
           else
           {
-            std::cout << "Manually mapping dependent DLL. " << ModuleName << "." << std::endl;
+            std::wcout << "Manually mapping dependent DLL. " << ModulePathReal << "." << std::endl;
             try
             {
-              std::cout << "Attempting without path resolution." << std::endl;
-              CurModBase = InjectDll(ModuleNameW);
+              std::wcout << "Attempting without path resolution." << std::endl;
+              CurModBase = InjectDll(ModulePathReal, "", InjectFlag_None, ParentPath);
             }
             catch (std::exception const& e)
             {
-              std::cout << "Failed to map dependent DLL. " << ModuleName << "." << std::endl;
+              std::wcout << "Failed to map dependent DLL. " << ModulePathReal << "." << std::endl;
               std::cout << boost::diagnostic_information(e) << std::endl;
-              std::cout << "Attempting with path resolution." << std::endl;
-              CurModBase = InjectDll(ModuleNameW, "", InjectFlag_PathResolution);
+              // FIXME: Using absolute paths. Path resolution code will always fail.
+              std::wcout << "Attempting with path resolution." << std::endl;
+              CurModBase = InjectDll(ModulePathReal, "", InjectFlag_PathResolution);
             }
           }
         }
@@ -523,7 +618,7 @@ namespace HadesMem
             TargetExport = FindExport(DepPeFile, T.GetName());
           }
           
-          FARPROC FuncAddr = ResolveExport(*TargetExport);
+          FARPROC FuncAddr = ResolveExport(*TargetExport, ParentPath);
           
           if (!FuncAddr)
           {
@@ -657,7 +752,7 @@ namespace HadesMem
     // it does not search in %PATH%.
     // Note: Should we search in the client library directory rather than the 
     // target process directory?
-    if (!PathResolution)
+    if (!PathResolution && PathReal.is_relative())
     {
       boost::filesystem::path AppLoadDir = m_Memory.GetProcessPath();
       AppLoadDir = AppLoadDir.parent_path();
@@ -739,12 +834,14 @@ namespace HadesMem
   }
   
   // Resolve export
-  FARPROC ManualMap::ResolveExport(Export const& E) const
+  FARPROC ManualMap::ResolveExport(Export const& E, 
+    std::wstring const& ParentPath) const
   {
     if (E.Forwarded())
     {
       std::cout << "Forwarded export detected. Forwarder: " << 
         E.GetForwarder() << "." << std::endl;
+      std::wcout << "Parent: " << ParentPath << "." << std::endl;
       
       std::string ForwarderModuleLower = boost::to_lower_copy(
         E.GetForwarderModule());
@@ -757,11 +854,48 @@ namespace HadesMem
       
       bool IsNtdll = ForwarderModuleLower == "ntdll.dll";
       
-      // FIXME: Support both path resolution cases
-      std::wstring const ResolvedModulePath = ResolvePath(
-        boost::lexical_cast<std::wstring>(ForwarderModuleLower), false);
+      std::wstring const ForwarderModuleLowerW(boost::lexical_cast<std::wstring>(
+        ForwarderModuleLower));
+      
+      // Check if module is in the API Schema list
+      boost::filesystem::path PathReal;
+      auto SchemaIter = m_ApiSchemaDefaults.find(ForwarderModuleLowerW);
+      if (SchemaIter != m_ApiSchemaDefaults.cend())
+      {
+        auto SchemaExceptIter = m_ApiSchemaExceptions.find(ForwarderModuleLowerW);
+        if (SchemaExceptIter != m_ApiSchemaExceptions.cend())
+        {
+          auto FoundIter = std::find_if(SchemaExceptIter->second.cbegin(), 
+            SchemaExceptIter->second.cend(), 
+            [&] (ApiSchemaExceptionPair const& Exception)
+            {
+              return boost::filesystem::equivalent(
+                ResolvePath(Exception.first, false), 
+                ParentPath);
+            });
+          if (FoundIter != SchemaExceptIter->second.cend())
+          {
+            std::cout << "Detected API schema exception." << std::endl;
+            PathReal = ResolvePath(FoundIter->second, false);
+          }
+        }
+        
+        if (PathReal.empty())
+        {
+          std::cout << "Detected API schema default." << std::endl;
+          PathReal = ResolvePath(SchemaIter->second, false);
+        }
+      }
+      
+      if (PathReal.empty())
+      {
+        // FIXME: Support both path resolution cases
+        PathReal = ResolvePath(boost::lexical_cast<std::wstring>(
+          ForwarderModuleLower), false);
+      }
+      
       auto const ForwardedModIter = m_MappedMods.find(boost::to_lower_copy(
-        ResolvedModulePath));
+        PathReal.native()));
       
       if (ForwardedModIter == m_MappedMods.end() && !IsNtdll)
       {
@@ -802,12 +936,14 @@ namespace HadesMem
       if (ForwardedByOrdinal)
       {
         std::cout << "Resolving forwarded export by ordinal." << std::endl;
-        return ResolveExport(Export(NewTargetPe, ForwarderOrdinal));
+        return ResolveExport(Export(NewTargetPe, ForwarderOrdinal), 
+          PathReal.native());
       }
       else
       {
         std::cout << "Resolving forwarded export by name." << std::endl;
-        return ResolveExport(FindExport(NewTargetPe, ForwarderFunction));
+        return ResolveExport(FindExport(NewTargetPe, ForwarderFunction), 
+          PathReal.native());
       }
     }
     else
@@ -832,6 +968,73 @@ namespace HadesMem
     }
     
     return Target;
+  }
+  
+  namespace
+  {
+    std::wstring GetName(wchar_t* str, WORD size)
+    {
+      return std::wstring(str, str + size / 2);
+    }
+  }
+    
+  // Initialize API set schema defaults
+  void ManualMap::InitializeApiSchema() const
+  {
+    // FIXME: Do version detection. This should only be done on Windows 7 
+    // (and above?).
+    
+    std::wcout << "Initializing API Schema." << std::endl;
+    
+#if defined(_M_AMD64) 
+  	DWORD_PTR headerBase = *reinterpret_cast<DWORD_PTR *>(
+  	  __readgsqword(0x60) + 0x68);
+#elif defined(_M_IX86) 
+  	DWORD_PTR headerBase = *reinterpret_cast<DWORD_PTR *>(
+  	  __readfsdword(0x30) + 0x38);
+#else 
+#error "[HadesMem] Unsupported architecture."
+#endif
+  	ApiSetMapHeader *header = reinterpret_cast<ApiSetMapHeader *>(headerBase);
+  
+  	ApiSetModuleEntry *entries = reinterpret_cast<ApiSetModuleEntry *>(
+  	  &header[1]);
+  	for (DWORD i = 0; i < header->NumModules; ++i)
+  	{
+  		ApiSetModuleEntry *entry = &entries[i];
+  		std::wstring name = GetName(reinterpret_cast<wchar_t *>(
+  		  headerBase + entry->OffsetToName), entry->NameSize);
+  		
+  		std::wstring dllName = L"API-" + name + L".dll";
+  		boost::to_lower(dllName);
+  		std::wcout << dllName << ":\n";
+  
+  		auto hostsHeader = reinterpret_cast<ApiSetModuleHostsHeader*>(
+  		  headerBase + entry->OffsetOfHosts);
+  		auto hosts = reinterpret_cast<ApiSetModuleHost *>(&hostsHeader[1]);
+  		for (DWORD j = 0; j < hostsHeader->NumHosts; ++j)
+  		{
+  			ApiSetModuleHost *host = &hosts[j];
+  			std::wstring hostName = GetName(reinterpret_cast<wchar_t *>(
+  			  headerBase + host->OffsetOfHostName), host->HostNameSize);
+  			boost::to_lower(hostName);
+  
+  			if (j == 0)
+  			{
+				  std::wcout << "\tDefault: " << hostName << "\n";
+  			  m_ApiSchemaDefaults[dllName] = hostName;
+  			}
+  			else
+  			{
+  				std::wstring importerName = GetName(reinterpret_cast<wchar_t *>(
+  				  headerBase + host->OffsetOfImportingName), host->ImportingNameSize);
+  			  boost::to_lower(importerName);
+  				std::wcout << "\t" << importerName << " -> " << hostName << "\n";
+  				m_ApiSchemaExceptions[dllName].push_back(
+  				  std::make_pair(importerName, hostName));
+  			}
+  		}
+  	}
   }
   
   // Equality operator

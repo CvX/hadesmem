@@ -15,6 +15,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include <utility>
 
 #include <Windows.h>
@@ -57,7 +58,8 @@ namespace HadesMem
     // Manually map DLL
     HMODULE InjectDll(std::wstring const& Path, 
       std::string const& Export = "", 
-      InjectFlags Flags = InjectFlag_None) const;
+      InjectFlags Flags = InjectFlag_None, 
+      std::wstring const& Parent = L"") const;
     
     // Equality operator
     bool operator==(ManualMap const& Rhs) const;
@@ -70,7 +72,7 @@ namespace HadesMem
     void MapSections(PeFile& MyPeFile, PVOID RemoteAddr) const;
 
     // Fix imports
-    void FixImports(PeFile& MyPeFile) const;
+    void FixImports(PeFile& MyPeFile, std::wstring const& ParentPath) const;
 
     // Fix relocations
     void FixRelocations(PeFile& MyPeFile, PVOID RemoteAddr) const;
@@ -80,15 +82,54 @@ namespace HadesMem
       bool PathResolution) const;
       
     // Resolve export
-    FARPROC ResolveExport(Export const& E) const;
+    FARPROC ResolveExport(Export const& E, 
+      std::wstring const& ParentPath) const;
     
     // Find export by name
     Export FindExport(PeFile const& MyPeFile, std::string const& Name) const;
+    
+    // API Schema types (undocumented)
+    struct ApiSetMapHeader
+    {
+      DWORD Version;
+      DWORD NumModules;
+    };
+    struct ApiSetModuleEntry
+    {
+      DWORD OffsetToName;
+      WORD NameSize;
+      DWORD OffsetOfHosts;
+    };
+    struct ApiSetModuleHostsHeader
+    {
+      DWORD NumHosts;
+    };
+    struct ApiSetModuleHost
+    {
+      DWORD OffsetOfImportingName;
+      WORD ImportingNameSize;
+      DWORD OffsetOfHostName;
+      WORD HostNameSize;
+    };
+    
+    // API Schema list types
+    typedef std::map<std::wstring, std::wstring> ApiSchemaDefaultMap;
+    typedef std::pair<std::wstring, std::wstring> ApiSchemaExceptionPair;
+    typedef std::vector<ApiSchemaExceptionPair> ApiSchemaExceptionList;
+    typedef std::map<std::wstring, ApiSchemaExceptionList> 
+      ApiSchemaExceptionMap;
+    
+    // Initialize API set schema
+    void InitializeApiSchema() const;
 
     // MemoryMgr instance
     MemoryMgr m_Memory;
     
     // Manually mapped modules
     mutable std::map<std::wstring, HMODULE> m_MappedMods;
+    
+    // API set schema tables
+    mutable ApiSchemaDefaultMap m_ApiSchemaDefaults;
+    mutable ApiSchemaExceptionMap m_ApiSchemaExceptions;
   };
 }
