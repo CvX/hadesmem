@@ -489,15 +489,9 @@ namespace HadesMem
           ModuleNameW));
         std::cout << "Module Name: " << ModuleName << "." << std::endl;
         
-        std::wstring ModulePathReal;
+        std::wstring ModulePathReal(ResolvePath(ModuleNameLowerW, false));
         
         HMODULE CurModBase = nullptr;
-        
-        if (ModulePathReal.empty())
-        {
-//          std::cout << "No API schema redirection." << std::endl;
-          ModulePathReal = ResolvePath(ModuleNameLowerW, false);
-        }
         
         // FIXME: Support both path resolution cases
         auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
@@ -527,6 +521,8 @@ namespace HadesMem
           }
           else
           {
+            // FIXME: Use existing module instances where possible
+            
             std::wcout << "Manually mapping dependent DLL. " << ModulePathReal << "." << std::endl;
             try
             {
