@@ -148,7 +148,23 @@ DEALINGS IN THE SOFTWARE.
 
 [*Bug Fixes]
 
+* Fixed bug in MemoryMgr::CanRead, MemoryMgr::CanWrite, and 
+MemoryMgr::CanExecute that was causing failures in Region unit tests. Attempts 
+to read/write/execute memory marked as MEM_RESERVE (and not MEM_COMMIT) will 
+fail, so check it explicitly.
+* Support API Set Schema redirection in `ManualMap`. Fixes various failures 
+under Windows 7.
+* Various minor bug fixes to `ManualMap`.
+
 [*Changes]
+
+* `ManualMap` now uses existing instances of DLLs loaded in the target where 
+possible, rather than giving private copies of every module. Done because of 
+stability issues when mapping certain system DLLs which can't be properly 
+initialized more than once per process.
+* Allow HadesMem to be built targetting Windows 2000 SP4. Please note that 
+this platform is still not officially supported, I'm just making it an 
+'unofficial' option.
 
 [h3 v1.4.0]
 

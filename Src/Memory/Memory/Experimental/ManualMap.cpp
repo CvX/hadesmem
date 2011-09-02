@@ -276,6 +276,7 @@ namespace HadesMem
     PeFile RemotePeFile(m_Memory, RemoteBase);
     FixImports(RemotePeFile, PathReal.native());
     
+    // FIXME: Should TLS callbacks be called before or after the entry point?
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
@@ -304,7 +305,7 @@ namespace HadesMem
     std::wcout << PathReal << " - Entry Point: " << EntryPoint << "." 
       << std::endl;
     
-    // FIXME: Unload module if DllMain returns FALSE.
+    // FIXME: Throw an exception if the entry point returns failure.
     // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
     // static).
     // FIXME: Register an atexit handler to call DllMain again with 
@@ -462,8 +463,11 @@ namespace HadesMem
   }
 
   // Fix imports
-  // FIXME: Support delay loaded imports
-  // FIXME: Build hash tables for quick lookup
+  // FIXME: Support delay loaded imports.
+  // FIXME: Build hash tables for quick lookup.
+  // FIXME: Parse EAT of each module and load all modules referenced by 
+  // forwarders.
+  // FIXME: Support bound imports.
   void ManualMap::FixImports(PeFile& MyPeFile, 
     std::wstring const& ParentPath) const
   {
@@ -489,55 +493,41 @@ namespace HadesMem
           ModuleNameW));
         std::cout << "Module Name: " << ModuleName << "." << std::endl;
         
+        // FIXME: Implement proper path resolution logic as per the Windows 
+        // PE loader
         std::wstring ModulePathReal(ResolvePath(ModuleNameLowerW, false));
+        std::wcout << "Module Path: " << ModulePathReal << "." << std::endl;
         
         HMODULE CurModBase = nullptr;
         
-        // FIXME: Support both path resolution cases
-        auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
-          ModulePathReal));
-        if (MappedModIter != m_MappedMods.end())
+        try
         {
-          std::cout << "Found existing mapped instance of dependent DLL." << 
-            std::endl;
-          CurModBase = MappedModIter->second;
+          // FIXME: Bump load count of dependent module to ensure it's not 
+          // unloaded prematurely
+          
+          Module RemoteMod(m_Memory, ModulePathReal);
+          std::wcout << "Found existing instance of dependent DLL." 
+            << std::endl;
+          CurModBase = RemoteMod.GetHandle();
         }
-        else
+        catch (std::exception const&)
         {
-          // Handle NTDLL.dll as a special case. It doesn't not work if you 
-          // don't call LdrInitializeThunk to bootstrap it, but if you do that 
-          // on a manually mapped copy it causes the process to fail as it tries 
-          // to initialize everything twice and causes conflicts.
-          // For now, just use the copy that resides in the remote target. It's 
-          // guaranteed to be there anyway...
-          // FIXME: Don't assume NTDLL at any location on disk is the 'real' NTDLL
-          std::wstring const ResolvedFileName = boost::to_lower_copy(
-            boost::filesystem::path(ModulePathReal).filename().native());
-          if (ResolvedFileName == L"ntdll.dll")
+          auto const MappedModIter = m_MappedMods.find(boost::to_lower_copy(
+            ModulePathReal));
+          if (MappedModIter != m_MappedMods.end())
           {
-            std::wcout << "Detected NTDLL as special case." << std::endl;
-            Module NtdllMod(m_Memory, L"ntdll.dll");
-            CurModBase = NtdllMod.GetHandle();
+            std::cout << "Found existing manually mapped instance of dependent "
+              "DLL." << std::endl;
+            CurModBase = MappedModIter->second;
           }
           else
           {
-            // FIXME: Use existing module instances where possible
-            
-            std::wcout << "Manually mapping dependent DLL. " << ModulePathReal << "." << std::endl;
-            try
-            {
-              std::wcout << "Attempting without path resolution." << std::endl;
-              CurModBase = InjectDll(ModulePathReal, "", InjectFlag_None, ParentPath);
-            }
-            catch (std::exception const& e)
-            {
-              std::wcout << "Failed to map dependent DLL. " << ModulePathReal << "." << std::endl;
-              std::cout << boost::diagnostic_information(e) << std::endl;
-              // FIXME: Using absolute paths. Path resolution code will always fail.
-              std::wcout << "Attempting with path resolution." << std::endl;
-              CurModBase = InjectDll(ModulePathReal, "", InjectFlag_PathResolution);
-            }
-          }
+            std::wcout << "Manually mapping dependent DLL. " << ModulePathReal 
+              << "." << std::endl;
+            std::wcout << "Attempting without path resolution." << std::endl;
+            CurModBase = InjectDll(ModulePathReal, "", InjectFlag_None, 
+              ParentPath);
+          }          
         }
         
         PeFile DepPeFile(m_Memory, CurModBase);
