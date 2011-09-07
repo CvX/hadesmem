@@ -161,7 +161,8 @@ int wmain(int argc, wchar_t* argv[])
     HadesMem::ManualMap const MyManualMapper(MyMemory);
     
     // Manually map DLL
-    PVOID ModRemote = MyManualMapper.InjectDll(ModulePath.native(), Export);
+    PVOID const ModRemote = MyManualMapper.InjectDll(ModulePath.native(), L"", 
+      Export);
     
     std::wcout << "Module successfully mapped. Base = " << ModRemote << 
       ".\n";
