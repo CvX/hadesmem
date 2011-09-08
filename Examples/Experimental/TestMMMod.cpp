@@ -13,6 +13,7 @@
 // Boost
 #ifdef HADES_MSVC
 #include <boost/thread.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/exception/all.hpp>
 #endif
 
@@ -88,6 +89,23 @@ extern "C" __declspec(dllexport) DWORD __stdcall Test(HMODULE /*Module*/)
   boost::thread_specific_ptr<std::wstring> TlsTest;
   TlsTest.reset(new std::wstring(L"Testing TLS."));
   MessageBox(nullptr, TlsTest->c_str(), L"MMHelper", MB_OK);
+  
+  // Another TLS test
+  double d = 3.14;
+  d = fabs(d);
+  char buf[20];
+  ZeroMemory(&buf[0], sizeof(buf));
+  sprintf_s(buf, sizeof(buf), "%f", d);
+  MessageBoxA(nullptr, buf, "MMHelper", MB_OK);
+  
+  // One more TLS test
+  // FIXME: Check which OS versions this syntax is supported on and wrap in 
+  // version detection code if needed.
+  // FIXME: Add multi-threading test.
+  __declspec(thread) static int i = 0;
+  i = 50;
+  MessageBoxW(nullptr, boost::lexical_cast<std::wstring>(i).c_str(), 
+    L"MMHelper", MB_OK);
 
   // Test relocs
   typedef void (* tTestRelocs)();

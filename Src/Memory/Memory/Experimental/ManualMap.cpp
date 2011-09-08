@@ -185,6 +185,8 @@ namespace HadesMem
     // TLS support, like allocating TLS slots etc.
     // FIXME: TLS callbacks should be called from the same thread the EP is 
     // called from.
+    // FIXME: Add callback in remote process to ensure TLS callbacks are 
+    // called on all new threads etc.
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
@@ -211,7 +213,6 @@ namespace HadesMem
     
     std::wcout << "Entry Point: " << EntryPoint << ".\n";
     
-    // FIXME: Throw an exception if the entry point returns failure.
     // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
     // static).
     // FIXME: Register an atexit handler to call DllMain again with 
@@ -797,6 +798,10 @@ namespace HadesMem
   // FIXME: Parse EAT of each module and load all modules referenced by 
   // forwarders.
   // FIXME: Support bound imports.
+  // FIXME: Do redirection on APIs that would otherwise fail (e.g. 
+  // GetModuleHandle, GetModuleFileName, etc), including redirecting indirect 
+  // calls through GetProcAddress. Allow manually mapped modules to see other 
+  // manually mapped modules.
   void ManualMap::FixImports(PeFile const& MyPeFile, 
     std::wstring const& ParentPath) const
   {
