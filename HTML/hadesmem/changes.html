@@ -20,7 +20,7 @@
 <a name="hadesmem.changes"></a><a class="link" href="changes.html" title="Changes">Changes</a>
 </h2></div></div></div>
 <a name="hadesmem.changes.v1_5_0"></a><h4>
-<a name="hadesmem.changes.h0"></a>
+<a name="hadesmem.changes.v1_5_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_5_0">v1.5.0</a>
     </h4>
 <p>
@@ -32,11 +32,40 @@
 <p>
       <span class="bold"><strong>Bug Fixes</strong></span>
     </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          Fixed bug in MemoryMgr::CanRead, MemoryMgr::CanWrite, and MemoryMgr::CanExecute
+          that was causing failures in Region unit tests. Attempts to read/write/execute
+          memory marked as MEM_RESERVE (and not MEM_COMMIT) will fail, so check it
+          explicitly.
+        </li>
+<li class="listitem">
+          Support API Set Schema redirection in <code class="computeroutput"><span class="identifier">ManualMap</span></code>.
+          Fixes various failures under Windows 7.
+        </li>
+<li class="listitem">
+          Various minor bug fixes to <code class="computeroutput"><span class="identifier">ManualMap</span></code>.
+        </li>
+</ul></div>
 <p>
       <span class="bold"><strong>Changes</strong></span>
     </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now uses existing
+          instances of DLLs loaded in the target where possible, rather than giving
+          private copies of every module. Done because of stability issues when mapping
+          certain system DLLs which can't be properly initialized more than once
+          per process.
+        </li>
+<li class="listitem">
+          Allow HadesMem to be built targetting Windows 2000 SP4. Please note that
+          this platform is still not officially supported, I'm just making it an
+          'unofficial' option.
+        </li>
+</ul></div>
 <a name="hadesmem.changes.v1_4_0"></a><h4>
-<a name="hadesmem.changes.h1"></a>
+<a name="hadesmem.changes.v1_4_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_4_0">v1.4.0</a>
     </h4>
 <p>
@@ -98,7 +127,7 @@
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_3_0"></a><h4>
-<a name="hadesmem.changes.h2"></a>
+<a name="hadesmem.changes.v1_3_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_3_0">v1.3.0</a>
     </h4>
 <p>
@@ -186,7 +215,7 @@
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_2_0"></a><h4>
-<a name="hadesmem.changes.h3"></a>
+<a name="hadesmem.changes.v1_2_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_2_0">v1.2.0</a>
     </h4>
 <p>
@@ -221,7 +250,7 @@
       <span class="bold"><strong>Changes</strong></span>
     </p>
 <a name="hadesmem.changes.v1_1_0"></a><h4>
-<a name="hadesmem.changes.h4"></a>
+<a name="hadesmem.changes.v1_1_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_1_0">v1.1.0</a>
     </h4>
 <p>
@@ -277,7 +306,7 @@
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_0_0"></a><h4>
-<a name="hadesmem.changes.h5"></a>
+<a name="hadesmem.changes.v1_0_0-heading"></a>
       <a class="link" href="changes.html#hadesmem.changes.v1_0_0">v1.0.0</a>
     </h4>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
