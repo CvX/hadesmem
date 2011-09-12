@@ -220,10 +220,8 @@ namespace HadesMem
   {
     // FIXME: Investigate whether anything else needs to be done for 'proper' 
     // TLS support, like allocating TLS slots etc.
-    // FIXME: Add callback in remote process to ensure TLS callbacks are 
+    // FIXME: Register callback in remote process to ensure TLS callbacks are 
     // called on all new threads etc.
-    // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
-    // static).
     // FIXME: Register an atexit handler to call DllMain/TLS again with 
     // DLL_PROCESS_DETACH on process termination.
     
