@@ -35,13 +35,21 @@
 // MinGW compatibility workaround
 #if defined(HADES_GCC)
 #if defined(_M_AMD64) 
-extern unsigned __int64 __readgsqword(unsigned long offset);
+extern "C" unsigned __int64 __readgsqword(unsigned long offset);
 #elif defined(_M_IX86) 
-extern unsigned long __readfsdword(unsigned long offset);
+extern "C" unsigned long __readfsdword(unsigned long offset);
 #else 
 #error "[HadesMem] Unsupported architecture."
 #endif
 #endif
+
+// WARNING: Here be dragons...
+// This component is highly experimental, and relies on information gleaned 
+// from reverse engineering and other 'unofficial' sources. As such, the code 
+// is quite compilcated and 'volatile' (future OS versions may break 
+// invariants unexpectedly - such as the API Schema Redirection added in 
+// Windows 7 as part of the 'MinWin' rewrite). If you don't know what you're 
+// doing, it's probably best not to touch this file.
 
 namespace HadesMem
 {
@@ -140,9 +148,17 @@ namespace HadesMem
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
     
+    // Try to map module at preferred base address before forcing relocation
     DWORD const ImageSize = MyNtHeaders.GetSizeOfImage();
-    // FIXME: Try to allocate module at preferred base address
-    PVOID const RemoteBase = m_Memory.Alloc(ImageSize);
+    PVOID const PreferredBase = reinterpret_cast<PVOID>(
+      MyNtHeaders.GetImageBase());
+    PVOID RemoteBase = VirtualAllocEx(m_Memory.GetProcessHandle(), 
+      PreferredBase, ImageSize, MEM_COMMIT | MEM_RESERVE, 
+      PAGE_EXECUTE_READWRITE);
+    if (!RemoteBase)
+    {
+      RemoteBase = m_Memory.Alloc(ImageSize);
+    }
     
     std::wcout << "Remote Base: " << RemoteBase << ".\n";
     std::wcout << "Remove Size: " << ImageSize << ".\n";
@@ -160,7 +176,10 @@ namespace HadesMem
     
     MapHeaders(MyPeFile, RemoteBase);
     
-    FixRelocations(MyPeFile, RemoteBase);
+    if (RemoteBase != PreferredBase)
+    {
+      FixRelocations(MyPeFile, RemoteBase);
+    }
     
     MapSections(MyPeFile, RemoteBase);
 
