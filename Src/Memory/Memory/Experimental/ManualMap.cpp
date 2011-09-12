@@ -30,6 +30,24 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+#ifdef HADES_MSVC
+#pragma warning(push, 1)
+#endif
+#ifdef HADES_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-pedantic"
+#pragma GCC diagnostic ignored "-Wattributes"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+#include <AsmJit/AsmJit.h>
+#ifdef HADES_MSVC
+#pragma warning(pop)
+#endif
+#ifdef HADES_GCC
+#pragma GCC diagnostic pop
+#endif
+
 #include <Shlobj.h>
 
 // MinGW compatibility workaround
@@ -202,23 +220,17 @@ namespace HadesMem
   {
     // FIXME: Investigate whether anything else needs to be done for 'proper' 
     // TLS support, like allocating TLS slots etc.
-    // FIXME: TLS callbacks should be called from the same thread the EP is 
-    // called from.
     // FIXME: Add callback in remote process to ensure TLS callbacks are 
     // called on all new threads etc.
+    // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
+    // static).
+    // FIXME: Register an atexit handler to call DllMain/TLS again with 
+    // DLL_PROCESS_DETACH on process termination.
+    
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
       std::wcout << "TLS Callback: " << pCallback << ".\n";
-      std::vector<PVOID> TlsCallArgs;
-      TlsCallArgs.push_back(0);
-      TlsCallArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
-      TlsCallArgs.push_back(RemoteBase);
-      MemoryMgr::RemoteFunctionRet const TlsRet = m_Memory.Call(
-        static_cast<PBYTE>(RemoteBase) + reinterpret_cast<DWORD_PTR>(
-        pCallback), MemoryMgr::CallConv_Default, TlsCallArgs);
-      std::wcout << "TLS Callback Returned: " << TlsRet.GetReturnValue() 
-        << ".\n";
     });
     
     PVOID EntryPoint = nullptr;
@@ -232,24 +244,142 @@ namespace HadesMem
     
     std::wcout << "Entry Point: " << EntryPoint << ".\n";
     
-    // FIXME: Investigate whether lpReserved should be 0 or 1 (i.e. dynamic or 
-    // static).
-    // FIXME: Register an atexit handler to call DllMain again with 
-    // DLL_PROCESS_DETACH on process termination.
+    AsmJit::Assembler MyJitFunc;
+
+    AllocAndFree const ReturnValueRemote(m_Memory, sizeof(DWORD_PTR));
+
+#if defined(_M_AMD64) 
+    // Prologue
+    MyJitFunc.push(AsmJit::rbp);
+    MyJitFunc.mov(AsmJit::rbp, AsmJit::rsp);
+    
+    // Set up parameters
+    MyJitFunc.mov(AsmJit::rcx, reinterpret_cast<DWORD_PTR>(RemoteBase));
+    MyJitFunc.mov(AsmJit::rdx, AsmJit::Imm(DLL_PROCESS_ATTACH));
+    MyJitFunc.mov(AsmJit::r8, AsmJit::Imm(0));
+
+    // Allocate ghost space
+    MyJitFunc.sub(AsmJit::rsp, AsmJit::Imm(0x20));
+
+    // Call all TLS callbacks
+    std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
+      [&] (PIMAGE_TLS_CALLBACK pCallback) 
+    {
+      DWORD_PTR CallbackReal = reinterpret_cast<DWORD_PTR>(RemoteBase) + 
+        reinterpret_cast<DWORD_PTR>(pCallback);
+      MyJitFunc.mov(AsmJit::rax, CallbackReal);
+      MyJitFunc.call(AsmJit::rax);
+      // FIXME: Store return values somewhere
+    });
+    
+    // Call entry point if available
     if (EntryPoint)
     {
-      std::vector<PVOID> EpArgs;
-      EpArgs.push_back(0);
-      EpArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
-      EpArgs.push_back(RemoteBase);
-      MemoryMgr::RemoteFunctionRet const EpRet = m_Memory.Call(EntryPoint, 
-        MemoryMgr::CallConv_Default, EpArgs);
-      std::wcout << "Entry Point Returned: " << EpRet.GetReturnValue() 
-        << ".\n";
-      if (!EpRet.GetReturnValue())
+      // Call entry point
+      MyJitFunc.mov(AsmJit::rax, reinterpret_cast<DWORD_PTR>(EntryPoint));
+      MyJitFunc.call(AsmJit::rax);
+
+      // Write return value to memory
+      MyJitFunc.mov(AsmJit::rcx, reinterpret_cast<DWORD_PTR>(
+        ReturnValueRemote.GetBase()));
+      MyJitFunc.mov(AsmJit::qword_ptr(AsmJit::rcx), AsmJit::rax);
+    }
+    
+    // Cleanup ghost space
+    MyJitFunc.add(AsmJit::rsp, AsmJit::Imm(0x20));
+    
+    // Epilogue
+    MyJitFunc.mov(AsmJit::rsp, AsmJit::rbp);
+    MyJitFunc.pop(AsmJit::rbp);
+
+    // Return
+    MyJitFunc.ret();
+#elif defined(_M_IX86) 
+    // Prologue
+    MyJitFunc.push(AsmJit::ebp);
+    MyJitFunc.mov(AsmJit::ebp, AsmJit::esp);
+
+    // Call all TLS callbacks
+    std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
+      [&] (PIMAGE_TLS_CALLBACK pCallback) 
+    {
+      DWORD_PTR CallbackReal = reinterpret_cast<DWORD_PTR>(RemoteBase) + 
+        reinterpret_cast<DWORD_PTR>(pCallback);
+      MyJitFunc.push(AsmJit::Imm(0));
+      MyJitFunc.push(AsmJit::Imm(DLL_PROCESS_ATTACH));
+      MyJitFunc.mov(AsmJit::eax, reinterpret_cast<DWORD_PTR>(RemoteBase));
+      MyJitFunc.push(AsmJit::eax);
+      MyJitFunc.mov(AsmJit::eax, CallbackReal);
+      MyJitFunc.call(AsmJit::eax);
+      // FIXME: Store return values somewhere
+    });
+    
+    // Call entry point if available
+    if (EntryPoint)
+    {
+      // Call entry point
+      MyJitFunc.mov(AsmJit::eax, reinterpret_cast<DWORD_PTR>(EntryPoint));
+      MyJitFunc.call(AsmJit::eax);
+      
+      // Write return value to memory
+      MyJitFunc.mov(AsmJit::ecx, reinterpret_cast<DWORD_PTR>(
+        ReturnValueRemote.GetBase()));
+      MyJitFunc.mov(AsmJit::dword_ptr(AsmJit::ecx), AsmJit::eax);
+    }
+    
+    // Epilogue
+    MyJitFunc.mov(AsmJit::esp, AsmJit::ebp);
+    MyJitFunc.pop(AsmJit::ebp);
+
+    // Return
+    MyJitFunc.ret(AsmJit::Imm(0x4));
+#else 
+#error "[HadesMem] Unsupported architecture."
+#endif
+    
+    DWORD_PTR const StubSize = MyJitFunc.getCodeSize();
+    
+    AllocAndFree const StubMemRemote(m_Memory, StubSize);
+    PBYTE const pRemoteStub = static_cast<PBYTE>(StubMemRemote.GetBase());
+    DWORD_PTR const pRemoteStubTemp = reinterpret_cast<DWORD_PTR>(
+      pRemoteStub);
+    
+    std::vector<BYTE> CodeReal(StubSize);
+    MyJitFunc.relocCode(CodeReal.data(), reinterpret_cast<DWORD_PTR>(
+      pRemoteStub));
+    
+    m_Memory.WriteList(pRemoteStub, CodeReal);
+    
+    Detail::EnsureCloseHandle const MyThread(CreateRemoteThread(m_Memory.
+      GetProcessHandle(), nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(
+      pRemoteStubTemp), nullptr, 0, nullptr));
+    if (!MyThread)
+    {
+      DWORD const LastError = GetLastError();
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::CallInitRoutines") << 
+        ErrorString("Could not create remote thread.") << 
+        ErrorCodeWinLast(LastError));
+    }
+    
+    if (WaitForSingleObject(MyThread, INFINITE) != WAIT_OBJECT_0)
+    {
+      DWORD const LastError = GetLastError();
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::CallInitRoutines") << 
+        ErrorString("Could not wait for remote thread.") << 
+        ErrorCodeWinLast(LastError));
+    }
+    
+    if (EntryPoint)
+    {
+      DWORD_PTR const RetVal = m_Memory.Read<DWORD_PTR>(
+        ReturnValueRemote.GetBase());
+      std::wcout << "Entry Point Returned: " << RetVal << ".\n";
+      if (!RetVal)
       {
         BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::InjectDll") << 
+          ErrorFunction("ManualMap::CallInitRoutines") << 
           ErrorString("Entry point returned FALSE."));
       }
     }

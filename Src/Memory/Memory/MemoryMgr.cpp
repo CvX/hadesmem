@@ -5,7 +5,6 @@
 // This file is part of HadesMem.
 // <http://www.raptorfactor.com/> <raptorfactor@raptorfactor.com>
 
-// Hades
 #include <HadesMemory/Region.hpp>
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/MemoryMgr.hpp>
@@ -13,11 +12,9 @@
 #include <HadesMemory/Detail/ArgQuote.hpp>
 #include <HadesMemory/Detail/EnsureCleanup.hpp>
 
-// Boost
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-// AsmJit
 #ifdef HADES_MSVC
 #pragma warning(push, 1)
 #endif
@@ -36,7 +33,6 @@
 #pragma GCC diagnostic pop
 #endif
 
-// Windows API
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Shellapi.h>
