@@ -62,7 +62,7 @@ namespace HadesMem
   {
     InitializeApiSchema();
   }
-      
+  
   // Copy constructor
   ManualMap::ManualMap(ManualMap const& Other)
     : m_Memory(Other.m_Memory), 
