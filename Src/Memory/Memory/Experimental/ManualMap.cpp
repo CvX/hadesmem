@@ -7,6 +7,7 @@
 
 #include <HadesMemory/Experimental/ManualMap.hpp>
 #include <HadesMemory/Module.hpp>
+#include <HadesMemory/Injector.hpp>
 #include <HadesMemory/Detail/I18n.hpp>
 #include <HadesMemory/PeLib/TlsDir.hpp>
 #include <HadesMemory/Detail/Config.hpp>
@@ -68,6 +69,8 @@ extern "C" unsigned long __readfsdword(unsigned long offset);
 // invariants unexpectedly - such as the API Schema Redirection added in 
 // Windows 7 as part of the 'MinWin' rewrite). If you don't know what you're 
 // doing, it's probably best not to touch this file.
+
+// FIXME: Support SEH under DEP enabled targets (SafeSEH).
 
 namespace HadesMem
 {
@@ -218,12 +221,11 @@ namespace HadesMem
     std::vector<PIMAGE_TLS_CALLBACK> const& TlsCallbacks, 
     PVOID RemoteBase) const
   {
-    // FIXME: Investigate whether anything else needs to be done for 'proper' 
-    // TLS support, like allocating TLS slots etc.
-    // FIXME: Register callback in remote process to ensure TLS callbacks are 
-    // called on all new threads etc.
-    // FIXME: Register an atexit handler to call DllMain/TLS again with 
-    // DLL_PROCESS_DETACH on process termination.
+    // FIXME: Support implicit TLS, i.e. __declspec(thread).
+    // FIXME: Register callback in remote process to ensure TLS is properly 
+    // supported on all new threads etc.
+    // FIXME: Register callback in remote process to call DllMain/TLS again 
+    // with DLL_PROCESS_DETACH on process termination.
     
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
@@ -722,22 +724,15 @@ namespace HadesMem
   {
     std::wcout << "Mapping PE headers.\n";
     
-    m_Memory.Write(RemoteBase, *reinterpret_cast<PIMAGE_DOS_HEADER>(
-      MyPeFile.GetBase()));
-    
-    // FIXME: Should other data such as the MS-DOS stub etc which lies in 
-    // the header range but is not in the header structure be written?
-    
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
-    PBYTE const pNtBeg = reinterpret_cast<PBYTE>(MyNtHeaders.GetBase());
-    // FIXME: Ensure that getting the end of the NT headers this way is 
-    // correct.
-    PBYTE const pNtEnd = static_cast<PBYTE>(Section(MyPeFile, 0).GetBase());
-    std::vector<BYTE> const NtBuf(pNtBeg, pNtEnd);
-    PBYTE const NtRemote = static_cast<PBYTE>(RemoteBase) + MyDosHeader.
-      GetNewHeaderOffset();
-    m_Memory.WriteList(NtRemote, NtBuf);
+    
+    DWORD const SizeOfHeaders = MyNtHeaders.GetSizeOfHeaders();
+    PBYTE const pHeadersBeg = static_cast<PBYTE>(MyPeFile.GetBase());
+    PBYTE const pHeadersEnd = pHeadersBeg + SizeOfHeaders;
+    std::vector<BYTE> PeHeaders(pHeadersBeg, pHeadersEnd);
+    
+    m_Memory.WriteList(RemoteBase, PeHeaders);
   }
     
   // Get local PE file memory
@@ -979,12 +974,20 @@ namespace HadesMem
         
         try
         {
-          // FIXME: Bump load count of dependent module to ensure it's not 
-          // unloaded prematurely
-          
           Module RemoteMod(m_Memory, ModulePath);
           
           std::wcout << "Found existing instance of dependent DLL.\n";
+          
+          Injector MyInjector(m_Memory);
+          HMODULE RemoteModTemp = MyInjector.InjectDll(RemoteMod.GetPath());
+          if (RemoteMod.GetHandle() != RemoteModTemp)
+          {
+            BOOST_THROW_EXCEPTION(ManualMap::Error() << 
+              ErrorFunction("ManualMap::FixImports") << 
+              ErrorString("Mismatched base address during load count bump."));
+          }
+          
+          std::wcout << "Bumped load count of dependent DLL.\n";
           
           CurModBase = RemoteMod.GetHandle();
         }
@@ -1105,21 +1108,26 @@ namespace HadesMem
       std::wcout << "Parent: " << ParentPath << ".\n";
       
       std::wstring ModuleName = boost::to_lower_copy(
-        boost::lexical_cast<std::wstring>(E.GetForwarderModule()));
-      // FIXME: This is a nasty hack. Perform GetModuleHandle style path 
-      // checking.
+        boost::lexical_cast<std::wstring>(
+        E.GetForwarderModule()));
       if (ModuleName.find(L'.') == std::string::npos)
       {
         ModuleName += L".dll";
       }
+      else if (*(ModuleName.end() - 1) == '.')
+      {
+        ModuleName += L"dll";
+      }
       
-      bool IsNtdll = (ModuleName == L"ntdll.dll");
+      std::wcout << "Forwarder Module (Fixed): " << ModuleName << ".\n";
       
       boost::filesystem::path const ModulePath(ResolvePath(
         ModuleName, ParentPath));
       
+      std::wcout << "Forwarder Module (Resolved): " << ModulePath << ".\n";
+      
       HMODULE NewTarget = nullptr;
-      if (IsNtdll)
+      if (ModuleName == L"ntdll.dll")
       {
         Module NtdllMod(m_Memory, L"ntdll.dll");
         NewTarget = NtdllMod.GetHandle();
@@ -1179,7 +1187,7 @@ namespace HadesMem
     std::string const& Name) const
   {
     std::wcout << "FindExport: " << Name.c_str() << ".\n";
-      
+    
     Export Target(MyPeFile, Name);
     
     if (Target.GetName() != Name)
