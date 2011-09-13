@@ -156,14 +156,15 @@ namespace HadesMem
     HMODULE PrevInstance = LookupCache(FullPath.native());
     if (PrevInstance)
     {
-      std::wcout << "InjectDll called on previously mapped module.\n";
+      std::wcout << FullPath << " - InjectDll called on previously mapped "
+        "module.\n";
       return PrevInstance;
     }
     
     AllocAndFree const FileLocal(OpenFile(FullPath.native()));
     char* const pBase = static_cast<char*>(FileLocal.GetBase());
     
-    std::wcout << "Validating PE file.\n";
+    std::wcout << FullPath << " - Validating PE file.\n";
     
     MemoryMgr const MyMemoryLocal(GetCurrentProcessId());
     PeFile const MyPeFile(MyMemoryLocal, pBase, PeFile::FileType_Data);
@@ -182,8 +183,10 @@ namespace HadesMem
       RemoteBase = m_Memory.Alloc(ImageSize);
     }
     
-    std::wcout << "Remote Base: " << RemoteBase << ".\n";
-    std::wcout << "Remove Size: " << ImageSize << ".\n";
+    std::wcout << FullPath << " - Remote Base: " << RemoteBase << ".\n";
+    std::wcout << FullPath << " - Remove Size: " << ImageSize << ".\n";
+    
+    std::wcout << FullPath << " - Adding module to cache.\n";
     
     AddToCache(FullPath.native(), reinterpret_cast<HMODULE>(RemoteBase));
     
@@ -191,26 +194,38 @@ namespace HadesMem
     TlsDir const MyTlsDir(MyPeFile);
     if (MyTlsDir.IsValid())
     {
-      std::wcout << "Image has TLS directory.\n";
-      std::wcout << "Caching TLS callbacks before modifications.\n";
+      std::wcout << FullPath << " - Image has TLS directory.\n";
+      std::wcout << FullPath << " - Caching TLS callbacks before "
+        "modifications.\n";
       TlsCallbacks = MyTlsDir.GetCallbacks();
     }
+    
+    std::wcout << FullPath << " - Mapping headers.\n";
     
     MapHeaders(MyPeFile, RemoteBase);
     
     if (RemoteBase != PreferredBase)
     {
+      std::wcout << FullPath << " - Relocating module.\n";
+      
       FixRelocations(MyPeFile, RemoteBase);
     }
+    
+    std::wcout << FullPath << " - Mapping sections.\n";
     
     MapSections(MyPeFile, RemoteBase);
 
     // Import table must be processed in remote process due to cyclic 
     // depdendencies.
     PeFile RemotePeFile(m_Memory, RemoteBase);
+    std::wcout << FullPath << " - Fixing imports.\n";
     FixImports(RemotePeFile, FullPath.native());
     
+    std::wcout << FullPath << " - Calling initialization routines.\n";
+    
     CallInitRoutines(MyPeFile, TlsCallbacks, RemoteBase);
+    
+    std::wcout << FullPath << " - Calling export.\n";
     
     CallExport(FullPath.native(), Export, RemoteBase);
     
@@ -227,13 +242,23 @@ namespace HadesMem
     // supported on all new threads etc.
     // FIXME: Register callback in remote process to call DllMain/TLS again 
     // with DLL_PROCESS_DETACH on process termination.
+    // FIXME: TLS callbacks should be called from the same thread as the EP.
     
     std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
       std::wcout << "TLS Callback: " << pCallback << ".\n";
+      std::vector<PVOID> TlsCallArgs;
+      TlsCallArgs.push_back(0);
+      TlsCallArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
+      TlsCallArgs.push_back(RemoteBase);
+      MemoryMgr::RemoteFunctionRet const TlsRet = m_Memory.Call(
+        static_cast<PBYTE>(RemoteBase) + reinterpret_cast<DWORD_PTR>(
+        pCallback), MemoryMgr::CallConv_Default, TlsCallArgs);
+      std::wcout << "TLS Callback Returned: " << TlsRet.GetReturnValue() 
+        << ".\n";
     });
-    
+        
     PVOID EntryPoint = nullptr;
     NtHeaders const MyNtHeaders(MyPeFile);
     DWORD AddressOfEP = MyNtHeaders.GetAddressOfEntryPoint();
@@ -245,142 +270,20 @@ namespace HadesMem
     
     std::wcout << "Entry Point: " << EntryPoint << ".\n";
     
-    AsmJit::Assembler MyJitFunc;
-
-    AllocAndFree const ReturnValueRemote(m_Memory, sizeof(DWORD_PTR));
-
-#if defined(_M_AMD64) 
-    // Prologue
-    MyJitFunc.push(AsmJit::rbp);
-    MyJitFunc.mov(AsmJit::rbp, AsmJit::rsp);
-    
-    // Set up parameters
-    MyJitFunc.mov(AsmJit::rcx, reinterpret_cast<DWORD_PTR>(RemoteBase));
-    MyJitFunc.mov(AsmJit::rdx, AsmJit::Imm(DLL_PROCESS_ATTACH));
-    MyJitFunc.mov(AsmJit::r8, AsmJit::Imm(0));
-
-    // Allocate ghost space
-    MyJitFunc.sub(AsmJit::rsp, AsmJit::Imm(0x20));
-
-    // Call all TLS callbacks
-    std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
-      [&] (PIMAGE_TLS_CALLBACK pCallback) 
-    {
-      DWORD_PTR CallbackReal = reinterpret_cast<DWORD_PTR>(RemoteBase) + 
-        reinterpret_cast<DWORD_PTR>(pCallback);
-      MyJitFunc.mov(AsmJit::rax, CallbackReal);
-      MyJitFunc.call(AsmJit::rax);
-      // FIXME: Store return values somewhere
-    });
-    
-    // Call entry point if available
     if (EntryPoint)
     {
-      // Call entry point
-      MyJitFunc.mov(AsmJit::rax, reinterpret_cast<DWORD_PTR>(EntryPoint));
-      MyJitFunc.call(AsmJit::rax);
-
-      // Write return value to memory
-      MyJitFunc.mov(AsmJit::rcx, reinterpret_cast<DWORD_PTR>(
-        ReturnValueRemote.GetBase()));
-      MyJitFunc.mov(AsmJit::qword_ptr(AsmJit::rcx), AsmJit::rax);
-    }
-    
-    // Cleanup ghost space
-    MyJitFunc.add(AsmJit::rsp, AsmJit::Imm(0x20));
-    
-    // Epilogue
-    MyJitFunc.mov(AsmJit::rsp, AsmJit::rbp);
-    MyJitFunc.pop(AsmJit::rbp);
-
-    // Return
-    MyJitFunc.ret();
-#elif defined(_M_IX86) 
-    // Prologue
-    MyJitFunc.push(AsmJit::ebp);
-    MyJitFunc.mov(AsmJit::ebp, AsmJit::esp);
-
-    // Call all TLS callbacks
-    std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
-      [&] (PIMAGE_TLS_CALLBACK pCallback) 
-    {
-      DWORD_PTR CallbackReal = reinterpret_cast<DWORD_PTR>(RemoteBase) + 
-        reinterpret_cast<DWORD_PTR>(pCallback);
-      MyJitFunc.push(AsmJit::Imm(0));
-      MyJitFunc.push(AsmJit::Imm(DLL_PROCESS_ATTACH));
-      MyJitFunc.mov(AsmJit::eax, reinterpret_cast<DWORD_PTR>(RemoteBase));
-      MyJitFunc.push(AsmJit::eax);
-      MyJitFunc.mov(AsmJit::eax, CallbackReal);
-      MyJitFunc.call(AsmJit::eax);
-      // FIXME: Store return values somewhere
-    });
-    
-    // Call entry point if available
-    if (EntryPoint)
-    {
-      // Call entry point
-      MyJitFunc.mov(AsmJit::eax, reinterpret_cast<DWORD_PTR>(EntryPoint));
-      MyJitFunc.call(AsmJit::eax);
-      
-      // Write return value to memory
-      MyJitFunc.mov(AsmJit::ecx, reinterpret_cast<DWORD_PTR>(
-        ReturnValueRemote.GetBase()));
-      MyJitFunc.mov(AsmJit::dword_ptr(AsmJit::ecx), AsmJit::eax);
-    }
-    
-    // Epilogue
-    MyJitFunc.mov(AsmJit::esp, AsmJit::ebp);
-    MyJitFunc.pop(AsmJit::ebp);
-
-    // Return
-    MyJitFunc.ret(AsmJit::Imm(0x4));
-#else 
-#error "[HadesMem] Unsupported architecture."
-#endif
-    
-    DWORD_PTR const StubSize = MyJitFunc.getCodeSize();
-    
-    AllocAndFree const StubMemRemote(m_Memory, StubSize);
-    PBYTE const pRemoteStub = static_cast<PBYTE>(StubMemRemote.GetBase());
-    DWORD_PTR const pRemoteStubTemp = reinterpret_cast<DWORD_PTR>(
-      pRemoteStub);
-    
-    std::vector<BYTE> CodeReal(StubSize);
-    MyJitFunc.relocCode(CodeReal.data(), reinterpret_cast<DWORD_PTR>(
-      pRemoteStub));
-    
-    m_Memory.WriteList(pRemoteStub, CodeReal);
-    
-    Detail::EnsureCloseHandle const MyThread(CreateRemoteThread(m_Memory.
-      GetProcessHandle(), nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(
-      pRemoteStubTemp), nullptr, 0, nullptr));
-    if (!MyThread)
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("ManualMap::CallInitRoutines") << 
-        ErrorString("Could not create remote thread.") << 
-        ErrorCodeWinLast(LastError));
-    }
-    
-    if (WaitForSingleObject(MyThread, INFINITE) != WAIT_OBJECT_0)
-    {
-      DWORD const LastError = GetLastError();
-      BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("ManualMap::CallInitRoutines") << 
-        ErrorString("Could not wait for remote thread.") << 
-        ErrorCodeWinLast(LastError));
-    }
-    
-    if (EntryPoint)
-    {
-      DWORD_PTR const RetVal = m_Memory.Read<DWORD_PTR>(
-        ReturnValueRemote.GetBase());
-      std::wcout << "Entry Point Returned: " << RetVal << ".\n";
-      if (!RetVal)
+      std::vector<PVOID> EpArgs;
+      EpArgs.push_back(0);
+      EpArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
+      EpArgs.push_back(RemoteBase);
+      MemoryMgr::RemoteFunctionRet const EpRet = m_Memory.Call(EntryPoint, 
+        MemoryMgr::CallConv_Default, EpArgs);
+      std::wcout << "Entry Point Returned: " << EpRet.GetReturnValue() 
+        << ".\n";
+      if (!EpRet.GetReturnValue())
       {
         BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::CallInitRoutines") << 
+          ErrorFunction("ManualMap::InjectDll") << 
           ErrorString("Entry point returned FALSE."));
       }
     }
@@ -723,8 +626,6 @@ namespace HadesMem
   // Map PE headers
   void ManualMap::MapHeaders(PeFile const& MyPeFile, PVOID RemoteBase) const
   {
-    std::wcout << "Mapping PE headers.\n";
-    
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
     
@@ -777,8 +678,6 @@ namespace HadesMem
   void ManualMap::FixRelocations(PeFile const& MyPeFile, 
     PVOID RemoteBase) const
   {
-    std::wcout << "Fixing relocations.\n";
-    
     NtHeaders const MyNtHeaders(MyPeFile);
     
     DWORD const RelocDirSize = MyNtHeaders.GetDataDirectorySize(
@@ -845,8 +744,6 @@ namespace HadesMem
   // Map sections
   void ManualMap::MapSections(PeFile const& MyPeFile, PVOID RemoteBase) const
   {
-    std::wcout << "Mapping sections.\n";
-    
     SectionList Sections(MyPeFile);
     std::for_each(Sections.cbegin(), Sections.cend(), 
       [&] (Section const& S)
@@ -1099,8 +996,6 @@ namespace HadesMem
   void ManualMap::FixImports(PeFile const& MyPeFile, 
     std::wstring const& ParentPath) const
   {
-    std::wcout << "Fixing imports.\n";
-    
     ImportDir const ImpDir(MyPeFile);
     if (!ImpDir.IsValid())
     {
@@ -1124,6 +1019,8 @@ namespace HadesMem
     {
       std::wcout << "Forwarded export detected.\n";
       std::wcout << "Forwarder: " << E.GetForwarder().c_str() << ".\n";
+      std::wcout << "Forwarder (Manual): " << E.GetForwarderModule().c_str() 
+        << "." << E.GetForwarderFunction().c_str() << ".\n";
       std::wcout << "Parent: " << ParentPath << ".\n";
       
       std::wstring ModuleName = boost::to_lower_copy(
@@ -1168,12 +1065,14 @@ namespace HadesMem
       if (E.IsForwardedByOrdinal())
       {
         std::wcout << "Resolving forwarded export by ordinal.\n";
+        std::wcout << "Ordinal: " << E.GetForwarderOrdinal() << ".\n";
         return ResolveExport(Export(NewTargetPe, E.GetForwarderOrdinal()), 
           ModulePath.native());
       }
       else
       {
         std::wcout << "Resolving forwarded export by name.\n";
+        std::wcout << "Name: " << E.GetForwarderFunction().c_str() << ".\n";
         return ResolveExport(FindExport(NewTargetPe, 
           E.GetForwarderFunction()), ModulePath.native());
       }

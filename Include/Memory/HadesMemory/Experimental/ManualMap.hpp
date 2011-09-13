@@ -89,7 +89,7 @@ namespace HadesMem
     void FixImportDir(PeFile const& MyPeFile, ImportDir const& I, 
       std::wstring const& ParentPath) const;
     
-  // Resolve an import thunk
+    // Resolve an import thunk
     FARPROC ResolveImportThunk(ImportThunk const& T, 
       PeFile const& DepPeFile, std::wstring const& ParentPath) const;
     

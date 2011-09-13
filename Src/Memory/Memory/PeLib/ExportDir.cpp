@@ -428,19 +428,6 @@ namespace HadesMem
           ErrorFunction("Export::Export") << 
           ErrorString("Invalid forwarder string format."));
       }
-      
-      if (m_ForwarderSplit.second[0] == '#')
-      {
-        try
-        {
-          m_ForwarderOrdinal = boost::lexical_cast<WORD>(
-            m_ForwarderSplit.second.substr(1));
-          
-          m_ForwardedByOrdinal = true;
-        }
-        catch (std::exception const& /*e*/)
-        { }
-      }
     }
     else
     {
@@ -460,9 +447,7 @@ namespace HadesMem
     m_ForwarderSplit(), 
     m_Ordinal(0), 
     m_ByName(false), 
-    m_Forwarded(false), 
-    m_ForwardedByOrdinal(false), 
-    m_ForwarderOrdinal(0)
+    m_Forwarded(false)
   {
     ExportDir const MyExportDir(m_PeFile);
     
@@ -577,23 +562,6 @@ namespace HadesMem
         BOOST_THROW_EXCEPTION(ExportDir::Error() << 
           ErrorFunction("Export::Export") << 
           ErrorString("Invalid forwarder string format."));
-      }
-      
-      if (m_ForwarderSplit.second[0] == '#')
-      {
-        m_ForwardedByOrdinal = true;
-        
-        try
-        {
-          m_ForwarderOrdinal = boost::lexical_cast<WORD>(
-            m_ForwarderSplit.second.substr(1));
-        }
-        catch (std::exception const& /*e*/)
-        {
-          BOOST_THROW_EXCEPTION(ExportDir::Error() << 
-            ErrorFunction("Export::Export") << 
-            ErrorString("Invalid forwarder ordinal detected."));
-        }
       }
     }
     else
@@ -746,13 +714,34 @@ namespace HadesMem
   // If entry is forwarded by ordinal
   bool Export::IsForwardedByOrdinal() const
   {
-    return m_ForwardedByOrdinal;
+    return (GetForwarderFunction()[0] == '#');
   }
   
   // Get forwarder function ordinal
   WORD Export::GetForwarderOrdinal() const
   {
-    return m_ForwarderOrdinal;
+    if (IsForwardedByOrdinal())
+    {
+      WORD ForwarderOrdinal = 0;
+      
+      try
+      {
+        std::string const ForwarderFunction(GetForwarderFunction());
+        ForwarderOrdinal = boost::lexical_cast<WORD>(ForwarderFunction.substr(1));
+      }
+      catch (std::exception const& /*e*/)
+      {
+        BOOST_THROW_EXCEPTION(ExportDir::Error() << 
+          ErrorFunction("Export::GetForwarderOrdinal") << 
+          ErrorString("Invalid forwarder ordinal detected."));
+      }
+      
+      return ForwarderOrdinal;
+    }
+    
+    BOOST_THROW_EXCEPTION(ExportDir::Error() << 
+      ErrorFunction("Export::GetForwarderOrdinal") << 
+      ErrorString("Function is not exported by ordinal."));
   }
   
   // Equality operator
