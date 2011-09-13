@@ -28,6 +28,7 @@
 
 #include <boost/range.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -933,6 +934,157 @@ namespace HadesMem
         }
       });
   }
+  
+  // Resolve an import thunk
+  FARPROC ManualMap::ResolveImportThunk(ImportThunk const& T, 
+    PeFile const& DepPeFile, std::wstring const& ParentPath) const
+  {
+    boost::optional<Export> TargetExport;
+    
+    if (T.ByOrdinal())
+    {
+      std::wcout << "Function Ordinal: " << T.GetOrdinal() << ".\n";
+      
+      TargetExport = Export(DepPeFile, T.GetOrdinal());
+    }
+    // Attempt lookup by hint
+    else
+    {
+      std::wcout << "Function Name: " << T.GetName().c_str() << ".\n";
+      
+      ExportDir DepExportDir(DepPeFile);
+      DWORD const ImpHint = T.GetHint();
+      DWORD const NumberOfNames = DepExportDir.GetNumberOfNames();
+      if (DepExportDir.IsValid() && ImpHint && ImpHint < NumberOfNames)
+      {
+        try
+        {
+          DWORD* pNames = static_cast<DWORD*>(DepPeFile.RvaToVa(
+            DepExportDir.GetAddressOfNames()));              
+          DWORD const HintNameRva = m_Memory.Read<DWORD>(pNames + ImpHint);
+          std::string const HintName = m_Memory.ReadString<std::string>(
+            DepPeFile.RvaToVa(HintNameRva));
+          
+          if (HintName == T.GetName())
+          {
+            WORD* pOrdinals = static_cast<WORD*>(DepPeFile.RvaToVa(
+              DepExportDir.GetAddressOfNameOrdinals()));
+            
+            WORD const HintOrdinal = m_Memory.Read<WORD>(pOrdinals + 
+              ImpHint);
+            
+            Export TempExport(DepPeFile, HintOrdinal + 
+              DepExportDir.GetOrdinalBase());
+            
+            if (TempExport.GetName() != HintName)
+            {
+              std::wcout << "Error! Hint name mismatch.\n";
+              throw std::exception();
+            }
+            
+            TargetExport = TempExport;
+          }
+          else
+          {
+            std::wcout << "Hint invalid.\n";
+          }
+        }
+        catch (std::exception const& /*e*/)
+        { }
+      }
+    }
+
+    // If lookup by ordinal or hint failed do a manual lookup
+    if (!TargetExport)
+    {
+      TargetExport = FindExport(DepPeFile, T.GetName());
+    }
+    
+    FARPROC FuncAddr = ResolveExport(*TargetExport, ParentPath);
+    
+    if (!FuncAddr)
+    {
+      BOOST_THROW_EXCEPTION(ManualMap::Error() << 
+        ErrorFunction("ManualMap::FixImports") << 
+        ErrorString("Could not find current import."));
+    }
+    
+    return FuncAddr;
+  }
+  
+  // Fix all entries in import dir
+  void ManualMap::FixImportDir(PeFile const& MyPeFile, ImportDir const& I, 
+    std::wstring const& ParentPath) const
+  {
+    std::wstring const ModuleName(boost::to_lower_copy(
+      boost::lexical_cast<std::wstring>(I.GetName())));
+    
+    std::wcout << "Module Name: " << ModuleName << "." << std::endl;
+    
+    std::wstring const ModulePath(boost::to_lower_copy(
+      ResolvePath(ModuleName, ParentPath)));
+    
+    std::wcout << "Module Path: " << ModulePath << ".\n";
+    
+    HMODULE CurModBase = GetImportModule(ModulePath, ParentPath);
+    
+    PeFile DepPeFile(m_Memory, CurModBase);
+    
+    ImportThunkList ImportOrigThunks(MyPeFile, I.GetCharacteristics());
+    ImportThunkList ImportFirstThunks(MyPeFile, I.GetFirstThunk());
+    for (auto j = ImportOrigThunks.cbegin(); j != ImportOrigThunks.cend(); ++j)
+    {
+      ImportThunk const& T = *j;
+      
+      FARPROC FuncAddr = ResolveImportThunk(T, DepPeFile, ParentPath);
+      
+      auto ImpThunkFT = ImportFirstThunks.begin();
+      std::advance(ImpThunkFT, std::distance(ImportOrigThunks.cbegin(), j));
+      ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
+    }
+  }
+  
+  // Resolve imported module to handle
+  HMODULE ManualMap::GetImportModule(std::wstring const& ModulePath, 
+    std::wstring const& ParentPath) const
+  {
+    try
+    {
+      Module RemoteMod(m_Memory, ModulePath);
+      
+      std::wcout << "Found existing instance of dependent DLL.\n";
+      
+      Injector MyInjector(m_Memory);
+      HMODULE RemoteModTemp = MyInjector.InjectDll(RemoteMod.GetPath());
+      if (RemoteMod.GetHandle() != RemoteModTemp)
+      {
+        BOOST_THROW_EXCEPTION(ManualMap::Error() << 
+          ErrorFunction("ManualMap::FixImports") << 
+          ErrorString("Mismatched base address during load count bump."));
+      }
+      
+      std::wcout << "Bumped load count of dependent DLL.\n";
+      
+      return RemoteMod.GetHandle();
+    }
+    catch (std::exception const&)
+    {
+      HMODULE CacheBase = LookupCache(ModulePath);
+      if (CacheBase)
+      {
+        std::wcout << "Found existing manually mapped instance of "
+          "dependent DLL.\n";
+        
+        return CacheBase;
+      }
+      else
+      {
+        std::wcout << "Manually mapping dependent DLL.\n";
+        
+        return InjectDll(ModulePath, ParentPath);
+      }
+    }
+  }
 
   // Fix imports
   // FIXME: Support delay loaded imports.
@@ -960,140 +1112,7 @@ namespace HadesMem
     std::for_each(ImportDirs.begin(), ImportDirs.end(), 
       [&] (ImportDir const& I)
       {
-        std::wstring const ModuleName(boost::to_lower_copy(
-          boost::lexical_cast<std::wstring>(I.GetName())));
-        
-        std::wcout << "Module Name: " << ModuleName << "." << std::endl;
-        
-        std::wstring const ModulePath(boost::to_lower_copy(
-          ResolvePath(ModuleName, ParentPath)));
-        
-        std::wcout << "Module Path: " << ModulePath << ".\n";
-        
-        HMODULE CurModBase = nullptr;
-        
-        try
-        {
-          Module RemoteMod(m_Memory, ModulePath);
-          
-          std::wcout << "Found existing instance of dependent DLL.\n";
-          
-          Injector MyInjector(m_Memory);
-          HMODULE RemoteModTemp = MyInjector.InjectDll(RemoteMod.GetPath());
-          if (RemoteMod.GetHandle() != RemoteModTemp)
-          {
-            BOOST_THROW_EXCEPTION(ManualMap::Error() << 
-              ErrorFunction("ManualMap::FixImports") << 
-              ErrorString("Mismatched base address during load count bump."));
-          }
-          
-          std::wcout << "Bumped load count of dependent DLL.\n";
-          
-          CurModBase = RemoteMod.GetHandle();
-        }
-        catch (std::exception const&)
-        {
-          HMODULE CacheBase = LookupCache(ModulePath);
-          if (CacheBase)
-          {
-            std::wcout << "Found existing manually mapped instance of "
-              "dependent DLL.\n";
-            
-            CurModBase = CacheBase;
-          }
-          else
-          {
-            std::wcout << "Manually mapping dependent DLL.\n";
-            
-            CurModBase = InjectDll(ModulePath, ParentPath);
-          }          
-        }
-        
-        PeFile DepPeFile(m_Memory, CurModBase);
-        
-        // Lift export list out of loop to allow for caching
-        ExportList Exports(DepPeFile);
-        
-        ImportThunkList ImportOrigThunks(MyPeFile, I.GetCharacteristics());
-        ImportThunkList ImportFirstThunks(MyPeFile, I.GetFirstThunk());
-        for (auto j = ImportOrigThunks.cbegin(); j != ImportOrigThunks.cend(); ++j)
-        {
-          ImportThunk const& T = *j;
-          
-          boost::optional<Export> TargetExport;
-          
-          if (T.ByOrdinal())
-          {
-            std::wcout << "Function Ordinal: " << T.GetOrdinal() << ".\n";
-            
-            TargetExport = Export(DepPeFile, T.GetOrdinal());
-          }
-          // Attempt lookup by hint
-          else
-          {
-            std::wcout << "Function Name: " << T.GetName().c_str() << ".\n";
-            
-            ExportDir DepExportDir(DepPeFile);
-            DWORD const ImpHint = T.GetHint();
-            DWORD const NumberOfNames = DepExportDir.GetNumberOfNames();
-            if (DepExportDir.IsValid() && ImpHint && ImpHint < NumberOfNames)
-            {
-              try
-              {
-                DWORD* pNames = static_cast<DWORD*>(DepPeFile.RvaToVa(
-                  DepExportDir.GetAddressOfNames()));              
-                DWORD const HintNameRva = m_Memory.Read<DWORD>(pNames + ImpHint);
-                std::string const HintName = m_Memory.ReadString<std::string>(
-                  DepPeFile.RvaToVa(HintNameRva));
-                
-                if (HintName == T.GetName())
-                {
-                  WORD* pOrdinals = static_cast<WORD*>(DepPeFile.RvaToVa(
-                    DepExportDir.GetAddressOfNameOrdinals()));
-                  
-                  WORD const HintOrdinal = m_Memory.Read<WORD>(pOrdinals + 
-                    ImpHint);
-                  
-                  Export TempExport(DepPeFile, HintOrdinal + 
-                    DepExportDir.GetOrdinalBase());
-                  
-                  if (TempExport.GetName() != HintName)
-                  {
-                    std::wcout << "Error! Hint name mismatch.\n";
-                    throw std::exception();
-                  }
-                  
-                  TargetExport = TempExport;
-                }
-                else
-                {
-                  std::wcout << "Hint invalid.\n";
-                }
-              }
-              catch (std::exception const& /*e*/)
-              { }
-            }
-          }
-  
-          // If lookup by ordinal or hint failed do a manual lookup
-          if (!TargetExport)
-          {
-            TargetExport = FindExport(DepPeFile, T.GetName());
-          }
-          
-          FARPROC FuncAddr = ResolveExport(*TargetExport, ParentPath);
-          
-          if (!FuncAddr)
-          {
-            BOOST_THROW_EXCEPTION(ManualMap::Error() << 
-              ErrorFunction("ManualMap::FixImports") << 
-              ErrorString("Could not find current import."));
-          }
-          
-          auto ImpThunkFT = ImportFirstThunks.begin();
-          std::advance(ImpThunkFT, std::distance(ImportOrigThunks.cbegin(), j));
-          ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
-        }
+        FixImportDir(MyPeFile, I, ParentPath);
       });
   }
   
@@ -1145,35 +1164,18 @@ namespace HadesMem
         NewTarget = CacheBase;
       }
       
-      std::string const ForwarderFunction = E.GetForwarderFunction();
-      bool ForwardedByOrdinal = (ForwarderFunction[0] == '#');
-      WORD ForwarderOrdinal = 0;
-      if (ForwardedByOrdinal)
-      {
-        try
-        {
-          ForwarderOrdinal = boost::lexical_cast<WORD>(ForwarderFunction.substr(1));
-        }
-        catch (std::exception const& /*e*/)
-        {
-          BOOST_THROW_EXCEPTION(Error() << 
-            ErrorFunction("ManualMap::ResolveExport") << 
-            ErrorString("Invalid forwarder ordinal detected."));
-        }
-      }
-      
       PeFile NewTargetPe(m_Memory, NewTarget);
-      if (ForwardedByOrdinal)
+      if (E.IsForwardedByOrdinal())
       {
         std::wcout << "Resolving forwarded export by ordinal.\n";
-        return ResolveExport(Export(NewTargetPe, ForwarderOrdinal), 
+        return ResolveExport(Export(NewTargetPe, E.GetForwarderOrdinal()), 
           ModulePath.native());
       }
       else
       {
         std::wcout << "Resolving forwarded export by name.\n";
-        return ResolveExport(FindExport(NewTargetPe, ForwarderFunction), 
-          ModulePath.native());
+        return ResolveExport(FindExport(NewTargetPe, 
+          E.GetForwarderFunction()), ModulePath.native());
       }
     }
     else

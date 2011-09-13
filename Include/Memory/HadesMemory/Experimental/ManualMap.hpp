@@ -11,6 +11,7 @@
 #include <HadesMemory/Detail/Error.hpp>
 #include <HadesMemory/PeLib/PeFile.hpp>
 #include <HadesMemory/PeLib/ExportDir.hpp>
+#include <HadesMemory/PeLib/ImportDir.hpp>
 
 #include <map>
 #include <string>
@@ -83,6 +84,18 @@ namespace HadesMem
     
     // Map sections
     void MapSections(PeFile const& MyPeFile, PVOID RemoteBase) const;
+    
+    // Fix all entries in import dir
+    void FixImportDir(PeFile const& MyPeFile, ImportDir const& I, 
+      std::wstring const& ParentPath) const;
+    
+  // Resolve an import thunk
+    FARPROC ResolveImportThunk(ImportThunk const& T, 
+      PeFile const& DepPeFile, std::wstring const& ParentPath) const;
+    
+    // Resolve imported module to handle
+    HMODULE GetImportModule(std::wstring const& ModulePath, 
+      std::wstring const& ParentPath) const;
 
     // Fix imports
     void FixImports(PeFile const& MyPeFile, 

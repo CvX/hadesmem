@@ -175,15 +175,6 @@ namespace HadesMem
     // Get name
     std::string GetName() const;
 
-    // Get forwarder
-    std::string GetForwarder() const;
-    
-    // Get forwarder module name
-    std::string GetForwarderModule() const;
-    
-    // Get forwarder function name
-    std::string GetForwarderFunction() const;
-
     // Get ordinal
     WORD GetOrdinal() const;
 
@@ -192,6 +183,21 @@ namespace HadesMem
 
     // If entry is forwarded
     bool Forwarded() const;
+
+    // Get forwarder
+    std::string GetForwarder() const;
+    
+    // Get forwarder module name
+    std::string GetForwarderModule() const;
+    
+    // Get forwarder function name
+    std::string GetForwarderFunction() const;
+    
+    // If entry is forwarded by ordinal
+    bool IsForwardedByOrdinal() const;
+    
+    // Get forwarder function ordinal
+    WORD GetForwarderOrdinal() const;
     
     // Equality operator
     bool operator==(Export const& Rhs) const;
@@ -229,6 +235,12 @@ namespace HadesMem
     
     // If entry is forwarded
     bool m_Forwarded;
+    
+    // If entry is forwarded by ordinal
+    bool m_ForwardedByOrdinal;
+    
+    // Forwarder ordinal
+    WORD m_ForwarderOrdinal;
   };
     
   // Forward declaration of ExportIter

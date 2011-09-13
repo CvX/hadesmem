@@ -169,7 +169,7 @@ int wmain(int argc, wchar_t* argv[])
   }
   catch (std::exception const& e)
   {
-    std::cerr << boost::diagnostic_information(e) << std::endl;
+    std::cout << boost::diagnostic_information(e) << "\n";
   }
   
   // Print elapsed time

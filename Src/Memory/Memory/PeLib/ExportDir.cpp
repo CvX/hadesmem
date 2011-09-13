@@ -13,6 +13,8 @@
 
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 namespace HadesMem
 {
   // Constructor
@@ -332,6 +334,7 @@ namespace HadesMem
   }
 
   // Constructor
+  // FIXME: Refactor constructors to remove duplicated code.
   Export::Export(PeFile const& MyPeFile, DWORD Ordinal) 
     : m_PeFile(MyPeFile), 
     m_Memory(MyPeFile.GetMemoryMgr()), 
@@ -425,6 +428,19 @@ namespace HadesMem
           ErrorFunction("Export::Export") << 
           ErrorString("Invalid forwarder string format."));
       }
+      
+      if (m_ForwarderSplit.second[0] == '#')
+      {
+        try
+        {
+          m_ForwarderOrdinal = boost::lexical_cast<WORD>(
+            m_ForwarderSplit.second.substr(1));
+          
+          m_ForwardedByOrdinal = true;
+        }
+        catch (std::exception const& /*e*/)
+        { }
+      }
     }
     else
     {
@@ -444,7 +460,9 @@ namespace HadesMem
     m_ForwarderSplit(), 
     m_Ordinal(0), 
     m_ByName(false), 
-    m_Forwarded(false)
+    m_Forwarded(false), 
+    m_ForwardedByOrdinal(false), 
+    m_ForwarderOrdinal(0)
   {
     ExportDir const MyExportDir(m_PeFile);
     
@@ -559,6 +577,23 @@ namespace HadesMem
         BOOST_THROW_EXCEPTION(ExportDir::Error() << 
           ErrorFunction("Export::Export") << 
           ErrorString("Invalid forwarder string format."));
+      }
+      
+      if (m_ForwarderSplit.second[0] == '#')
+      {
+        m_ForwardedByOrdinal = true;
+        
+        try
+        {
+          m_ForwarderOrdinal = boost::lexical_cast<WORD>(
+            m_ForwarderSplit.second.substr(1));
+        }
+        catch (std::exception const& /*e*/)
+        {
+          BOOST_THROW_EXCEPTION(ExportDir::Error() << 
+            ErrorFunction("Export::Export") << 
+            ErrorString("Invalid forwarder ordinal detected."));
+        }
       }
     }
     else
@@ -706,6 +741,18 @@ namespace HadesMem
   bool Export::Forwarded() const
   {
     return m_Forwarded;
+  }
+    
+  // If entry is forwarded by ordinal
+  bool Export::IsForwardedByOrdinal() const
+  {
+    return m_ForwardedByOrdinal;
+  }
+  
+  // Get forwarder function ordinal
+  WORD Export::GetForwarderOrdinal() const
+  {
+    return m_ForwarderOrdinal;
   }
   
   // Equality operator
