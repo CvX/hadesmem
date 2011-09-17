@@ -26,9 +26,14 @@
 <p>
       <span class="bold"><strong>New Features</strong></span>
     </p>
-<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
           Added new <code class="computeroutput"><span class="identifier">FindPattern</span></code> APIs.
-        </li></ul></div>
+        </li>
+<li class="listitem">
+          Added <code class="computeroutput"><span class="identifier">Export</span><span class="special">::</span><span class="identifier">IsForwardedByOrdinal</span></code> and <code class="computeroutput"><span class="identifier">Export</span><span class="special">::</span><span class="identifier">GetForwarderOrdinal</span></code>.
+        </li>
+</ul></div>
 <p>
       <span class="bold"><strong>Bug Fixes</strong></span>
     </p>
@@ -46,6 +51,24 @@
 <li class="listitem">
           Various minor bug fixes to <code class="computeroutput"><span class="identifier">ManualMap</span></code>.
         </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now attempts
+          to load modules at their preferred base address. Fixes some issues with
+          images without relocation data.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now bumps the
+          load count of dependent modules. Fixes rare issue where dependent module
+          is unloaded by target application.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now correctly
+          writes the entire PE headers to memory rather than just selected structures.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now implements
+          correct path resolution (minus manifest/sxs redirection).
+        </li>
 </ul></div>
 <p>
       <span class="bold"><strong>Changes</strong></span>
@@ -62,6 +85,9 @@
           Allow HadesMem to be built targetting Windows 2000 SP4. Please note that
           this platform is still not officially supported, I'm just making it an
           'unofficial' option.
+        </li>
+<li class="listitem">
+          Refactored 'ManualMap'.
         </li>
 </ul></div>
 <a name="hadesmem.changes.v1_4_0"></a><h4>

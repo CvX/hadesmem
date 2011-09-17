@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Hades
 #include <HadesMemory/FindPattern.hpp>
 #include <HadesMemory/Module.hpp>
 #include <HadesMemory/Detail/I18n.hpp>
@@ -27,7 +26,6 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #include <HadesMemory/PeLib/DosHeader.hpp>
 #include <HadesMemory/PeLib/NtHeaders.hpp>
 
-// C++ Standard Library
 #include <limits>
 #include <vector>
 #include <string>
@@ -35,7 +33,6 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 #include <iterator>
 #include <algorithm>
 
-// Boost
 #ifdef HADES_MSVC
 #pragma warning(push, 1)
 #endif
@@ -552,6 +549,37 @@ namespace HadesMem
     m_Name(), 
     m_Address(static_cast<PBYTE>(Finder.Find(Data, Flags))), 
     m_Flags(Flags)
+  { }
+  
+  // Move constructor
+  Pattern::Pattern(Pattern&& Other) 
+    : m_Finder(Other.m_Finder), 
+    m_Name(std::move(Other.m_Name)), 
+    m_Address(Other.m_Address), 
+    m_Flags(Other.m_Flags)
+  {
+    m_Address = nullptr;
+    m_Flags = FindPattern::FindFlags_None;
+  }
+  
+  // Move assignment operator
+  Pattern& Pattern::operator=(Pattern&& Other)
+  {
+    this->m_Finder = Other.m_Finder;
+    
+    this->m_Name = std::move(Other.m_Name);
+      
+    this->m_Address = Other.m_Address;
+    Other.m_Address = nullptr;
+    
+    this->m_Flags = Other.m_Flags;
+    Other.m_Flags = FindPattern::FindFlags_None;
+    
+    return *this;
+  }
+  
+  // Destructor
+  Pattern::~Pattern()
   { }
   
   // Save back to parent

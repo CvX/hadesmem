@@ -19,17 +19,14 @@ along with HadesMem.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-// Hades
 #include <HadesMemory/MemoryMgr.hpp>
 #include <HadesMemory/Detail/Error.hpp>
 
-// C++ Standard Library
 #include <map>
 #include <string>
 #include <vector>
 #include <utility>
 
-// Windows API
 #include <Windows.h>
 
 namespace HadesMem
@@ -72,11 +69,11 @@ namespace HadesMem
       FindFlags_RelativeAddress = 2, 
       FindFlags_ScanData = 4
     };
-
+    
     // Find pattern
     PVOID Find(std::wstring const& Data, FindFlags Flags = 
       FindFlags_None) const;
-      
+    
     // Find pattern and store by name
     PVOID Find(std::wstring const& Data, std::wstring const& Name, 
       FindFlags Flags = FindFlags_None);
@@ -133,6 +130,15 @@ namespace HadesMem
 	  // Constructor
 	  Pattern(FindPattern& Finder, std::wstring const& Data, 
 	    FindPattern::FindFlags Flags = FindPattern::FindFlags_None);
+    
+    // Move constructor
+    Pattern(Pattern&& Other);
+    
+    // Move assignment operator
+    Pattern& operator=(Pattern&& Other);
+    
+    // Destructor
+    ~Pattern();
 	  
 	  // Save back to parent
 	  void Save();
@@ -160,10 +166,13 @@ namespace HadesMem
 	private:
 	  // Parent pattern finder
 	  FindPattern& m_Finder;
+	  
 	  // Pattern name
 	  std::wstring m_Name;
+	  
 	  // Pattern address
 	  PBYTE m_Address;
+	  
 	  // Find flags
 	  FindPattern::FindFlags m_Flags;
 	};
@@ -241,6 +250,7 @@ namespace HadesMem
     private:
       // Instruction size
       DWORD_PTR m_Size;
+      
       // Instruction offset
       DWORD_PTR m_Offset;
     };
