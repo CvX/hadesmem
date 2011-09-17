@@ -54,11 +54,21 @@ namespace HadesMem
     bool operator!=(ManualMap const& Rhs) const;
 
     // Manually map DLL
+    HMODULE InjectDll(std::wstring const& Path) const;
+
+    // Manually map DLL and call export
     HMODULE InjectDll(std::wstring const& Path, 
-      std::wstring const& ParentPath = std::wstring(), 
-      std::string const& Export = std::string()) const;
+      std::string const& Export) const;
     
   private:
+    // Manually map DLL
+    HMODULE InjectDll(std::wstring const& Path, 
+      std::wstring const& ParentPath, 
+      std::string const& Export) const;
+    
+    // Validate PE file
+    void ValidateFile(PeFile const& MyPeFile) const;
+    
     // Resolve path as per Windows loader
     std::wstring ResolvePath(std::wstring const& Path, 
       std::wstring const& Parent = std::wstring()) const;

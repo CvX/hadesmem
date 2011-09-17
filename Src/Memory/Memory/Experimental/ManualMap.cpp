@@ -72,6 +72,7 @@ extern "C" unsigned long __readfsdword(unsigned long offset);
 // doing, it's probably best not to touch this file.
 
 // FIXME: Support SEH under DEP enabled targets (SafeSEH).
+// FIXME: Support unmapping modules.
 
 namespace HadesMem
 {
@@ -141,6 +142,19 @@ namespace HadesMem
   }
 
   // Manually map DLL
+  HMODULE ManualMap::InjectDll(std::wstring const& Path) const
+  {
+    return InjectDll(Path, L"", "");
+  }
+
+  // Manually map DLL and call export
+  HMODULE ManualMap::InjectDll(std::wstring const& Path, 
+    std::string const& Export) const
+  {
+    return InjectDll(Path, L"", Export);
+  }
+
+  // Manually map DLL
   // FIXME: Support LoadLibrary/FreeLibrary style refcounting.
   HMODULE ManualMap::InjectDll(std::wstring const& Path, 
     std::wstring const& ParentPath, 
@@ -170,6 +184,8 @@ namespace HadesMem
     PeFile const MyPeFile(MyMemoryLocal, pBase, PeFile::FileType_Data);
     DosHeader const MyDosHeader(MyPeFile);
     NtHeaders const MyNtHeaders(MyPeFile);
+    
+    ValidateFile(MyPeFile);
     
     // Try to map module at preferred base address before forcing relocation
     DWORD const ImageSize = MyNtHeaders.GetSizeOfImage();
@@ -232,6 +248,55 @@ namespace HadesMem
     return reinterpret_cast<HMODULE>(RemoteBase);
   }
   
+  // Validate PE file
+  void ManualMap::ValidateFile(PeFile const& MyPeFile) const
+  {
+    DosHeader const MyDosHeader(MyPeFile);
+    NtHeaders const MyNtHeaders(MyPeFile);
+    
+#if defined(_M_AMD64) 
+    if (MyNtHeaders.GetMachine() != IMAGE_FILE_MACHINE_AMD64)
+#elif defined(_M_IX86) 
+    if (MyNtHeaders.GetMachine() != IMAGE_FILE_MACHINE_I386)
+#else 
+#error "[HadesMem] Unsupported architecture."
+#endif
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::InjectDll") << 
+        ErrorString("PE file machine type invalid."));
+    }
+    
+    if ((MyNtHeaders.GetCharacteristics() & IMAGE_FILE_DLL) == 0)
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::InjectDll") << 
+        ErrorString("PE file is not a DLL."));
+    }
+    
+    OSVERSIONINFOEX VerInfo;
+    ZeroMemory(&VerInfo, sizeof(VerInfo));
+    VerInfo.dwOSVersionInfoSize = sizeof(VerInfo);
+    if (!GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&VerInfo)))
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::InjectDll") << 
+        ErrorString("Could not get OS version info."));
+    }
+    
+    DWORD const OsMajorVer = VerInfo.dwMajorVersion;
+    DWORD const OsMinorVer = VerInfo.dwMinorVersion;
+    WORD const PeMajorVer = MyNtHeaders.GetMajorOperatingSystemVersion();
+    WORD const PeMinorVer = MyNtHeaders.GetMinorOperatingSystemVersion();
+    if (OsMajorVer < PeMajorVer || (OsMajorVer >= PeMajorVer && 
+      OsMinorVer < PeMinorVer))
+    {
+      BOOST_THROW_EXCEPTION(Error() << 
+        ErrorFunction("ManualMap::InjectDll") << 
+        ErrorString("OS does not meet minimum requirements."));
+    }
+  }
+  
   // Call initialization routines
   void ManualMap::CallInitRoutines(PeFile const& MyPeFile, 
     std::vector<PIMAGE_TLS_CALLBACK> const& TlsCallbacks, 
@@ -283,7 +348,7 @@ namespace HadesMem
       if (!EpRet.GetReturnValue())
       {
         BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::InjectDll") << 
+          ErrorFunction("ManualMap::CallInitRoutines") << 
           ErrorString("Entry point returned FALSE."));
       }
     }
@@ -299,7 +364,7 @@ namespace HadesMem
     {
       DWORD const LastError = GetLastError();
       BOOST_THROW_EXCEPTION(Error() << 
-        ErrorFunction("ManualMap::InjectDll") << 
+        ErrorFunction("ManualMap::CallExport") << 
         ErrorString("Could not load module locally.") << 
         ErrorCodeWinLast(LastError));
     }
@@ -312,7 +377,7 @@ namespace HadesMem
       {
         DWORD const LastError = GetLastError();
         BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::InjectDll") << 
+          ErrorFunction("ManualMap::CallExport") << 
           ErrorString("Could not find target function.") << 
           ErrorCodeWinLast(LastError));
       }
@@ -978,7 +1043,7 @@ namespace HadesMem
       {
         std::wcout << "Manually mapping dependent DLL.\n";
         
-        return InjectDll(ModulePath, ParentPath);
+        return InjectDll(ModulePath, ParentPath, "");
       }
     }
   }
