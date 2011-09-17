@@ -309,7 +309,7 @@ namespace HadesMem
     // with DLL_PROCESS_DETACH on process termination.
     // FIXME: TLS callbacks should be called from the same thread as the EP.
     
-    std::for_each(TlsCallbacks.cbegin(), TlsCallbacks.cend(), 
+    std::for_each(std::begin(TlsCallbacks), std::end(TlsCallbacks), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
       std::wcout << "TLS Callback: " << pCallback << ".\n";
@@ -517,20 +517,20 @@ namespace HadesMem
     std::wstring const FileName(boost::to_lower_copy(
       PathReal.filename().native()));
     auto DefIter = m_ApiSchemaDefaults.find(FileName);
-    if (DefIter != m_ApiSchemaDefaults.cend())
+    if (DefIter != std::end(m_ApiSchemaDefaults))
     {
       auto ExceptIter = m_ApiSchemaExceptions.find(FileName);
-      if (ExceptIter != m_ApiSchemaExceptions.cend())
+      if (ExceptIter != std::end(m_ApiSchemaExceptions))
       {
-        auto FoundIter = std::find_if(ExceptIter->second.cbegin(), 
-          ExceptIter->second.cend(), 
+        auto FoundIter = std::find_if(std::end(ExceptIter->second), 
+          std::end(ExceptIter->second), 
           [&] (ApiSchemaExceptionPair const& Exception)
           {
             return boost::filesystem::equivalent(
               ResolvePath(Exception.first), 
               ResolvePath(Parent));
           });
-        if (FoundIter != ExceptIter->second.cend())
+        if (FoundIter != std::end(ExceptIter->second))
         {
           std::wcout << "Detected API schema redirection (exception).\n";
           PathReal = ResolvePath(FoundIter->second);
@@ -666,7 +666,7 @@ namespace HadesMem
   void ManualMap::AddToCache(std::wstring const& Path, HMODULE Base) const
   {
     auto const Iter = m_MappedMods.find(boost::to_lower_copy(Path));
-    if (Iter != m_MappedMods.end())
+    if (Iter != std::end(m_MappedMods))
     {
       BOOST_THROW_EXCEPTION(Error() << 
         ErrorFunction("ManualMap::AddToCache") << 
@@ -680,7 +680,7 @@ namespace HadesMem
   HMODULE ManualMap::LookupCache(std::wstring const& Path) const
   {
     auto const Iter = m_MappedMods.find(boost::to_lower_copy(Path));
-    if (Iter != m_MappedMods.end())
+    if (Iter != std::end(m_MappedMods))
     {
       return Iter->second;
     }
@@ -810,7 +810,7 @@ namespace HadesMem
   void ManualMap::MapSections(PeFile const& MyPeFile, PVOID RemoteBase) const
   {
     SectionList Sections(MyPeFile);
-    std::for_each(Sections.cbegin(), Sections.cend(), 
+    std::for_each(std::begin(Sections), std::end(Sections), 
       [&] (Section const& S)
       {
         std::string const Name(S.GetName());
@@ -994,14 +994,14 @@ namespace HadesMem
     
     ImportThunkList ImportOrigThunks(MyPeFile, I.GetCharacteristics());
     ImportThunkList ImportFirstThunks(MyPeFile, I.GetFirstThunk());
-    for (auto j = ImportOrigThunks.cbegin(); j != ImportOrigThunks.cend(); ++j)
+    for (auto j = std::begin(ImportOrigThunks); j != std::end(ImportOrigThunks); ++j)
     {
       ImportThunk const& T = *j;
       
       FARPROC FuncAddr = ResolveImportThunk(T, DepPeFile, ParentPath);
       
-      auto ImpThunkFT = ImportFirstThunks.begin();
-      std::advance(ImpThunkFT, std::distance(ImportOrigThunks.cbegin(), j));
+      auto ImpThunkFT = std::begin(ImportFirstThunks);
+      std::advance(ImpThunkFT, std::distance(std::begin(ImportOrigThunks), j));
       ImpThunkFT->SetFunction(reinterpret_cast<DWORD_PTR>(FuncAddr));
     }
   }
@@ -1069,7 +1069,7 @@ namespace HadesMem
     }
     
     ImportDirList ImportDirs(MyPeFile);
-    std::for_each(ImportDirs.begin(), ImportDirs.end(), 
+    std::for_each(std::begin(ImportDirs), std::end(ImportDirs), 
       [&] (ImportDir const& I)
       {
         FixImportDir(MyPeFile, I, ParentPath);
@@ -1095,7 +1095,7 @@ namespace HadesMem
       {
         ModuleName += L".dll";
       }
-      else if (*(ModuleName.end() - 1) == '.')
+      else if (ModuleName[ModuleName.size() - 1] == '.')
       {
         ModuleName += L"dll";
       }
