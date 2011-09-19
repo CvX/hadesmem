@@ -146,6 +146,8 @@ DEALINGS IN THE SOFTWARE.
 
 * Added new `FindPattern` APIs.
 * Added `Export::IsForwardedByOrdinal` and `Export::GetForwarderOrdinal`.
+* Added `MemoryMgr::Call` overload to support calling multiple functions from the same 
+thread.
 
 [*Bug Fixes]
 
@@ -386,6 +388,10 @@ or the requirements list of your project.
     RemoteFunctionRet Call(LPCVOID Address, CallConv MyCallConv, 
       std::vector<PVOID> const& Args) const;
 
+    std::vector<RemoteFunctionRet> Call(std::vector<LPCVOID> Addresses, 
+      std::vector<CallConv> MyCallConvs, 
+      std::vector<std::vector<PVOID>> const& Args) const;
+
     template <typename T>
     T Read(PVOID Address) const;
 
@@ -588,6 +594,27 @@ semantics. Invalidates `Other`.]]
 `MyCallConv`, with the arguments `Args`.]]
 
 [[Returns:] [A `RemoteFunctionRet` instance.]]
+
+[[Throws:] [Yes.]]
+
+[[Notes:] [All arguments must be equivalent to integer arguments, with a size 
+equal to or less than the native pointer size of the platform. Floating point 
+arguments are unsupported.]]
+
+]
+
+[h4 MemoryMgr member function `Call`]
+
+  std::vector<RemoteFunctionRet> Call(std::vector<LPCVOID> Addresses, 
+    std::vector<CallConv> MyCallConvs, 
+    std::vector<std::vector<PVOID>> const& Args) const;
+
+[variablelist
+
+[[Effects:] [Calls functions at `Addresses`, using calling conventions 
+`MyCallConvs`, with the arguments `Args`.]]
+
+[[Returns:] [A `RemoteFunctionRet` list.]]
 
 [[Throws:] [Yes.]]
 

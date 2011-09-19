@@ -307,7 +307,10 @@ namespace HadesMem
     // supported on all new threads etc.
     // FIXME: Register callback in remote process to call DllMain/TLS again 
     // with DLL_PROCESS_DETACH on process termination.
-    // FIXME: TLS callbacks should be called from the same thread as the EP.
+    
+    std::vector<LPCVOID> InitRoutines;
+    std::vector<MemoryMgr::CallConv> InitCallConvs;
+    std::vector<std::vector<PVOID>> InitArgs;
     
     std::for_each(std::begin(TlsCallbacks), std::end(TlsCallbacks), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
@@ -317,11 +320,11 @@ namespace HadesMem
       TlsCallArgs.push_back(0);
       TlsCallArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
       TlsCallArgs.push_back(RemoteBase);
-      MemoryMgr::RemoteFunctionRet const TlsRet = m_Memory.Call(
-        static_cast<PBYTE>(RemoteBase) + reinterpret_cast<DWORD_PTR>(
-        pCallback), MemoryMgr::CallConv_Default, TlsCallArgs);
-      std::wcout << "TLS Callback Returned: " << TlsRet.GetReturnValue() 
-        << ".\n";
+      
+      InitRoutines.push_back(static_cast<PBYTE>(RemoteBase) + 
+        reinterpret_cast<DWORD_PTR>(pCallback));
+      InitCallConvs.push_back(MemoryMgr::CallConv_Default);
+      InitArgs.push_back(TlsCallArgs);
     });
         
     PVOID EntryPoint = nullptr;
@@ -341,15 +344,33 @@ namespace HadesMem
       EpArgs.push_back(0);
       EpArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
       EpArgs.push_back(RemoteBase);
-      MemoryMgr::RemoteFunctionRet const EpRet = m_Memory.Call(EntryPoint, 
-        MemoryMgr::CallConv_Default, EpArgs);
-      std::wcout << "Entry Point Returned: " << EpRet.GetReturnValue() 
-        << ".\n";
-      if (!EpRet.GetReturnValue())
+      
+      InitRoutines.push_back(EntryPoint);
+      InitCallConvs.push_back(MemoryMgr::CallConv_Default);
+      InitArgs.push_back(EpArgs);
+    }
+    
+    std::vector<MemoryMgr::RemoteFunctionRet> const InitRets = m_Memory.Call(
+      InitRoutines, InitCallConvs, InitArgs);
+    for (std::size_t i = 0; i < InitRets.size(); ++i)
+    {
+      if (EntryPoint && i == InitRets.size() - 1)
       {
-        BOOST_THROW_EXCEPTION(Error() << 
-          ErrorFunction("ManualMap::CallInitRoutines") << 
-          ErrorString("Entry point returned FALSE."));
+        MemoryMgr::RemoteFunctionRet const EpRet = InitRets[i];
+        std::wcout << "Entry Point Returned: " << EpRet.GetReturnValue() 
+          << ".\n";
+        if (!EpRet.GetReturnValue())
+        {
+          BOOST_THROW_EXCEPTION(Error() << 
+            ErrorFunction("ManualMap::CallInitRoutines") << 
+            ErrorString("Entry point returned FALSE."));
+        }
+      }
+      else
+      {
+        MemoryMgr::RemoteFunctionRet const TlsRet = InitRets[i];
+        std::wcout << "TLS Callback Returned: " << TlsRet.GetReturnValue() 
+          << ".\n";
       }
     }
   }

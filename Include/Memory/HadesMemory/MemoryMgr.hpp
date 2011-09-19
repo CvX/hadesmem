@@ -90,6 +90,11 @@ namespace HadesMem
     RemoteFunctionRet Call(LPCVOID Address, CallConv MyCallConv, 
       std::vector<PVOID> const& Args) const;
 
+    // Call remote function
+    std::vector<RemoteFunctionRet> Call(std::vector<LPCVOID> Addresses, 
+      std::vector<CallConv> MyCallConvs, 
+      std::vector<std::vector<PVOID>> const& Args) const;
+
     // Read memory (POD types)
     template <typename T>
     T Read(PVOID Address) const;
