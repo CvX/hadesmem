@@ -1037,17 +1037,6 @@ namespace HadesMem
       
       std::wcout << "Found existing instance of dependent DLL.\n";
       
-      Injector MyInjector(m_Memory);
-      HMODULE RemoteModTemp = MyInjector.InjectDll(RemoteMod.GetPath());
-      if (RemoteMod.GetHandle() != RemoteModTemp)
-      {
-        BOOST_THROW_EXCEPTION(ManualMap::Error() << 
-          ErrorFunction("ManualMap::FixImports") << 
-          ErrorString("Mismatched base address during load count bump."));
-      }
-      
-      std::wcout << "Bumped load count of dependent DLL.\n";
-      
       return RemoteMod.GetHandle();
     }
     catch (std::exception const&)
@@ -1079,6 +1068,8 @@ namespace HadesMem
   // GetModuleHandle, GetModuleFileName, etc), including redirecting indirect 
   // calls through GetProcAddress. Allow manually mapped modules to see other 
   // manually mapped modules.
+  // FIXME: Bump load count of dependent DLLs (use PEB directly to avoid detection 
+  // via 'hooks' on DLL injection such as LdrRegisterDllNotification).
   void ManualMap::FixImports(PeFile const& MyPeFile, 
     std::wstring const& ParentPath) const
   {
@@ -1128,24 +1119,7 @@ namespace HadesMem
       
       std::wcout << "Forwarder Module (Resolved): " << ModulePath << ".\n";
       
-      HMODULE NewTarget = nullptr;
-      if (ModuleName == L"ntdll.dll")
-      {
-        Module NtdllMod(m_Memory, L"ntdll.dll");
-        NewTarget = NtdllMod.GetHandle();
-      }
-      else
-      {
-        HMODULE const CacheBase = LookupCache(ModulePath.native());
-        if (!CacheBase)
-        {
-          BOOST_THROW_EXCEPTION(Error() << 
-            ErrorFunction("ManualMap::ResolveExport") << 
-            ErrorString("Found unknown forwarder module."));
-        }
-        
-        NewTarget = CacheBase;
-      }
+      HMODULE NewTarget = GetImportModule(ModulePath.native(), ParentPath);
       
       PeFile NewTargetPe(m_Memory, NewTarget);
       if (E.IsForwardedByOrdinal())
