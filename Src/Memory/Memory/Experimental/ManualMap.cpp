@@ -97,7 +97,6 @@ namespace HadesMem
   // Copy assignment operator
   ManualMap& ManualMap::operator=(ManualMap const& Other)
   {
-
     this->m_Memory = Other.m_Memory;
     this->m_MappedMods = Other.m_MappedMods;
     this->m_ApiSchemaDefaults = Other.m_ApiSchemaDefaults;
@@ -619,68 +618,68 @@ namespace HadesMem
 #if defined(_M_AMD64) 
     unsigned long PebOffset = 0x60;
     unsigned long ApiSchemaOffset = 0x68;
-  	ApiSetMapHeader* pHeader = *reinterpret_cast<ApiSetMapHeader**>(
-  	  __readgsqword(PebOffset) + ApiSchemaOffset);
+    ApiSetMapHeader* pHeader = *reinterpret_cast<ApiSetMapHeader**>(
+      __readgsqword(PebOffset) + ApiSchemaOffset);
 #elif defined(_M_IX86) 
     unsigned long PebOffset = 0x30;
     unsigned long ApiSchemaOffset = 0x38;
-  	ApiSetMapHeader* pHeader = *reinterpret_cast<ApiSetMapHeader**>(
-  	  __readfsdword(PebOffset) + ApiSchemaOffset);
+    ApiSetMapHeader* pHeader = *reinterpret_cast<ApiSetMapHeader**>(
+      __readfsdword(PebOffset) + ApiSchemaOffset);
 #else 
 #error "[HadesMem] Unsupported architecture."
 #endif
     DWORD_PTR HeaderBase = reinterpret_cast<DWORD_PTR>(pHeader);
     
-  	ApiSetModuleEntry* pEntries = reinterpret_cast<ApiSetModuleEntry*>(
-  	  &pHeader[1]);
-  	for (DWORD i = 0; i < pHeader->NumModules; ++i)
-  	{
-  		auto GetName = 
-  		  [] (DWORD_PTR Base, DWORD Offset, WORD Size) -> std::wstring
-  		  {
-  		    wchar_t* Name = reinterpret_cast<wchar_t*>(Base + Offset);
-  		    return std::wstring(Name, Name + Size / 2);
-  		  };
-  		
-  		ApiSetModuleEntry* pEntry = &pEntries[i];
-  		std::wstring EntryName(GetName(HeaderBase, pEntry->OffsetToName, 
-  		  pEntry->NameSize));
-  		EntryName = L"api-" + EntryName + L".dll";
-  		boost::to_lower(EntryName);
-  		
-  		std::wcout << "ApiSetSchema Entry: " << EntryName << "\n";
+    ApiSetModuleEntry* pEntries = reinterpret_cast<ApiSetModuleEntry*>(
+      &pHeader[1]);
+    for (DWORD i = 0; i < pHeader->NumModules; ++i)
+    {
+      auto GetName = 
+        [] (DWORD_PTR Base, DWORD Offset, WORD Size) -> std::wstring
+        {
+          wchar_t* Name = reinterpret_cast<wchar_t*>(Base + Offset);
+          return std::wstring(Name, Name + Size / 2);
+        };
+      
+      ApiSetModuleEntry* pEntry = &pEntries[i];
+      std::wstring EntryName(GetName(HeaderBase, pEntry->OffsetToName, 
+        pEntry->NameSize));
+      EntryName = L"api-" + EntryName + L".dll";
+      boost::to_lower(EntryName);
+      
+      std::wcout << "ApiSetSchema Entry: " << EntryName << "\n";
   
-  		auto pHostsHeader = reinterpret_cast<ApiSetModuleHostsHeader*>(
-  		  reinterpret_cast<DWORD_PTR>(pHeader) + pEntry->OffsetOfHosts);
-  		auto pHosts = reinterpret_cast<ApiSetModuleHost*>(&pHostsHeader[1]);
-  		for (DWORD j = 0; j < pHostsHeader->NumHosts; ++j)
-  		{
-  			ApiSetModuleHost* pHost = &pHosts[j];
-  			std::wstring HostName(GetName(reinterpret_cast<DWORD_PTR>(pHeader), 
-  			  pHost->OffsetOfHostName, pHost->HostNameSize));
-  			boost::to_lower(HostName);
+      auto pHostsHeader = reinterpret_cast<ApiSetModuleHostsHeader*>(
+        reinterpret_cast<DWORD_PTR>(pHeader) + pEntry->OffsetOfHosts);
+      auto pHosts = reinterpret_cast<ApiSetModuleHost*>(&pHostsHeader[1]);
+      for (DWORD j = 0; j < pHostsHeader->NumHosts; ++j)
+      {
+        ApiSetModuleHost* pHost = &pHosts[j];
+        std::wstring HostName(GetName(reinterpret_cast<DWORD_PTR>(pHeader), 
+          pHost->OffsetOfHostName, pHost->HostNameSize));
+        boost::to_lower(HostName);
   
-  			if (j == 0)
-  			{
-				  std::wcout << "\tDefault: " << HostName << "\n";
-				  
-  			  m_ApiSchemaDefaults[EntryName] = HostName;
-  			}
-  			else
-  			{
-  			  std::wstring ImporterName(GetName(HeaderBase, 
-  			    pHost->OffsetOfImportingName, pHost->ImportingNameSize));
-  			  boost::to_lower(ImporterName);
-  			  
-  				std::wcout << "\t" << ImporterName << " -> " << HostName << "\n";
-  				
-  				m_ApiSchemaExceptions[EntryName].push_back(std::make_pair(
-  				  ImporterName, HostName));
-  			}
-  		}
-  	}
-  	
-  	return;
+        if (j == 0)
+        {
+          std::wcout << "\tDefault: " << HostName << "\n";
+          
+          m_ApiSchemaDefaults[EntryName] = HostName;
+        }
+        else
+        {
+          std::wstring ImporterName(GetName(HeaderBase, 
+            pHost->OffsetOfImportingName, pHost->ImportingNameSize));
+          boost::to_lower(ImporterName);
+          
+          std::wcout << "\t" << ImporterName << " -> " << HostName << "\n";
+          
+          m_ApiSchemaExceptions[EntryName].push_back(std::make_pair(
+            ImporterName, HostName));
+        }
+      }
+    }
+    
+    return;
   }
   
   // Add module to cache
