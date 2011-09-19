@@ -45,6 +45,12 @@ namespace HadesMem
     
     // Destructor
     ~MemoryMgr();
+    
+    // Equality operator
+    bool operator==(MemoryMgr const& Rhs) const;
+    
+    // Inequality operator
+    bool operator!=(MemoryMgr const& Rhs) const;
 
     // MemoryMgr::Call return data
     class RemoteFunctionRet
@@ -143,12 +149,6 @@ namespace HadesMem
     
     // Is WoW64 process
     bool IsWoW64Process() const;
-    
-    // Equality operator
-    bool operator==(MemoryMgr const& Rhs) const;
-    
-    // Inequality operator
-    bool operator!=(MemoryMgr const& Rhs) const;
 
   private:
     // Read memory

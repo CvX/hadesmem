@@ -654,7 +654,7 @@ namespace HadesMem
   {
     std::wstring CommandLine;
     Detail::ArgvQuote(Path, CommandLine, false);
-    std::for_each(Args.begin(), Args.end(), 
+    std::for_each(std::begin(Args), std::end(Args), 
       [&] (std::wstring const& Arg) 
       {
         CommandLine += L' ';
