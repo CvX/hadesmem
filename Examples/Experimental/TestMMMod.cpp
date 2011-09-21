@@ -76,9 +76,8 @@ void TestCPPEH()
 
 void TestTls()
 {
-  // FIXME: Ad multit-threading test to check for TLS 'thrashing'. (i.e. 
-  // Callbacks for thread creation are not currently being called, ensure 
-  // no existing data is being overwritten)
+  // FIXME: Add multi-threading test to check for TLS 'thrashing' (i.e. 
+  // ensure no existing data is being overwritten).
   boost::thread_specific_ptr<std::wstring> TlsTest;
   TlsTest.reset(new std::wstring(L"Testing TLS."));
   MessageBox(nullptr, TlsTest->c_str(), L"MMHelper", MB_OK);
@@ -99,6 +98,8 @@ void TestTls3()
   // FIXME: Check which OS versions this syntax is supported on and wrap in 
   // version detection code if needed.
   // FIXME: Add multi-threading test.
+  // FIXME: Add multi-threading test to check for TLS 'thrashing' (i.e. 
+  // ensure no existing data is being overwritten).
   __declspec(thread) static int i = 0;
   i = 50;
   MessageBoxW(nullptr, boost::lexical_cast<std::wstring>(i).c_str(), 
