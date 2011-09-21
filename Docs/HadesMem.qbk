@@ -166,6 +166,9 @@ where dependent module is unloaded by target application.
 just selected structures.
 * `ManualMap` now implements correct path resolution (minus manifest/sxs 
 redirection).
+* `ManualMap` now calls TLS callbacks from the same thread as the EP.
+* `ManualMap` now validates the OS version, machine type, etc of modules 
+before attempting to map them.
 
 [*Changes]
 

@@ -287,7 +287,7 @@ namespace HadesMem
     DWORD const OsMinorVer = VerInfo.dwMinorVersion;
     WORD const PeMajorVer = MyNtHeaders.GetMajorOperatingSystemVersion();
     WORD const PeMinorVer = MyNtHeaders.GetMinorOperatingSystemVersion();
-    if (OsMajorVer < PeMajorVer || (OsMajorVer >= PeMajorVer && 
+    if (OsMajorVer < PeMajorVer || (OsMajorVer == PeMajorVer && 
       OsMinorVer < PeMinorVer))
     {
       BOOST_THROW_EXCEPTION(Error() << 

@@ -33,6 +33,10 @@
 <li class="listitem">
           Added <code class="computeroutput"><span class="identifier">Export</span><span class="special">::</span><span class="identifier">IsForwardedByOrdinal</span></code> and <code class="computeroutput"><span class="identifier">Export</span><span class="special">::</span><span class="identifier">GetForwarderOrdinal</span></code>.
         </li>
+<li class="listitem">
+          Added <code class="computeroutput"><span class="identifier">MemoryMgr</span><span class="special">::</span><span class="identifier">Call</span></code> overload to support calling multiple
+          functions from the same thread.
+        </li>
 </ul></div>
 <p>
       <span class="bold"><strong>Bug Fixes</strong></span>
@@ -68,6 +72,14 @@
 <li class="listitem">
           <code class="computeroutput"><span class="identifier">ManualMap</span></code> now implements
           correct path resolution (minus manifest/sxs redirection).
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now calls TLS
+          callbacks from the same thread as the EP.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">ManualMap</span></code> now validates
+          the OS version, machine type, etc of modules before attempting to map them.
         </li>
 </ul></div>
 <p>
