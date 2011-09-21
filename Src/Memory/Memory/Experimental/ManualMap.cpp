@@ -302,10 +302,10 @@ namespace HadesMem
     PVOID RemoteBase) const
   {
     // FIXME: Support implicit TLS, i.e. __declspec(thread).
-    // FIXME: Register callback in remote process to ensure TLS is properly 
-    // supported on all new threads etc.
-    // FIXME: Register callback in remote process to call DllMain/TLS again 
-    // with DLL_PROCESS_DETACH on process termination.
+    // FIXME: TLS callbacks are currently only being called for manually 
+    // mapped modules on the initial remote thread used to call initialization 
+    // routines for the module. Ensure they are called again on all relevant 
+    // events (thread creation, thread exit, process creation, process exit).
     
     std::vector<LPCVOID> InitRoutines;
     std::vector<MemoryMgr::CallConv> InitCallConvs;
