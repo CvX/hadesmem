@@ -7,7 +7,7 @@
 
 #pragma comment( lib, "mscoree" )
 
-#define LOAD_DLL_PATH L"C:\\Users\\Josh\\Documents\\visual studio 2010\\"
+#define LOAD_DLL_PATH L"C:\\Users\\Josh\\Documents\\visual studio 2010\\"\
 L"Projects\\DotNetTest\\DotNetTest\\bin\\Debug\\DotNetTest.exe"
 #define LOAD_DLL_FILE_NAME L"DotNetTest.exe"
 #define NAMESPACE_AND_CLASS L"DotNetTest.Program"
@@ -105,7 +105,7 @@ void LoadClr()
 	hThread = (HANDLE)_beginthreadex(NULL, 0, ThreadMain, NULL, 0, NULL);
 }
 
-BOOL WINAPI DllMain(HMODULE hDll, DWORD dwReason, LPVOID)
+BOOL WINAPI DllMain(HMODULE, DWORD dwReason, LPVOID)
 {
 	if (dwReason == DLL_PROCESS_ATTACH)
 	{
