@@ -17,6 +17,7 @@ L"Projects\\DotNetTest\\DotNetTest\\bin\\Debug\\DotNetTest.exe"
 // WARNING: This code is purely for internal testing. It breaks numerous 
 // 'good practice' guidelines and is not production quality. Do not attempt 
 // to run.
+// FIXME: Clean up or remove before v1.5.0 release.
 
 ICLRMetaHostPolicy* pMetaHost = NULL;
 ICLRRuntimeInfo* pRuntimeInfo = NULL;
