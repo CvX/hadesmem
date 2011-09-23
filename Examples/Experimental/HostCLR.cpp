@@ -116,14 +116,10 @@ BOOL WINAPI DllMain(HMODULE, DWORD dwReason, LPVOID)
 	{
 		if (clrHost)
 		{
-			// We eventually 'die' so we make sure we stop the CLR.
 			clrHost->Stop();
-			// And release it.
 			clrHost->Release();
 		}
-
-		// Yes yes, I know. I should be using _endthread(ex)
-		// however, I can't. Since we don't want the thread killed until we exit.
+    
 		if (hThread)
 		{
 			TerminateThread( hThread, 0 );
