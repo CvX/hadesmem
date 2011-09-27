@@ -2395,45 +2395,45 @@ region list.]]
     
     bool operator!=(FindPattern const& Rhs) const;
   };
-	
-	class Pattern
-	{
-	public:
-	  Pattern(FindPattern& Finder, std::wstring const& Data, 
-	    std::wstring const& Name, FindPattern::FindFlags Flags = 
-	    FindPattern::FindFlags_None);
-	  
-	  Pattern(FindPattern& Finder, std::wstring const& Data, 
-	    FindPattern::FindFlags Flags = FindPattern::FindFlags_None);
+  
+  class Pattern
+  {
+  public:
+    Pattern(FindPattern& Finder, std::wstring const& Data, 
+      std::wstring const& Name, FindPattern::FindFlags Flags = 
+      FindPattern::FindFlags_None);
+    
+    Pattern(FindPattern& Finder, std::wstring const& Data, 
+      FindPattern::FindFlags Flags = FindPattern::FindFlags_None);
     
     Pattern(Pattern&& Other);
     
     Pattern& operator=(Pattern&& Other);
     
     ~Pattern();
-	  
-	  void Save();
-	  
-	  void Update(PBYTE Address);
-	  
-	  PBYTE GetAddress() const;
-	  
-	  MemoryMgr GetMemory() const;
-	  
-	  FindPattern::FindFlags GetFlags() const;
-	  
-	  DWORD_PTR GetBase() const;
-	};
-	
-	namespace PatternManipulators
-	{
+    
+    void Save();
+    
+    void Update(PBYTE Address);
+    
+    PBYTE GetAddress() const;
+    
+    MemoryMgr GetMemory() const;
+    
+    FindPattern::FindFlags GetFlags() const;
+    
+    DWORD_PTR GetBase() const;
+  };
+  
+  namespace PatternManipulators
+  {
     class Manipulator
     {
     public:
       virtual void Manipulate(Pattern& /*Pat*/) const;
       
-			friend Pattern& operator<< (Pattern& Pat, 
-			  Manipulator const& Manip);
+      friend Pattern& operator<< (Pattern& Pat, 
+        Manipulator const& Manip);
     };
     
     class Save : public Manipulator
@@ -2471,7 +2471,7 @@ region list.]]
       
       virtual void Manipulate(Pattern& Pat) const;
     };
-	}
+  }
 
 [h3 Description]
 

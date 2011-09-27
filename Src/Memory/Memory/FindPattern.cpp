@@ -592,8 +592,8 @@ namespace HadesMem
     
     m_Finder.m_Addresses[m_Name] = m_Address;
   }
-	
-	// Update address
+  
+  // Update address
   void Pattern::Update(PBYTE Address)
   {
     m_Address = Address;
@@ -630,12 +630,12 @@ namespace HadesMem
     { }
 
     // Manipulator chaining operator overload
-		Pattern& operator<< (Pattern& Pat, Manipulator const& Manip)
-		{
-			Manip.Manipulate(Pat);
-			return Pat;
-		}
-		
+    Pattern& operator<< (Pattern& Pat, Manipulator const& Manip)
+    {
+      Manip.Manipulate(Pat);
+      return Pat;
+    }
+    
     // Manipulate pattern
     void Save::Manipulate(Pattern& Pat) const
     {
