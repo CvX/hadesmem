@@ -314,7 +314,11 @@ namespace HadesMem
     std::for_each(std::begin(TlsCallbacks), std::end(TlsCallbacks), 
       [&] (PIMAGE_TLS_CALLBACK pCallback) 
     {
-      std::wcout << "TLS Callback: " << pCallback << ".\n";
+      // Without the casts GCC will not print the offset correctly. 
+      // Technically GCCs behaviour is 'correct', and this workaround isn't 
+      // standards conformant, but it will do for now.
+      std::wcout << "TLS Callback: " << reinterpret_cast<PVOID>(
+        reinterpret_cast<DWORD_PTR>(pCallback)) << ".\n";
       std::vector<PVOID> TlsCallArgs;
       TlsCallArgs.push_back(0);
       TlsCallArgs.push_back(reinterpret_cast<PVOID>(DLL_PROCESS_ATTACH));
