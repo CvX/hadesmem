@@ -116,28 +116,24 @@
       </p></td></tr>
 </table></div>
 <p>
-      Sample Jamroot 
-</p>
-<pre class="programlisting"><span class="identifier">use</span><span class="special">-</span><span class="identifier">project</span> <span class="special">/</span><span class="identifier">HadesMem</span> 
-  <span class="special">:</span> 
-    <span class="special">../../</span><span class="identifier">HadesMem</span><span class="special">-</span><span class="identifier">Branches</span><span class="special">-</span><span class="identifier">v1</span><span class="special">.</span><span class="number">0.0</span><span class="special">/</span>
-  <span class="special">;</span>
+      Sample Jamroot
+    </p>
+<pre class="programlisting">use-project /HadesMem 
+  : 
+    ../../HadesMem-Branches-v1.0.0/
+  ;
 
-<span class="identifier">exe</span> <span class="identifier">Test</span>
-  <span class="special">:</span> 
-    <span class="identifier">Test</span><span class="special">.</span><span class="identifier">cpp</span>
-    <span class="special">/</span><span class="identifier">HadesMem</span><span class="comment">//HadesMem</span>
-  <span class="special">;</span>
+exe Test
+  : 
+    Test.cpp
+    /HadesMem//HadesMem
+  ;
 </pre>
 <p>
+      Sample Command-line:
     </p>
-<p>
-      Sample Command-line: 
-</p>
-<pre class="programlisting"><span class="identifier">b2</span> <span class="identifier">toolset</span><span class="special">=</span><span class="identifier">msvc</span><span class="special">-</span><span class="number">10.0</span> <span class="identifier">address</span><span class="special">-</span><span class="identifier">model</span><span class="special">=</span><span class="number">32</span> <span class="identifier">debug</span>
+<pre class="programlisting">b2 toolset=msvc-10.0 address-model=32 debug
 </pre>
-<p>
-    </p>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>

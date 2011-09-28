@@ -349,23 +349,23 @@ settings. If you've done it right then you should only need to link to Boost
 and HadesMem (i.e. nothing should be recompiled).]
 
 Sample Jamroot
-``
-use-project /HadesMem 
+[pre 
+use-project \/HadesMem 
   : 
-    ../../HadesMem-Branches-v1.0.0/
+    ..\/..\/HadesMem-Branches-v1.0.0\/
   ;
 
 exe Test
   : 
     Test.cpp
-    /HadesMem//HadesMem
+    \/HadesMem\/\/HadesMem
   ;
-``
+]
 
 Sample Command-line:
-``
+[pre 
 b2 toolset=msvc-10.0 address-model=32 debug
-``
+]
 
 [endsect] [/ Building]
 
