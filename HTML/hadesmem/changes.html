@@ -43,6 +43,9 @@
     </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
 <li class="listitem">
+          Fixed build process.
+        </li>
+<li class="listitem">
           Fixed bug in MemoryMgr::CanRead, MemoryMgr::CanWrite, and MemoryMgr::CanExecute
           that was causing failures in Region unit tests. Attempts to read/write/execute
           memory marked as MEM_RESERVE (and not MEM_COMMIT) will fail, so check it
