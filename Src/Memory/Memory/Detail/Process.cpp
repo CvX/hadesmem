@@ -125,8 +125,8 @@ namespace HadesMem
         
         m_IsWoW64 = (IsWoW64 != FALSE);
         
-        // Disable x86 -> x64 process manipulation
-        if (IsWoW64Me && !IsWoW64)
+        // Disable cross-architecture process manipulation
+        if (IsWoW64Me != IsWoW64)
         {
           BOOST_THROW_EXCEPTION(Error() << 
             ErrorFunction("Process::SetWoW64") << 
