@@ -170,6 +170,12 @@ redirection).
 * `ManualMap` now calls TLS callbacks from the same thread as the EP.
 * `ManualMap` now validates the OS version, machine type, etc of modules 
 before attempting to map them.
+* `Process` was incorrectly allowing x64 processes to open x86 processes. This 
+is something I would like to support, but it will require rewrites to some of 
+the base components for it to work in a bug-free manner, and as such will 
+probably not be implemented until v2.0.0 or later.
+* `Process::SetWoW64` no longer causes a null function pointer call when 
+the IsWoW64Process API cannot be found.
 
 [*Changes]
 
