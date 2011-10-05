@@ -91,9 +91,9 @@ vXX.YY.ZZ, as a narrow C-style string.
 
 HadesMem iterators are STL-compatible. Iterators are 'lazy' to keep the API 
 performant. Lazy in this context means that data enumeration and initialization 
-is only performed on-demmand, rather than lists being pre-processed. Furthermore, 
-caching is implemented to improve performance when the list is used in multi-pass 
-algorithms.
+is only performed on-demmand, rather than lists being pre-processed. 
+Furthermore, caching is implemented to improve performance when the list is 
+used in multi-pass algorithms.
 
 [h3 Support]
 
@@ -154,8 +154,8 @@ DEALINGS IN THE SOFTWARE.
 
 * Added new `FindPattern` APIs.
 * Added `Export::IsForwardedByOrdinal` and `Export::GetForwarderOrdinal`.
-* Added `MemoryMgr::Call` overload to support calling multiple functions from the same 
-thread.
+* Added `MemoryMgr::Call` overload to support calling multiple functions from 
+the same thread.
 
 [*Bug Fixes]
 
