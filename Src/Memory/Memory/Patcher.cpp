@@ -163,7 +163,7 @@ namespace HadesMem
     // Disassemble instructions until we have enough data to generate the 
     // trampoline
     unsigned int InstrSize = 0;
-    while (InstrSize < GetJumpSize())
+    do
     {
       // Disassemble target
       int const Len = Disasm(&MyDisasm);
@@ -198,7 +198,7 @@ namespace HadesMem
 
       // Add to total instruction size
       InstrSize += Len;
-    }
+    } while (InstrSize < GetJumpSize());
 
     // Write jump back to target
     WriteJump(TrampCur, static_cast<PBYTE>(m_Target) + InstrSize);
