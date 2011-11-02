@@ -57,6 +57,23 @@ namespace HadesMem
     : m_Memory(MyMemory), 
     m_Applied(false)
   { }
+    
+  // Move constructor
+  Patch::Patch(Patch&& Other)
+    : m_Memory(std::move(Other.m_Memory)), 
+    m_Applied(Other.m_Applied)
+  {
+    Other.m_Applied = false;
+  }
+  
+  // Move assignment operator
+  Patch& Patch::operator=(Patch&& Other)
+  {
+    m_Memory = std::move(Other.m_Memory);
+    m_Applied = Other.m_Applied;
+    Other.m_Applied = false;
+    return *this;
+  }
 
   // Destructor
   Patch::~Patch()
@@ -75,6 +92,31 @@ namespace HadesMem
     m_Target(Target), 
     m_Data(Data), 
     m_Orig()
+  { }
+    
+  // Move constructor
+  PatchRaw::PatchRaw(PatchRaw&& Other)
+    : Patch(std::forward<Patch>(Other)), 
+    m_Target(Other.m_Target), 
+    m_Data(std::move(Other.m_Data)), 
+    m_Orig(std::move(Other.m_Orig))
+  {
+    Other.m_Target = nullptr;
+  }
+  
+  // Move assignment operator
+  PatchRaw& PatchRaw::operator=(PatchRaw&& Other)
+  {
+    Patch::operator=(std::forward<Patch>(Other));
+    m_Target = Other.m_Target;
+    Other.m_Target = nullptr;
+    m_Data = std::move(Other.m_Data);
+    m_Orig = std::move(Other.m_Orig);
+    return *this;
+  }
+
+  // Destructor
+  PatchRaw::~PatchRaw()
   { }
 
   // Apply patch
@@ -124,6 +166,35 @@ namespace HadesMem
     m_Target(Target), 
     m_Detour(Detour), 
     m_Trampoline()
+  { }
+    
+  // Move constructor
+  PatchDetour::PatchDetour(PatchDetour&& Other)
+    : Patch(std::forward<Patch>(Other)), 
+    m_Target(Other.m_Target), 
+    m_Detour(Other.m_Detour), 
+    m_Trampoline(std::move(Other.m_Trampoline)), 
+    m_Orig(std::move(Other.m_Orig))
+  {
+    Other.m_Target = nullptr;
+    Other.m_Detour = nullptr;
+  }
+  
+  // Move assignment operator
+  PatchDetour& PatchDetour::operator=(PatchDetour&& Other)
+  {
+    Patch::operator=(std::forward<Patch>(Other));
+    m_Target = Other.m_Target;
+    Other.m_Target = nullptr;
+    m_Detour = Other.m_Detour;
+    Other.m_Detour = nullptr;
+    m_Trampoline = std::move(Other.m_Trampoline);
+    m_Orig = std::move(Other.m_Orig);
+    return *this;
+  }
+
+  // Destructor
+  PatchDetour::~PatchDetour()
   { }
 
   // Apply patch
@@ -176,6 +247,7 @@ namespace HadesMem
       }
 
       // Detect and resolve jumps
+      // TODO: Support more types of relative instructions
       if ((MyDisasm.Instruction.BranchType == JmpType) && 
         (MyDisasm.Instruction.AddrValue != 0)) 
       {

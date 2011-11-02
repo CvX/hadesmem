@@ -44,6 +44,12 @@ namespace HadesMem
 
     // Constructor
     explicit Patch(MemoryMgr const& MyMemory);
+    
+    // Move constructor
+    Patch(Patch&& Other);
+    
+    // Move assignment operator
+    Patch& operator=(Patch&& Other);
 
     // Destructor
     virtual ~Patch();
@@ -57,15 +63,16 @@ namespace HadesMem
     bool IsApplied() const;
 
   protected:
-    // Disable copying
-    Patch(Patch const&);
-    Patch& operator=(Patch const&);
-    
     // Memory manager instance
     MemoryMgr m_Memory;
 
     // Whether patch is currently applied
     bool m_Applied;
+    
+  private:
+    // Disable copying
+    Patch(Patch const&);
+    Patch& operator=(Patch const&);
   };
 
   // Raw patch (a.k.a. 'byte patch').
@@ -76,6 +83,15 @@ namespace HadesMem
     // Constructor
     PatchRaw(MemoryMgr const& MyMemory, PVOID Target, 
       std::vector<BYTE> const& Data);
+    
+    // Move constructor
+    PatchRaw(PatchRaw&& Other);
+    
+    // Move assignment operator
+    PatchRaw& operator=(PatchRaw&& Other);
+        
+    // Destructor
+    virtual ~PatchRaw();
 
     // Apply patch
     virtual void Apply();
@@ -101,6 +117,15 @@ namespace HadesMem
   public:
     // Constructor
     PatchDetour(MemoryMgr const& MyMemory, PVOID Target, PVOID Detour);
+    
+    // Move constructor
+    PatchDetour(PatchDetour&& Other);
+    
+    // Move assignment operator
+    PatchDetour& operator=(PatchDetour&& Other);
+        
+    // Destructor
+    virtual ~PatchDetour();
 
     // Apply patch
     virtual void Apply();

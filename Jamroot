@@ -38,8 +38,8 @@ project
     <define>_UNICODE 
     <define>STRICT 
     <define>WIN32_LEAN_AND_MEAN 
-    <define>_WIN32_WINNT=_WIN32_WINNT_WIN2K 
-    <define>WINVER=_WIN32_WINNT_WIN2K 
+    <define>_WIN32_WINNT=_WIN32_WINNT_WS03 
+    <define>WINVER=_WIN32_WINNT_WS03 
     <runtime-link>shared 
     <threading>multi 
     <toolset>gcc:<cxxflags>-std=c++0x 

@@ -17,6 +17,10 @@ applications, with the goal of providing a safe, generic, powerful, and
 efficient API. All components are useable on remote targets. Furthermore, all 
 components compile for (and work natively on) both IA32 and AMD64.
 
+[caution Whilst every effort is made to make HadesMem safe and rhobust, 
+modifying the memory of another process is inherently dangerous and may impact 
+the stability of the process being modified.]
+
 [h3 Design]
 
 HadesMem's design is built around the `HadesMem::MemoryMgr` class, which 
@@ -144,9 +148,13 @@ DEALINGS IN THE SOFTWARE.
 
 [*New Features]
 
+* Added new `Patcher` APIs.
+
 [*Bug Fixes]
 
 [*Changes]
+
+* Updated Boost.
 
 [h3 v1.5.0]
 
@@ -2884,6 +2892,292 @@ semantics. Invalidates `Other`.]]
 ]
 
 [endsect] [/ FindPattern]
+
+[section:patcher Patcher]
+
+[h3 Synopsis]
+
+  // In header: <HadesMemory/Patcher.hpp>
+  
+  class Patch
+  {
+  public:
+    class Error : public virtual HadesMemError;
+    
+    explicit Patch(MemoryMgr const& MyMemory);
+    
+    virtual ~Patch();
+    
+    virtual void Apply() = 0;
+    
+    virtual void Remove() = 0;
+    
+    bool IsApplied() const;
+  };
+  
+  class PatchRaw : public Patch
+  {
+  public:
+    PatchRaw(MemoryMgr const& MyMemory, PVOID Target, 
+      std::vector<BYTE> const& Data);
+    
+    virtual void Apply();
+    
+    virtual void Remove();
+  };
+  
+  class PatchDetour : public Patch
+  {
+  public:
+    PatchDetour(MemoryMgr const& MyMemory, PVOID Target, PVOID Detour);
+    
+    virtual void Apply();
+    
+    virtual void Remove();
+    
+    PVOID GetTrampoline() const;
+  };
+
+[h3 Description]
+
+The `PatchDetour` class provides functionality for creating 'detours' in a 
+remote process, and the `PatchRaw` class provides functionality for creating 
+raw 'byte patches' in a remote process. Both classes inherit from the `Patch` 
+base class. Please note that the `Patch` class is pure virtual and should not 
+be used directly, only as a generic base.
+
+`PatchDetour` uses a disassembler to automatically generate a trampoline, and 
+also provides basic support for relative instruction resolution (primarily to 
+allow hook chains, though other relative instruction types are supported).
+
+Unlike some other hooking libraries, `PatchDetour` does not mix code and data, 
+so targets are less likely to crash when hook chains are performed (either by 
+your own code, or some third party code such as Steam or Fraps).
+
+[warning The destructors of patching objects do not remove the patch. This 
+must be done either explicitly, or via the use of a RAII wrapper over the 
+object.]
+
+[h3 Patch public types]
+
+  class Error : public virtual HadesMemError;
+  
+Exception type thrown by `Patch` methods when an error occurs.
+
+[h3 Patch public member functions]
+
+[h4 Patch member function `Apply`]
+
+  virtual void Apply() = 0;
+
+[variablelist
+
+[[Effects:] [Applies patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Patch member function `Remove`]
+
+  virtual void Remove() = 0;
+
+[variablelist
+
+[[Effects:] [Removes patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 Patch member function `IsApplied`]
+
+  bool IsApplied() const;
+
+[variablelist
+
+[[Returns:] [Whether patch is applied.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 PatchRaw public construct/copy/destruct/move]
+
+[h4 PatchRaw constructor]
+
+  PatchRaw(MemoryMgr const& MyMemory, PVOID Target, 
+    std::vector<BYTE> const& Data);
+
+[variablelist
+
+[[Effects:] [Constructs a `PatchRaw` instance, taking the memory instance for 
+the target process, the target address, and the new data to patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchRaw move constructor]
+
+  PatchRaw(PatchRaw&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `PatchRaw` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchRaw move assignment operator]
+
+  PatchRaw& operator=(PatchRaw&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchRaw destructor]
+
+  virtual ~PatchRaw();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Notes:] [Does not remove patch.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 PatchRaw public member functions]
+
+[h4 PatchRaw member function `Apply`]
+
+  virtual void Apply();
+
+[variablelist
+
+[[Effects:] [Applies patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchRaw member function `Remove`]
+
+  virtual void Remove();
+
+[variablelist
+
+[[Effects:] [Removes patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h3 PatchDetour public construct/copy/destruct/move]
+
+[h4 PatchDetour constructor]
+
+  PatchDetour(MemoryMgr const& MyMemory, PVOID Target, PVOID Detour);
+
+[variablelist
+
+[[Effects:] [Constructs a `PatchDetour` instance, taking the memory instance 
+for the target process, the target address, and the detour address.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchDetour move constructor]
+
+  PatchDetour(PatchDetour&& Other);
+
+[variablelist
+
+[[Effects:] [Constructs a `PatchDetour` that refers to the same target as 
+`Other` via move semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchDetour move assignment operator]
+
+  PatchDetour& operator=(PatchDetour&& Other);
+
+[variablelist
+
+[[Effects:] [Sets self to refer to the same target as `Other` via move 
+semantics. Invalidates `Other`.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchDetour destructor]
+
+  virtual ~PatchDetour();
+
+[variablelist
+
+[[Effects:] [Destroys the instance and frees all resources.]]
+
+[[Notes:] [Does not remove patch.]]
+
+[[Throws:] [No.]]
+
+]
+
+[h3 PatchDetour public member functions]
+
+[h4 PatchDetour member function `Apply`]
+
+  virtual void Apply();
+
+[variablelist
+
+[[Effects:] [Applies patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchDetour member function `Remove`]
+
+  virtual void Remove();
+
+[variablelist
+
+[[Effects:] [Removes patch.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[h4 PatchDetour member function `GetTrampoline`]
+
+  PVOID GetTrampoline() const;
+
+[variablelist
+
+[[Returns:] [Pointer to trampoline to original function.]]
+
+[[Throws:] [Yes.]]
+
+]
+
+[endsect] [/ Patcher]
 
 [endsect] [/ Core]
 
