@@ -2921,6 +2921,12 @@ semantics. Invalidates `Other`.]]
     PatchRaw(MemoryMgr const& MyMemory, PVOID Target, 
       std::vector<BYTE> const& Data);
     
+    PatchRaw(PatchRaw&& Other);
+    
+    PatchRaw& operator=(PatchRaw&& Other);
+    
+    virtual ~PatchRaw();
+    
     virtual void Apply();
     
     virtual void Remove();
@@ -2930,6 +2936,12 @@ semantics. Invalidates `Other`.]]
   {
   public:
     PatchDetour(MemoryMgr const& MyMemory, PVOID Target, PVOID Detour);
+    
+    PatchDetour(PatchDetour&& Other);
+    
+    PatchDetour& operator=(PatchDetour&& Other);
+    
+    virtual ~PatchDetour();
     
     virtual void Apply();
     
