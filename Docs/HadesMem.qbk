@@ -163,6 +163,8 @@ please check the updated build instructions again.)
 checks. This means that the header layout of the project can be improved and 
 some include dependencies can be removed.
 * Updated QuickBook binary.
+* Updated AsmJit.
+* Updated BeaEngine.
 
 [h3 v1.5.0]
 
