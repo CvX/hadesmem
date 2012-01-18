@@ -1,7 +1,7 @@
 [article HadesMem
   [quickbook 1.5]
   [version 1.6.0]
-  [copyright 2011 Joshua Boyce]
+  [copyright 2011-2012 Joshua Boyce]
   [authors [Boyce, Joshua]]
   [license Distributed under the Boost Software License, Version 1.0. (See 
     accompanying file LICENSE_1_0.txt or copy at 
@@ -154,7 +154,15 @@ DEALINGS IN THE SOFTWARE.
 
 [*Changes]
 
-* Updated Boost.
+* Boost is no longer included as part of HadesMem. Please read the updated 
+build instructions.
+* Removed some unused build scripts and tweaked the GCC scripts. (Again, 
+please check the updated build instructions again.)
+* Marked the GCC support as 'experimental' as MinGW seems spotty at best.
+* Compiler detection is now done using Boost.Build rather than preprocessor 
+checks. This means that the header layout of the project can be improved and 
+some include dependencies can be removed.
+* Updated QuickBook binary.
 
 [h3 v1.5.0]
 
@@ -335,9 +343,8 @@ Supported Compilers:
 * [@http://gcc.gnu.org/ GNU GCC 4.6.x] (via 
 [@http://mingw-w64.sourceforge.net/ MinGW-w64])
 
-[warning Extra scripts are present for other compilers, however these are 
-currently unsupported and only present for use by developers and testers who 
-wish to help 'port' the project to support these toolsets.]
+[warning GCC support is currently experimental. This is largely due to 
+problems with the toolchain however, so it may take some time to be resolved.]
 
 Supported Platforms:
 
@@ -347,11 +354,9 @@ later)
 Steps to Build:
 
 # Build Boost.
-  # Navigate to Build/Boost.
-  # Run Bootstrap.bat.
-  # Run Build_Compiler_Architecture.bat (Substitute 'Compiler', and 
-  'Architecture' as appropriate).
-  # Check output and ensure there are no errors.
+  # Please consult the Boost documentation for build instructions. (Please note 
+  that by default HadesMem links with the CRT statically.)
+  # Place b2 somewhere in your PATH environmental variable.
 # Build HadesMem.
   # Navigate to Build/Full.
   # Run Build_Compiler_Configuration_Architecture.bat (Substitute 'Compiler', 
@@ -359,7 +364,9 @@ Steps to Build:
   # Check output and ensure there are no errors.
 
 [caution If using GCC, depending on which MinGW distribution you are using, 
-you may need to manually configure toolsets in your user-config.jam file.]
+you may need to manually configure toolsets in your user-config.jam file, and 
+you will probably also have to tweak the build script to point to your MinGW 
+installation directory.]
 
 Using HadesMem (in a Boost.Build based project):
 
@@ -368,8 +375,6 @@ document assumes you name the project 'HadesMem').
 # Add '''/HadesMem//HadesMem''' to the source list of your application/library 
 or the requirements list of your project.
 # Add `#include <HadesMemory/Memory.hpp>` to your code.
-# Set the BOOST_ROOT environmental variable and copy b2 to somewhere in your 
-PATH.
 
 [important When compiling your Boost.Build based project, explicitly specify 
 the toolset, address-model and debug/release configuration on the command line 

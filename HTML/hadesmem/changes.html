@@ -35,9 +35,24 @@
 <p>
       <span class="bold"><strong>Changes</strong></span>
     </p>
-<div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-          Updated Boost.
-        </li></ul></div>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+          Boost is no longer included as part of HadesMem. Please read the updated
+          build instructions.
+        </li>
+<li class="listitem">
+          Removed some unused build scripts and tweaked the GCC scripts. (Again,
+          please check the updated build instructions again.)
+        </li>
+<li class="listitem">
+          Marked the GCC support as 'experimental' as MinGW seems spotty at best.
+        </li>
+<li class="listitem">
+          Compiler detection is now done using Boost.Build rather than preprocessor
+          checks. This means that the header layout of the project can be improved
+          and some include dependencies can be removed.
+        </li>
+</ul></div>
 <h4>
 <a name="hadesmem.changes.h1"></a>
       <span><a name="hadesmem.changes.v1_5_0"></a></span><a class="link" href="changes.html#hadesmem.changes.v1_5_0">v1.5.0</a>

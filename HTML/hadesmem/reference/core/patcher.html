@@ -47,6 +47,12 @@
   <span class="identifier">PatchRaw</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">PVOID</span> <span class="identifier">Target</span><span class="special">,</span>
     <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">BYTE</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">Data</span><span class="special">);</span>
 
+  <span class="identifier">PatchRaw</span><span class="special">(</span><span class="identifier">PatchRaw</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+
+  <span class="identifier">PatchRaw</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">PatchRaw</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+
+  <span class="keyword">virtual</span> <span class="special">~</span><span class="identifier">PatchRaw</span><span class="special">();</span>
+
   <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="identifier">Apply</span><span class="special">();</span>
 
   <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="identifier">Remove</span><span class="special">();</span>
@@ -56,6 +62,12 @@
 <span class="special">{</span>
 <span class="keyword">public</span><span class="special">:</span>
   <span class="identifier">PatchDetour</span><span class="special">(</span><span class="identifier">MemoryMgr</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">MyMemory</span><span class="special">,</span> <span class="identifier">PVOID</span> <span class="identifier">Target</span><span class="special">,</span> <span class="identifier">PVOID</span> <span class="identifier">Detour</span><span class="special">);</span>
+
+  <span class="identifier">PatchDetour</span><span class="special">(</span><span class="identifier">PatchDetour</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+
+  <span class="identifier">PatchDetour</span><span class="special">&amp;</span> <span class="keyword">operator</span><span class="special">=(</span><span class="identifier">PatchDetour</span><span class="special">&amp;&amp;</span> <span class="identifier">Other</span><span class="special">);</span>
+
+  <span class="keyword">virtual</span> <span class="special">~</span><span class="identifier">PatchDetour</span><span class="special">();</span>
 
   <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="identifier">Apply</span><span class="special">();</span>
 
